@@ -13,9 +13,20 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
+    log.debug("curr timestamp: ", getTime.timeStamp);
+
+    //check if next oasis timestamp has passed
+    if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
+        if (nextOasis.Data.nextOasis.Value >= getTime.timeStamp) {
+            //player's timestamp is greater than current server time (time not elapsed yet). Return failed status with the next oasis timestamp in the 'Data' field.
+            return generateFailObj("Oasis not ready yet", nextOasis.Data.nextOasis.Value);
+        }
+    }
+    var nextOasisTimestep = 0;
+
     log.debug("nextOasis.Data.nextOasis undefined: ", nextOasis.Data.nextOasis == undefined);
 
-    var nextOasisTimestep = nextOasis.Data.nextOasis["Value"];
+    var nextOasisTimestep = nextOasis.Data.nextOasis.Value;
 
 
     log.debug("Next Oasis timestep undefined: ", nextOasisTimestep == undefined);

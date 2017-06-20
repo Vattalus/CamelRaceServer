@@ -1,7 +1,8 @@
-function generateFailObj(mess) {
+function generateFailObj(mess, data) {
     var retObj = {
         Result: "Failed",
-        Message: mess
+        Message: mess,
+        Data: data
     };
     return retObj;
 }
