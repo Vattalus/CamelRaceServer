@@ -7,12 +7,19 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("nextOasis undefined:", nextOasis==undefined);
-    log.debug("nextOasis.Data undefined:", nextOasis.Data == undefined);
-    log.debug("nextOasis.Data.nextOasis undefined:", nextOasis.Data.nextOasis == undefined);
+    var nextOasisTimestamp = new Date();
 
     //if non-existant, create it
-    if (nextOasis.Data == undefined || nextOasis.Data.nextOasis == undefined)
+    if (nextOasis.Data.nextOasis == undefined) {
+        server.UpdateUserReadOnlyData(
+            {
+                PlayFabId: currentPlayerId,
+                Data: { "nextOasis": nextOasisTimestamp }
+            }
+        );
+    } else {
+        nextOasisTimestamp = nextOasis.Data.nextOasis;
+    }
 
     return { nextOasisTimestamp: nextOasis };
 }
