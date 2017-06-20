@@ -6,10 +6,11 @@ function generateFailObj(mess) {
     return retObj;
 }
 
-function generateErrObj(mess) {
+function generateErrObj(mess, data) {
     var retObj = {
         Result: "Error",
-        Message: mess
+        Message: mess,
+        Data: data
     };
     return retObj;
 }
@@ -46,7 +47,16 @@ function loadTitleDataJson(key) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("Player Oasis Timestamp: ", nextOasis.Data.nextOasis["Value"]);
+    log.debug("nextOasis.Data.nextOasis['Value'] value: ", nextOasis.Data.nextOasis["Value"]);
+
+    var nextOasisTimestep = nextOasis.Data.nextOasis["Value"];
+
+
+    log.debug("Next Oasis timestep undefined: ", nextOasisTimestep == undefined);
+    log.debug("Next Oasis timestep null: ", nextOasisTimestep == null);
+
+    //if player did not have that value, add it
+    //if (nextOasisTimestep == null)
 
     //var nextOasisTimestamp = new Date().timeStamp;
 

@@ -13,7 +13,16 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("Player Oasis Timestamp: ", nextOasis.Data.nextOasis["Value"]);
+    log.debug("nextOasis.Data.nextOasis['Value'] value: ", nextOasis.Data.nextOasis["Value"]);
+
+    var nextOasisTimestep = nextOasis.Data.nextOasis["Value"];
+
+
+    log.debug("Next Oasis timestep undefined: ", nextOasisTimestep == undefined);
+    log.debug("Next Oasis timestep null: ", nextOasisTimestep == null);
+
+    //if player did not have that value, add it
+    //if (nextOasisTimestep == null)
 
     //var nextOasisTimestamp = new Date().timeStamp;
 

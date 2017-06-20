@@ -6,10 +6,11 @@ function generateFailObj(mess) {
     return retObj;
 }
 
-function generateErrObj(mess) {
+function generateErrObj(mess, data) {
     var retObj = {
         Result: "Error",
-        Message: mess
+        Message: mess,
+        Data: data
     };
     return retObj;
 }
