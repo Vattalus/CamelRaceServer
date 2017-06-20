@@ -1,0 +1,1 @@
+handlers.grantOasis=function(a,b){log.info("this is just a test");log.debug("helloWorld:",{input:a.inputValue});return{messageValue:"this is just a test"}};
