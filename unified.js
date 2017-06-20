@@ -22,14 +22,10 @@ function loadTitleDataJson(key) {
     }
     );
 
-    log.debug("tData key: ", tData.Data[key]);
-
     if (tData == undefined || tData.Data == undefined || tData.Data[key] == undefined)
         return null;
 
     var tDataJSON = JSON.parse(tData.Data[key]);
-
-    log.debug("tData JSON value: ", tDataJSON);
 
     if (tDataJSON == undefined)
         return null;
@@ -39,29 +35,18 @@ function loadTitleDataJson(key) {
 
     //load the oasis balancing json from title data
     var oasisBalancingJSON = loadTitleDataJson("Balancing_Oasis");
-    log.debug("Balancing Oasis: ", oasisBalancingJSON);
 
-    if (oasisBalancingJSON == null)
-        log.error("oasis balancing null");
-
-    if (oasisBalancingJSON == undefined)
-        log.error("oasis balancing undefined");
+    if (oasisBalancingJSON == undefined || oasisBalancingJSON == null)
+        return generateErrObj("Oasis Balancing JSON undefined or null");
 
     //load the player's oasis data
-    var nextOasis = server.GetUserReadOnlyData(
+    var nextOasisTimestamp = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Keys: ["nextOasis"]
     });
 
-    //load the oasis balancing values from title data
-
-    var tData = server.GetTitleData(
-     {
-         PlayFabId: currentPlayerId,
-         Keys: ["DailyMissionData"]
-     }
-   );
+    log.debug("Player Oasis Timestamp: ", nextOasisTimestamp["nextOasis"]);
 
     //var nextOasisTimestamp = new Date().timeStamp;
 

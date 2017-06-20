@@ -2,29 +2,18 @@ handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
     var oasisBalancingJSON = loadTitleDataJson("Balancing_Oasis");
-    log.debug("Balancing Oasis: ", oasisBalancingJSON);
 
-    if (oasisBalancingJSON == null)
-        log.error("oasis balancing null");
-
-    if (oasisBalancingJSON == undefined)
-        log.error("oasis balancing undefined");
+    if (oasisBalancingJSON == undefined || oasisBalancingJSON == null)
+        return generateErrObj("Oasis Balancing JSON undefined or null");
 
     //load the player's oasis data
-    var nextOasis = server.GetUserReadOnlyData(
+    var nextOasisTimestamp = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Keys: ["nextOasis"]
     });
 
-    //load the oasis balancing values from title data
-
-    var tData = server.GetTitleData(
-     {
-         PlayFabId: currentPlayerId,
-         Keys: ["DailyMissionData"]
-     }
-   );
+    log.debug("Player Oasis Timestamp: ", nextOasisTimestamp["nextOasis"]);
 
     //var nextOasisTimestamp = new Date().timeStamp;
 

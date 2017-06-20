@@ -22,14 +22,10 @@ function loadTitleDataJson(key) {
     }
     );
 
-    log.debug("tData key: ", tData.Data[key]);
-
     if (tData == undefined || tData.Data == undefined || tData.Data[key] == undefined)
         return null;
 
     var tDataJSON = JSON.parse(tData.Data[key]);
-
-    log.debug("tData JSON value: ", tDataJSON);
 
     if (tDataJSON == undefined)
         return null;
