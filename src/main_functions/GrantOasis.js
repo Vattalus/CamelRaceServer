@@ -39,7 +39,7 @@ handlers.grantOasis = function (args, context) {
     addCurrency("TK", tkReward);
 
     //calculate the timestamp of the next oasis
-    var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval);
+    var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000); //hours to miliseconds
 
     log.debug("recharge interval: " + oasisBalancingJSON.rechargeInterval);
     log.debug("new oasis: ", newOasisTimestep);
