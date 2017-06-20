@@ -7,12 +7,12 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("nextOasis:", nextOasis);
-    log.debug("nextOasis.Data:", nextOasis.Data);
-    log.debug("nextOasis.Data.nextOasis", nextOasis.Data.nextOasis);
+    log.debug("nextOasis undefined:", nextOasis==undefined);
+    log.debug("nextOasis.Data undefined:", nextOasis.Data == undefined);
+    log.debug("nextOasis.Data.nextOasis undefined:", nextOasis.Data.nextOasis == undefined);
 
     //if non-existant, create it
-    //if (nextOasis == undefined || nextOasis.Data.nextOasis == undefined)
+    if (nextOasis.Data == undefined || nextOasis.Data.nextOasis == undefined)
 
     return { nextOasisTimestamp: nextOasis };
 }
