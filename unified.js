@@ -50,9 +50,11 @@ function loadTitleDataJson(key) {
 
     log.debug("curr timestamp: ", getTime.timeStamp);
 
+    var serverTime = new Date();
+
     //check if next oasis timestamp has passed
     if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
-        if (nextOasis.Data.nextOasis.Value >= getTime.timeStamp) {
+        if (nextOasis.Data.nextOasis.Value >= serverTime.getTime.timeStamp) {
             //player's timestamp is greater than current server time (time not elapsed yet). Return failed status with the next oasis timestamp in the 'Data' field.
             return generateFailObj("Oasis not ready yet", nextOasis.Data.nextOasis.Value);
         }
