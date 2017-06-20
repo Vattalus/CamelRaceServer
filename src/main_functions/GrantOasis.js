@@ -7,13 +7,13 @@ handlers.grantOasis = function (args, context) {
         return generateErrObj("Oasis Balancing JSON undefined or null");
 
     //load the player's oasis data
-    var nextOasisTimestamp = server.GetUserReadOnlyData(
+    var nextOasis = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Keys: ["nextOasis"]
     });
 
-    log.debug("Player Oasis Timestamp: ", nextOasisTimestamp.nextOasis);
+    log.debug("Player Oasis Timestamp: ", nextOasis.Data.nextOasis);
 
     //var nextOasisTimestamp = new Date().timeStamp;
 
