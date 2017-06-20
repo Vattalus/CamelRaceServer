@@ -13,7 +13,7 @@ handlers.grantOasis = function (args, context) {
         Keys: ["lastClaimedOasisTimestamp"]
     });
 
-    var serverTime = new Date().getTime();
+    var serverTime = getServerTime();
 
     //check if the wait time has passed for the oasis
     if (lastOasis.Data.lastClaimedOasisTimestamp != undefined && lastOasis.Data.lastClaimedOasisTimestamp.Value != undefined) {

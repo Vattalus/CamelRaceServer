@@ -35,6 +35,11 @@ function loadTitleDataJson(key) {
     return tDataJSON;
 }
 
+//get the current server time timestamp (seconds)
+function getServerTime() {
+    return Math.floor((new Date().getTime() / 1000));
+}
+
 //random int between min and max (both inclusive)
 function randomRange(min, max) {
     return Math.round(Math.random() * (Number(max) - Number(min))) + Number(min);
