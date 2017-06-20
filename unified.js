@@ -1,11 +1,12 @@
 handlers.grantOasis = function (args, context) {
-    var message = "this is just a test";
 
-    log.info(message);
-    var inputValue = null;
-    if (args && args.inputValue)
-        inputValue = args.inputValue;
-    log.debug("helloWorld:", { input: args.inputValue });
+    //load the player's oasis data
+    var nextOasis = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["nextOasis"]
+    });
 
-    return { messageValue: message };
+
+    return { nextOasisTimestamp: nextOasis };
 }
