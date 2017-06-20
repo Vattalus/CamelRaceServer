@@ -33,6 +33,10 @@ function loadTitleDataJson(key) {
         return null;
 
     return tDataJSON;
+}
+
+function randomRange(min, max) {
+    return Math.round(Math.random() * (min - max + 1)) + min;
 }handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
@@ -58,31 +62,23 @@ function loadTitleDataJson(key) {
         }
     }
 
-    log.debug("old Oasis Timestamp: ", nextOasis.Data.nextOasis.Value);
+    //the oasis is ready to be granted
 
-    //the oasis is ready to be granted, calculate the timestamp of the next oasis
+    //grant rewards
+    log.debug("sc reward: ", randomRange(oasisBalancingJSON.scRewardBase, oasisBalancingJSON.scRewardBase * 2));
+    log.debug("hc reward: ", randomRange(oasisBalancingJSON.hcRewardMin, oasisBalancingJSON.hcRewardMax));
+    log.debug("tk reward: ", randomRange(oasisBalancingJSON.ticketsRewardMin, oasisBalancingJSON.ticketsRewardMax));
+
+    //calculate the timestamp of the next oasis
     var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval);
 
     //update the player's next oasis timestamp variable
-
-    log.debug("nextOasis timestamp: ", newOasisTimestep);
-
-    //if player did not have that value, add it
-    //if (nextOasisTimestep == null)
-
-    //var nextOasisTimestamp = new Date().timeStamp;
-
-    ////if non-existant, create it
-    //if (nextOasis.Data.nextOasis == undefined) {
-    //    server.UpdateUserReadOnlyData(
-    //        {
-    //            PlayFabId: currentPlayerId,
-    //            Data: { "nextOasis": nextOasisTimestamp }
-    //        }
-    //    );
-    //} else {
-    //    nextOasisTimestamp = nextOasis.Data.nextOasis;
-    //}
+    server.UpdateUserReadOnlyData(
+            {
+                PlayFabId: currentPlayerId,
+                Data: { "nextOasis": newOasisTimestep }
+            }
+        );
 
     return { nextOasisTimestamp: nextOasis.Data.nextOasis };
 }

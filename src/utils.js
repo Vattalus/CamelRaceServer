@@ -34,3 +34,7 @@ function loadTitleDataJson(key) {
 
     return tDataJSON;
 }
+
+function randomRange(min, max) {
+    return Math.round(Math.random() * (min - max + 1)) + min;
+}
