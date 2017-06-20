@@ -27,7 +27,7 @@ function loadTitleDataJson(key) {
     if (tData == undefined || tData.Data == undefined || tData.Data[key] == undefined)
         return null;
 
-    var tDataJSON = JSON.parse(tData.Data.key);
+    var tDataJSON = JSON.parse(tData.Data[key]);
 
     log.debug("tData JSON value: ", tDataJSON);
 
