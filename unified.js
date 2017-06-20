@@ -46,7 +46,7 @@ function loadTitleDataJson(key) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("Player Oasis Timestamp: ", nextOasis.Data.nextOasis);
+    log.debug("Player Oasis Timestamp: ", nextOasis.Data.nextOasis["Value"]);
 
     //var nextOasisTimestamp = new Date().timeStamp;
 
