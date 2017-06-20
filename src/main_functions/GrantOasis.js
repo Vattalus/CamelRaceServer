@@ -19,7 +19,7 @@ handlers.grantOasis = function (args, context) {
     if (lastOasis.Data.lastOasis != undefined && lastOasis.Data.lastOasis.Value != undefined) {
         if (lastOasis.Data.lastOasis.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) >= serverTime) {
             //player's timestamp is greater than current server time (time not elapsed yet). Return failed status with the next oasis timestamp in the 'Data' field.
-            return generateFailObj("Oasis not ready yet", nextOasis.Data.nextOasis.Value);
+            return generateFailObj("Oasis not ready yet", lastOasis.Data.lastOasis.Value);
         }
     }
 
@@ -48,7 +48,7 @@ handlers.grantOasis = function (args, context) {
 
     //return new timestamp and new inventory
     return {
-        nextOasisTimestamp: serverTime,
+        lastOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
