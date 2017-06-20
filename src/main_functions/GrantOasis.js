@@ -18,7 +18,7 @@ handlers.grantOasis = function (args, context) {
      }
    );
 
-    log.debug("balancing oasis: ", JSON.parse(tDataBalancing_Oasis.Data));
+    log.debug("balancing oasis: ", tDataBalancing_Oasis.Data["rechargeInterval"]);
 
     var tData = server.GetTitleData(
      {
