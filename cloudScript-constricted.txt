@@ -1,1 +1,1 @@
-handlers.grantOasis=function(a,b){return{nextOasisTimestamp:server.GetUserReadOnlyData({PlayFabId:currentPlayerId,Keys:["nextOasis"]})}};
+handlers.grantOasis=function(a,b){a=server.GetUserReadOnlyData({PlayFabId:currentPlayerId,Keys:["nextOasis"]});log.debug("nextOasis:",a);log.debug("nextOasis.Data:",a.Data);log.debug("nextOasis.Data.nextOasis",a.Data.nextOasis);return{nextOasisTimestamp:a}};
