@@ -36,7 +36,7 @@ function loadTitleDataJson(key) {
 }
 
 function randomRange(min, max) {
-    return Math.round(Math.random() * (min - max + 1)) + min;
+    return Math.round(Math.random() * (max-min)) + min;
 }handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
