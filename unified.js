@@ -35,8 +35,19 @@ function loadTitleDataJson(key) {
     return tDataJSON;
 }
 
+//random int between min and max (both inclusive)
 function randomRange(min, max) {
-    return Math.round(Math.random() * (max-min)) + min;
+    return Math.round(Math.random() * (Number(max) - Number(min))) + Number(min);
+}
+
+//Add Virtual Currency
+function addCurrency(currCode, amount) {
+    server.AddUserVirtualCurrency(
+{
+    PlayFabId: currentPlayerId,
+    "VirtualCurrency": currCode,
+    "Amount": amount
+});
 }handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
@@ -64,10 +75,15 @@ function randomRange(min, max) {
 
     //the oasis is ready to be granted
 
-    //grant rewards
-    log.debug("sc reward: ", randomRange(oasisBalancingJSON.scRewardBase, oasisBalancingJSON.scRewardBase * 2));
-    log.debug("hc reward: ", randomRange(oasisBalancingJSON.hcRewardMin, oasisBalancingJSON.hcRewardMax));
-    log.debug("tk reward: ", randomRange(oasisBalancingJSON.ticketsRewardMin, oasisBalancingJSON.ticketsRewardMax));
+    //calculate rewards
+    var scReward = randomRange(oasisBalancingJSON.scRewardBase, oasisBalancingJSON.scRewardBase * 2);
+    var hcReward = randomRange(oasisBalancingJSON.hcRewardMin, oasisBalancingJSON.hcRewardMax);
+    var tkReward = randomRange(oasisBalancingJSON.ticketsRewardMin, oasisBalancingJSON.ticketsRewardMax);
+
+    //increment virtual currency
+    addCurrency("SC", scReward);
+    addCurrency("HC", hcReward);
+    addCurrency("TK", tkReward);
 
     //calculate the timestamp of the next oasis
     var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval);
@@ -80,5 +96,12 @@ function randomRange(min, max) {
             }
         );
 
-    return { nextOasisTimestamp: nextOasis.Data.nextOasis };
+    var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
+    var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
+
+    //return new timestamp and new inventory
+    return {
+        nextOasisTimestamp: newOasisTimestep,
+        VirtualCurrency: VirtualCurrencyObject
+    }
 }

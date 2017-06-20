@@ -35,6 +35,17 @@ function loadTitleDataJson(key) {
     return tDataJSON;
 }
 
+//random int between min and max (both inclusive)
 function randomRange(min, max) {
-    return Math.round(Math.random() * (max-min)) + min;
+    return Math.round(Math.random() * (Number(max) - Number(min))) + Number(min);
+}
+
+//Add Virtual Currency
+function addCurrency(currCode, amount) {
+    server.AddUserVirtualCurrency(
+{
+    PlayFabId: currentPlayerId,
+    "VirtualCurrency": currCode,
+    "Amount": amount
+});
 }
