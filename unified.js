@@ -57,20 +57,17 @@ function addCurrency(currCode, amount) {
         return generateErrObj("Oasis Balancing JSON undefined or null");
 
     //load the player's oasis data
-    var nextOasis = server.GetUserReadOnlyData(
+    var lastOasis = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["nextOasis"]
+        Keys: ["lastOasis"]
     });
 
-    var serverTime = new Date();
+    var serverTime = new Date().getTime();
 
-    log.debug("next oasis: ", nextOasis.Data.nextOasis.Value);
-    log.debug("curr time: ", serverTime.getTime());
-
-    //check if next oasis timestamp has passed
-    if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
-        if (nextOasis.Data.nextOasis.Value >= serverTime.getTime()) {
+    //check if the wait time has passed for the oasis
+    if (lastOasis.Data.lastOasis != undefined && lastOasis.Data.lastOasis.Value != undefined) {
+        if (lastOasis.Data.lastOasis.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) >= serverTime) {
             //player's timestamp is greater than current server time (time not elapsed yet). Return failed status with the next oasis timestamp in the 'Data' field.
             return generateFailObj("Oasis not ready yet", nextOasis.Data.nextOasis.Value);
         }
@@ -88,17 +85,11 @@ function addCurrency(currCode, amount) {
     addCurrency("HC", hcReward);
     addCurrency("TK", tkReward);
 
-    //calculate the timestamp of the next oasis
-    var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000); //hours to miliseconds
-
-    log.debug("recharge interval: " + oasisBalancingJSON.rechargeInterval);
-    log.debug("new oasis: ", newOasisTimestep);
-
-    //update the player's next oasis timestamp variable
+    //update the player's last claimed oasis timestamp
     server.UpdateUserReadOnlyData(
             {
                 PlayFabId: currentPlayerId,
-                Data: { "nextOasis": newOasisTimestep }
+                Data: { "lastOasis": serverTime }
             }
         );
 
