@@ -18,7 +18,7 @@ handlers.grantOasis = function (args, context) {
      }
    );
 
-    debug.log("balancing oasis: ", tDataBalancing_Oasis.Data.rechargeInterval);
+    log.debug("balancing oasis: ", tDataBalancing_Oasis.Data.rechargeInterval);
 
     var tData = server.GetTitleData(
      {
