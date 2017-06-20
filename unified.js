@@ -65,6 +65,9 @@ function addCurrency(currCode, amount) {
 
     var serverTime = new Date();
 
+    log.debug("next oasis: ", nextOasis.Data.nextOasis.Value);
+    log.debug("curr time: ", serverTime.getTime());
+
     //check if next oasis timestamp has passed
     if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
         if (nextOasis.Data.nextOasis.Value >= serverTime.getTime()) {
@@ -87,6 +90,9 @@ function addCurrency(currCode, amount) {
 
     //calculate the timestamp of the next oasis
     var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval);
+
+    log.debug("recharge interval: " + oasisBalancingJSON.rechargeInterval);
+    log.debug("new oasis: ", newOasisTimestep);
 
     //update the player's next oasis timestamp variable
     server.UpdateUserReadOnlyData(
