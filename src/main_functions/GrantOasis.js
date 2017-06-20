@@ -7,7 +7,27 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    var nextOasisTimestamp = new Date();
+    //default value for oasis wait time
+    var hoursTillNextOasis = 12;
+
+    //load the oasis balancing values from title data
+    var tDataBalancing_Oasis = server.GetTitleData(
+     {
+         PlayFabId: currentPlayerId,
+         Keys: ["Balancing_Oasis"]
+     }
+   );
+
+    debug.log("balancing oasis: ", tDataBalancing_Oasis.Data.rechargeInterval);
+
+    var tData = server.GetTitleData(
+     {
+         PlayFabId: currentPlayerId,
+         Keys: ["DailyMissionData"]
+     }
+   );
+
+    var nextOasisTimestamp = new Date().timeStamp;
 
     //if non-existant, create it
     if (nextOasis.Data.nextOasis == undefined) {
@@ -21,5 +41,5 @@ handlers.grantOasis = function (args, context) {
         nextOasisTimestamp = nextOasis.Data.nextOasis;
     }
 
-    return { nextOasisTimestamp: nextOasis };
+    return { nextOasisTimestamp: nextOasis.Data.nextOasis };
 }
