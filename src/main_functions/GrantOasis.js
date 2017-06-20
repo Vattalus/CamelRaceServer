@@ -13,7 +13,7 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("Player Oasis Timestamp: ", nextOasisTimestamp["nextOasis"]);
+    log.debug("Player Oasis Timestamp: ", nextOasisTimestamp.nextOasis);
 
     //var nextOasisTimestamp = new Date().timeStamp;
 
