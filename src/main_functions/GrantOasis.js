@@ -48,7 +48,7 @@ handlers.grantOasis = function (args, context) {
 
     //return new timestamp and new inventory
     return {
-        nextOasisTimestamp: newOasisTimestep,
+        nextOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
 }

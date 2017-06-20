@@ -98,7 +98,7 @@ function addCurrency(currCode, amount) {
 
     //return new timestamp and new inventory
     return {
-        nextOasisTimestamp: newOasisTimestep,
+        nextOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
