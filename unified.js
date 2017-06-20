@@ -66,10 +66,10 @@ function addCurrency(currCode, amount) {
     var serverTime = new Date().getTime();
 
     //check if the wait time has passed for the oasis
-    if (lastOasis.Data.lastOasis != undefined && lastOasis.Data.lastOasis.Value != undefined) {
-        if (lastOasis.Data.lastOasis.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) >= serverTime) {
+    if (lastOasis.Data.lastClaimedOasisTimestamp != undefined && lastOasis.Data.lastClaimedOasisTimestamp.Value != undefined) {
+        if (lastOasis.Data.lastClaimedOasisTimestamp.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) >= serverTime) {
             //time not elapsed yet. Return failed status with the last oasis timestamp in the 'Data' field.
-            return generateFailObj("Oasis not ready yet", lastOasis.Data.lastOasis.Value);
+            return generateFailObj("Oasis not ready yet", lastOasis.Data.lastClaimedOasisTimestamp.Value);
         }
     }
 
