@@ -13,7 +13,7 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("nextOasis.Data.nextOasis['Value'] value: ", nextOasis.Data.nextOasis["Value"]);
+    log.debug("nextOasis.Data.nextOasis undefined: ", nextOasis.Data.nextOasis == undefined);
 
     var nextOasisTimestep = nextOasis.Data.nextOasis["Value"];
 
