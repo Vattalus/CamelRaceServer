@@ -15,9 +15,6 @@ handlers.grantOasis = function (args, context) {
 
     var serverTime = new Date();
 
-
-    log.debug("curr timestamp: ", serverTime.getTime());
-
     //check if next oasis timestamp has passed
     if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
         if (nextOasis.Data.nextOasis.Value >= serverTime.getTime()) {
@@ -25,15 +22,15 @@ handlers.grantOasis = function (args, context) {
             return generateFailObj("Oasis not ready yet", nextOasis.Data.nextOasis.Value);
         }
     }
-    var nextOasisTimestep = 0;
 
-    log.debug("nextOasis.Data.nextOasis undefined: ", nextOasis.Data.nextOasis == undefined);
+    log.debug("old Oasis Timestamp: ", nextOasis.Data.nextOasis.Value);
 
-    var nextOasisTimestep = nextOasis.Data.nextOasis.Value;
+    //the oasis is ready to be granted, calculate the timestamp of the next oasis
+    var newOasisTimestep = serverTime.getTime() + Number(oasisBalancingJSON.rechargeInterval);
 
+    //update the player's next oasis timestamp variable
 
-    log.debug("Next Oasis timestep undefined: ", nextOasisTimestep == undefined);
-    log.debug("Next Oasis timestep null: ", nextOasisTimestep == null);
+    log.debug("nextOasis timestamp: ", newOasisTimestep);
 
     //if player did not have that value, add it
     //if (nextOasisTimestep == null)
