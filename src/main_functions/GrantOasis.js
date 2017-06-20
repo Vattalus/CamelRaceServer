@@ -1,5 +1,15 @@
 handlers.grantOasis = function (args, context) {
 
+    //load the oasis balancing json from title data
+    var oasisBalancingJSON = loadTitleDataJson(Balancing_Oasis);
+    log.debug("Balancing Oasis: ", loadTitleDataJson(Balancing_Oasis));
+
+    if (oasisBalancingJSON == null)
+        log.error("oasis balancing null");
+
+    if (oasisBalancingJSON == undefined)
+        log.error("oasis balancing undefined");
+
     //load the player's oasis data
     var nextOasis = server.GetUserReadOnlyData(
     {
@@ -7,18 +17,7 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    //default value for oasis wait time
-    var hoursTillNextOasis = 12;
-
     //load the oasis balancing values from title data
-    var tDataBalancing_Oasis = server.GetTitleData(
-     {
-         PlayFabId: currentPlayerId,
-         Keys: ["Balancing_Oasis"]
-     }
-   );
-
-    log.debug("balancing oasis: ", JSON.parse(tDataBalancing_Oasis.Data.Balancing_Oasis));
 
     var tData = server.GetTitleData(
      {
