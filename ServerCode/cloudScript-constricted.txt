@@ -1,0 +1,1 @@
+handlers.grantOasis=function(a,b){};
