@@ -18,7 +18,7 @@ handlers.grantOasis = function (args, context) {
      }
    );
 
-    log.debug("balancing oasis: ", tDataBalancing_Oasis.Data.rechargeInterval);
+    log.debug("balancing oasis: ", tDataBalancing_Oasis.Data["rechargeInterval"]);
 
     var tData = server.GetTitleData(
      {
@@ -27,19 +27,19 @@ handlers.grantOasis = function (args, context) {
      }
    );
 
-    var nextOasisTimestamp = new Date().timeStamp;
+    //var nextOasisTimestamp = new Date().timeStamp;
 
-    //if non-existant, create it
-    if (nextOasis.Data.nextOasis == undefined) {
-        server.UpdateUserReadOnlyData(
-            {
-                PlayFabId: currentPlayerId,
-                Data: { "nextOasis": nextOasisTimestamp }
-            }
-        );
-    } else {
-        nextOasisTimestamp = nextOasis.Data.nextOasis;
-    }
+    ////if non-existant, create it
+    //if (nextOasis.Data.nextOasis == undefined) {
+    //    server.UpdateUserReadOnlyData(
+    //        {
+    //            PlayFabId: currentPlayerId,
+    //            Data: { "nextOasis": nextOasisTimestamp }
+    //        }
+    //    );
+    //} else {
+    //    nextOasisTimestamp = nextOasis.Data.nextOasis;
+    //}
 
     return { nextOasisTimestamp: nextOasis.Data.nextOasis };
 }
