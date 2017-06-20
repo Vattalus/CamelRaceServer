@@ -34,8 +34,8 @@ function loadTitleDataJson(key) {
 }handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
-    var oasisBalancingJSON = loadTitleDataJson(Balancing_Oasis);
-    log.debug("Balancing Oasis: ", loadTitleDataJson(Balancing_Oasis));
+    var oasisBalancingJSON = loadTitleDataJson("Balancing_Oasis");
+    log.debug("Balancing Oasis: ", oasisBalancingJSON);
 
     if (oasisBalancingJSON == null)
         log.error("oasis balancing null");
