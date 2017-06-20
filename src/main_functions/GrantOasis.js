@@ -10,7 +10,7 @@ handlers.grantOasis = function (args, context) {
     var lastOasis = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["lastOasis"]
+        Keys: ["lastClaimedOasisTimestamp"]
     });
 
     var serverTime = new Date().getTime();
@@ -39,7 +39,7 @@ handlers.grantOasis = function (args, context) {
     server.UpdateUserReadOnlyData(
             {
                 PlayFabId: currentPlayerId,
-                Data: { "lastOasis": serverTime }
+                Data: { "lastClaimedOasisTimestamp": serverTime }
             }
         );
 

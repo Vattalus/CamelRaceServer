@@ -60,7 +60,7 @@ function addCurrency(currCode, amount) {
     var lastOasis = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["lastOasis"]
+        Keys: ["lastClaimedOasisTimestamp"]
     });
 
     var serverTime = new Date().getTime();
@@ -68,7 +68,7 @@ function addCurrency(currCode, amount) {
     //check if the wait time has passed for the oasis
     if (lastOasis.Data.lastOasis != undefined && lastOasis.Data.lastOasis.Value != undefined) {
         if (lastOasis.Data.lastOasis.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) >= serverTime) {
-            //player's timestamp is greater than current server time (time not elapsed yet). Return failed status with the next oasis timestamp in the 'Data' field.
+            //time not elapsed yet. Return failed status with the last oasis timestamp in the 'Data' field.
             return generateFailObj("Oasis not ready yet", lastOasis.Data.lastOasis.Value);
         }
     }
@@ -89,7 +89,7 @@ function addCurrency(currCode, amount) {
     server.UpdateUserReadOnlyData(
             {
                 PlayFabId: currentPlayerId,
-                Data: { "lastOasis": serverTime }
+                Data: { "lastClaimedOasisTimestamp": serverTime }
             }
         );
 
