@@ -13,9 +13,10 @@ handlers.grantOasis = function (args, context) {
         Keys: ["nextOasis"]
     });
 
-    log.debug("curr timestamp: ", getTime.timeStamp);
-
     var serverTime = new Date();
+
+
+    log.debug("curr timestamp: ", serverTime.getTime.timeStamp);
 
     //check if next oasis timestamp has passed
     if (nextOasis.Data.nextOasis != undefined && nextOasis.Data.nextOasis.Value != undefined) {
