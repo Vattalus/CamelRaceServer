@@ -15,20 +15,22 @@ handlers.grantOasis = function (args, context) {
 
     var serverTime = getServerTime();
 
-    var readyAt = Number(lastOasis.Data.lastClaimedOasisTimestamp.Value) + Number(oasisBalancingJSON.rechargeInterval * 3600);
+    
 
     log.debug("var undefined: ", lastOasis.Data.lastClaimedOasisTimestamp == undefined);
     log.debug("value undefined: ", lastOasis.Data.lastClaimedOasisTimestamp.Value == undefined);
     log.debug("value: ", lastOasis.Data.lastClaimedOasisTimestamp.Value);
     log.debug("recharge interval: ", Number(oasisBalancingJSON.rechargeInterval * 3600));
-    log.debug("ready at: ", readyAt);
     log.debug("server time: ", serverTime);
 
-    log.debug("Should be ready: ", readyAt < serverTime);
+    log.debug("Should be ready: ", Number(lastOasis.Data.lastClaimedOasisTimestamp.Value) + Number(oasisBalancingJSON.rechargeInterval * 3600) < serverTime);
 
     //check if the wait time has passed for the oasis
     if (lastOasis.Data.lastClaimedOasisTimestamp != undefined && lastOasis.Data.lastClaimedOasisTimestamp.Value != undefined) {
-        if (Number(lastOasis.Data.lastClaimedOasisTimestamp.Value) + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000) > serverTime) {
+
+        //var readyAt = Number(lastOasis.Data.lastClaimedOasisTimestamp.Value) + Number(oasisBalancingJSON.rechargeInterval * 3600);
+
+        if (Number(lastOasis.Data.lastClaimedOasisTimestamp.Value) + Number(oasisBalancingJSON.rechargeInterval * 3600) > serverTime) {
             //time not elapsed yet. Return failed status with the last oasis timestamp in the 'Data' field.
             return generateFailObj("Oasis not ready yet", lastOasis.Data.lastClaimedOasisTimestamp.Value);
         }
