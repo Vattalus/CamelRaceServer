@@ -54,3 +54,4 @@ function addCurrency(currCode, amount) {
     "Amount": amount
 });
 }
+

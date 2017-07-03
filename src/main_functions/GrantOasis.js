@@ -52,3 +52,4 @@ handlers.grantOasis = function (args, context) {
         VirtualCurrency: VirtualCurrencyObject
     }
 }
+

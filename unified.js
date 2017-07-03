@@ -53,7 +53,9 @@ function addCurrency(currCode, amount) {
     "VirtualCurrency": currCode,
     "Amount": amount
 });
-}handlers.grantOasis = function (args, context) {
+}
+
+handlers.grantOasis = function (args, context) {
 
     //load the oasis balancing json from title data
     var oasisBalancingJSON = loadTitleDataJson("Balancing_Oasis");
@@ -106,10 +108,12 @@ function addCurrency(currCode, amount) {
         lastOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
-}handlers.raceEnd = function (args, context) {
-    if (args.endRaceReward && Number(args.endRaceReward)) {
-        addCurrency("SC", Number(args.endRaceReward));
-    }
-
-    return { Result: "OK" };
 }
+
+//handlers.raceEnd = function (args, context) {
+//    //if (args.endRaceReward && Number(args.endRaceReward)) {
+//    //    addCurrency("SC", Number(args.endRaceReward));
+//    //}
+
+//    return { Result: "OK" };
+//}
