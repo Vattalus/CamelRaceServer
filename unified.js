@@ -73,10 +73,10 @@ handlers.grantOasis = function (args, context) {
     var serverTime = getServerTime();
 
     log.debug("var undefined: ", lastOasis.Data.lastClaimedOasisTimestamp == undefined);
-    log.debug("value undefined: ", lastOasis.Data.lastClaimedOasisTimestamp.Value != undefined);
+    log.debug("value undefined: ", lastOasis.Data.lastClaimedOasisTimestamp.Value == undefined);
     log.debug("value: ", lastOasis.Data.lastClaimedOasisTimestamp.Value);
-    log.debug("recharge interval: ", Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000));
-    log.debug("ready at: ", lastOasis.Data.lastClaimedOasisTimestamp.Value + Number(oasisBalancingJSON.rechargeInterval * 3600 * 1000));
+    log.debug("recharge interval: ", Number(oasisBalancingJSON.rechargeInterval * 3600));
+    log.debug("ready at: ", lastOasis.Data.lastClaimedOasisTimestamp.Value + Number(oasisBalancingJSON.rechargeInterval * 3600));
     log.debug("server time: " + serverTime);
 
     //check if the wait time has passed for the oasis
