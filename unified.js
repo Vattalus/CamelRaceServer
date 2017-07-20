@@ -181,12 +181,9 @@ function GiveRaceRewards(args, raceRewardJSON) {
     var tkReward = Number(0);
 
     //add the sc reward for placement
-    scReward += raceRewardJSON.Placement_SC[args.finishPosition];
+    scReward += Number(raceRewardJSON.Placement_SC[args.finishPosition]);
 
     log.debug("sc reward: ", scReward);
-
-
-    return placementRwrd_SC;
 
     return null;
 }
