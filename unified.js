@@ -176,19 +176,15 @@ handlers.endRace_quick = function (args, context) {
 
 function GiveRaceRewards(args, raceRewardJSON) {
 
-    var scReward = 0;
-    var hcReward = 0;
-    var tkReward = 0;
+    var scReward = Number(0);
+    var hcReward = Number(0);
+    var tkReward = Number(0);
 
     //add the sc reward for placement
     scReward += raceRewardJSON.Placement_SC[args.finishPosition];
 
     log.debug("sc reward: ", scReward);
 
-    if (placementRwrd_SC != undefined && placementRwrd_SC != null) {
-        //there a reward defined for this placement
-        log.debug("debug:", { "Undefined": placementRwrd_SC == undefined, "Null": placementRwrd_SC == null });
-    };
 
     return placementRwrd_SC;
 
