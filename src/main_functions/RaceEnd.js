@@ -41,10 +41,21 @@ function GiveRaceRewards(args, raceRewardJSON) {
     var hcReward = Number(0);
     var tkReward = Number(0);
 
-    //add the sc reward for placement
-    scReward += Number(raceRewardJSON.Placement_SC[args.finishPosition]);
+
+    if (placementRwrd_SC != undefined && placementRwrd_SC != null) {
+        //there a reward defined for this placement
+        scReward += raceRewardJSON.Placement_SC[args.finishPosition];
+    };
+
+    //SC from start qte
+    scReward += Number(raceRewardJSON.MaxStartBonus);
+
+    //SC from finish speed
+    scReward += Number(raceRewardJSON.MaxFinishBonus);
 
     log.debug("sc reward: ", scReward);
+
+    return placementRwrd_SC;
 
     return null;
 }
