@@ -55,7 +55,5 @@ function GiveRaceRewards(args, raceRewardJSON) {
 
     log.debug("sc reward: ", scReward);
 
-    return placementRwrd_SC;
-
     return null;
 }
