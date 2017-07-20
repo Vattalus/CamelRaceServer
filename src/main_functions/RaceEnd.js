@@ -37,11 +37,12 @@ handlers.endRace_quick = function (args, context) {
 
 function GiveRaceRewards(args, raceRewardJSON) {
 
-    var scReward = Number(0);
+    var scReward = 0;
+    var hcReward = 0;
+    var tkReward = 0;
 
-    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
-
-    scReward += Number(placementRwrd_SC);
+    //add the sc reward for placement
+    scReward += raceRewardJSON.Placement_SC[args.finishPosition];
 
     log.debug("sc reward: ", scReward);
 
