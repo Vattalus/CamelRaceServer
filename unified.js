@@ -153,21 +153,37 @@ handlers.raceEnd = function (args, context) {
 handlers.endRace_quick = function (args, context) {
 
     //first we load the race reward parameters for the quick race.
-    var raceRewardObject = loadTitleDataJson("RaceRewards_Quick");
+    var raceRewardJSON = JSON.parse(loadTitleDataJson("RaceRewards_Quick"));
 
-    if (raceRewardObject == undefined || raceRewardObject == null)
+    if (raceRewardJSON == undefined || raceRewardJSON == null)
         return generateErrObj("RaceRewards_Quick JSON undefined or null");
 
-    var errorMessage = GiveRaceRewards(args, raceRewardObject);
+    //calculate and give rewards based on placement, start qte, finish speed
+    var errorMessage = GiveRaceRewards(args, raceRewardJSON);
 
     //check for errors
     if (errorMessage != null)
         return generateErrObj(errorMessage);
 
-    //todo create virtual currency object and return it
+    var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
+
+    //return new inventory
+    return {
+        VirtualCurrency: VirtualCurrencyObject
+    }
 }
 
-function GiveRaceRewards(args, raceRewardObject) {
-    return "something went wrong lol";
+function GiveRaceRewards(args, raceRewardJSON) {
+
+    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition] != undefined;
+
+    if (placementRwrd_SC == undefined || placementRwrd_SC == null) {
+        //there is no reward defined for this placement
+        log.debug("debug:", { "Undefined": placementRwrd_SC == undefined, "Null": placementRwrd_SC == null });
+    };
+
+    return placementRwrd_SC;
+
+    return null;
 }
 
