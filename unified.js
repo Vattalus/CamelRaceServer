@@ -168,6 +168,6 @@ handlers.endRace_quick = function (args, context) {
 }
 
 function GiveRaceRewards(args, raceRewardObject) {
-    return null;
+    return "something went wrong lol";
 }
 
