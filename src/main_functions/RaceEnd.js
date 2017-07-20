@@ -22,7 +22,7 @@ handlers.endRace_quick = function (args, context) {
     var errorMessage = GiveRaceRewards(args, raceRewardObject);
 
     //check for errors
-    if (errorCode != null)
+    if (errorMessage != null)
         return generateErrObj(errorMessage);
 
     //todo create virtual currency object and return it
