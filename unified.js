@@ -180,10 +180,10 @@ function GiveRaceRewards(args, raceRewardJSON) {
     var hcReward = Number(0);
     var tkReward = Number(0);
 
-
-    if (placementRwrd_SC != undefined && placementRwrd_SC != null) {
+    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
+    if (placementRwrd_SC != undefined && placementRwrd_SC != null && !isNaN(Number(placementRwrd_SC))) {
         //there a reward defined for this placement
-        scReward += raceRewardJSON.Placement_SC[args.finishPosition];
+        scReward += Number(placementRwrd_SC);
     };
 
     //SC from start qte
