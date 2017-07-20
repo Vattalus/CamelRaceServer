@@ -26,6 +26,7 @@ handlers.endRace_quick = function (args, context) {
     if (errorMessage != null)
         return generateErrObj(errorMessage);
 
+    var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
     var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
 
     //return new inventory
@@ -35,6 +36,8 @@ handlers.endRace_quick = function (args, context) {
 }
 
 function GiveRaceRewards(args, raceRewardJSON) {
+
+    log.debug("placement index: ", args.finishPosition);
 
     var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
 
