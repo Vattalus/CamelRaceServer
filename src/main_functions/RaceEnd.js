@@ -13,10 +13,8 @@ handlers.raceEnd = function (args, context) {
 //arg.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
 handlers.endRace_quick = function (args, context) {
 
-    return generateErrObj(loadTitleDataJson("RaceRewards_Quick"));
-
     //first we load the race reward parameters for the quick race.
-    var raceRewardJSON = JSON.parse(loadTitleDataJson("RaceRewards_Quick"));
+    var raceRewardJSON = loadTitleDataJson("RaceRewards_Quick");
 
     if (raceRewardJSON == undefined || raceRewardJSON == null)
         return generateErrObj("RaceRewards_Quick JSON undefined or null");
