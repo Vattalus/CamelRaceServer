@@ -41,6 +41,10 @@ function GiveRaceRewards(args, raceRewardJSON) {
     var hcReward = Number(0);
     var tkReward = Number(0);
 
+    //check if JSON is valid
+    if (raceRewardJSON.Placement_SC == undefined || raceRewardJSON.Placement_HC == undefined || raceRewardJSON.Placement_TK == undefined)
+        return "race rewards JSON is not valid";
+
     var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
     if (placementRwrd_SC != undefined && placementRwrd_SC != null && !isNaN(Number(placementRwrd_SC))) {
         //there a reward defined for this placement
