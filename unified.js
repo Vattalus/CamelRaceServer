@@ -184,16 +184,33 @@ function GiveRaceRewards(args, raceRewardJSON) {
     if (raceRewardJSON.Placement_SC == undefined || raceRewardJSON.Placement_HC == undefined || raceRewardJSON.Placement_TK == undefined)
         return "race rewards JSON is not valid";
 
+    //Placement SC
     var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
     if (placementRwrd_SC != undefined && placementRwrd_SC != null && !isNaN(Number(placementRwrd_SC))) {
         //there a reward defined for this placement
         scReward += Number(placementRwrd_SC);
     };
 
+    //Placement HC
+    var placementRwrd_HC = raceRewardJSON.Placement_HC[args.finishPosition];
+    if (placementRwrd_HC != undefined && placementRwrd_HC != null && !isNaN(Number(placementRwrd_HC))) {
+        //there a reward defined for this placement
+        hcReward += Number(placementRwrd_HC);
+    };
+
+    //Placement TK
+    var placementRwrd_TK = raceRewardJSON.Placement_TK[args.finishPosition];
+    if (placementRwrd_TK != undefined && placementRwrd_TK != null && !isNaN(Number(placementRwrd_TK))) {
+        //there a reward defined for this placement
+        tkReward += Number(placementRwrd_TK);
+    };
+
     //SC from start qte
+    if (!isNaN(Number(raceRewardJSON.MaxStartBonus)))
     scReward += Number(raceRewardJSON.MaxStartBonus);
 
     //SC from finish speed
+    if (!isNaN(Number(raceRewardJSON.MaxFinishBonus)))
     scReward += Number(raceRewardJSON.MaxFinishBonus);
 
     log.debug("sc reward: ", scReward);
