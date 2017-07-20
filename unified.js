@@ -175,7 +175,7 @@ handlers.endRace_quick = function (args, context) {
 
 function GiveRaceRewards(args, raceRewardJSON) {
 
-    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition] != undefined;
+    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
 
     if (placementRwrd_SC == undefined || placementRwrd_SC == null) {
         //there is no reward defined for this placement
