@@ -66,15 +66,24 @@ function GiveRaceRewards(args, raceRewardJSON) {
         tkReward += Number(placementRwrd_TK);
     };
 
+    //TODO actually use the start qte outcome index to modify the scReward value
     //SC from start qte
     if (!isNaN(Number(raceRewardJSON.MaxStartBonus)))
-    scReward += Number(raceRewardJSON.MaxStartBonus);
+        scReward += Number(raceRewardJSON.MaxStartBonus);
 
     //SC from finish speed
-    if (!isNaN(Number(raceRewardJSON.MaxFinishBonus)))
-    scReward += Number(raceRewardJSON.MaxFinishBonus);
+    if (!isNaN(Number(args.finishSpeedFactor)) && !isNaN(Number(raceRewardJSON.MaxFinishBonus)))
+        scReward += Math.round(Number(raceRewardJSON.MaxFinishBonus) * Number(args.finishSpeedFactor));
 
-    log.debug("sc reward: ", scReward);
+    //Give currencies to player
+    if (scReward > 0)
+        addCurrency("SC", scReward);
+
+    if (hcReward > 0)
+        addCurrency("HC", hcReward);
+
+    if (tkReward > 0)
+        addCurrency("TK", tkReward);
 
     return null;
 }
