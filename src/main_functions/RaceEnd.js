@@ -60,17 +60,21 @@ handlers.endRace_event = function (args, context) {
     if (seriesJSON.EventsList == undefined || seriesJSON.EventsList == null)
         return generateErrObj("List of events not found for series with index: " + args.seriesIndex);
 
-    //at this point, we have found the series and the list of events for that series
+    //at this point, we have found the series and the list of events for that series, we don't need the entire eventRewardsJSON any more.
+    eventRewardsJSON = null;
+
     //now, we need to check if the player is eligible for this reward
     var currSeries = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Keys: ["CurrentSeries"]
     });
+
+
     log.debug({
-        "Player current series: ": currSeries.Data.CurrentSeries.Value,
-        "Undefined:": currSeries.Data.CurrentSeries.Value == undefined,
-        "Null:": currSeries.Data.CurrentSeries.Value == null
+        "Player current series: ": currSeries.Data.CurrentSeries,
+        "Undefined:": currSeries.Data.CurrentSeries == undefined,
+        "Null:": currSeries.Data.CurrentSeries == null
     });
 
     //now, check if the event with given index exists
