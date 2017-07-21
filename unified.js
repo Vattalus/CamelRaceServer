@@ -189,13 +189,17 @@ handlers.endRace_event = function (args, context) {
         return generateErrObj("RaceRewards_Events JSON undefined or null");
 
     //cache the season json
-    var seasonJSON = eventRewardsJSON[args.seriesIndex];
+    var seriesJSON = eventRewardsJSON[args.seriesIndex];
 
     //check the series index exists
-    if (seasonJSON == undefined || seasonJSON == null)
-        return generateErrObj("Series with index: " + args.seriesIndex + "not found");
+    if (seriesJSON == undefined || seriesJSON == null)
+        return generateErrObj("Series with index: " + args.seriesIndex + " not found");
 
-    log.debug("1st place SC reward: ", seasonJSON.EventsList[args.eventIndex]);
+    //check if the list of events exists
+    if (seriesJSON.EventsList == undefined || seriesJSON.EventsList == null)
+        return generateErrObj("List of events not found for series with index: " + args.seriesIndex);
+
+    log.debug("1st place SC reward: ", seriesJSON.EventsList[args.eventIndex]);
 
     //now, check if the event with given index exists
 
