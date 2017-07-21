@@ -89,7 +89,7 @@ handlers.endRace_event = function (args, context) {
         return generateFailObj("Player is not eligible for this event");
 
     //calculate and give rewards based on placement, start qte, finish speed
-    var errorMessage = GiveRaceRewards(args, raceRewardJSON);
+    var errorMessage = GiveRaceRewards(args, seriesJSON.EventsList[args.eventIndex]);
 
     //check for errors
     if (errorMessage != null)
