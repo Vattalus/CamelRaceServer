@@ -203,18 +203,21 @@ handlers.endRace_event = function (args, context) {
     eventRewardsJSON = null;
 
     //now, we need to check if the player is eligible for this reward
-    var currSeries = server.GetUserReadOnlyData(
+    var reachedSeason = Number(0);
+    var reachedEvent = Number(0);
+
+    //read the 'ReachedSeries' and 'ReachedEvent' variable from player's read only data
+    var playerData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["CurrentSeries"]
+        Keys: ["ReachedSeries", "ReachedEvent"]
     });
 
+    if (playerData.Data.ReachedSeries != undefined && playerData.Data.ReachedSeries != null && !isNaN(playerData.Data.ReachedSeries.Value)) {
+        reachedSeason = Number(playerData.Data.ReachedSeries.Value);
+    }
 
-    log.debug({
-        "Player current series: ": currSeries.Data.CurrentSeries,
-        "Undefined:": currSeries.Data.CurrentSeries == undefined,
-        "Null:": currSeries.Data.CurrentSeries == null
-    });
+    log.debug(playerData);
 
     //now, check if the event with given index exists
 
