@@ -67,7 +67,11 @@ handlers.endRace_event = function (args, context) {
         PlayFabId: currentPlayerId,
         Keys: ["CurrentSeries"]
     });
-    log.debug("Player current series: ", currSeries + "| undefined: " + currSeries == undefined + " null: " + currSeries == null);
+    log.debug({
+        "Player current series: ": currSeries.Data.CurrentSeries.Value,
+        "Undefined:": currSeries.Data.CurrentSeries.Value == undefined,
+        "Null:": currSeries.Data.CurrentSeries.Value == null
+    });
 
     //now, check if the event with given index exists
 
