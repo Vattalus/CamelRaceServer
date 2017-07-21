@@ -96,7 +96,7 @@ handlers.endRace_event = function (args, context) {
         return generateErrObj(errorMessage);
 
     //if the player won, increment the current event value
-    if (arg.finishPosition == 0) {
+    if (args.finishPosition == 0) {
         //increment series and set event to 0, if event was last in the list
         if (args.eventIndex == seriesJSON.EventsList.length) {
 
