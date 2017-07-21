@@ -174,6 +174,33 @@ handlers.endRace_quick = function (args, context) {
     }
 }
 
+//Arguments
+//arg.seriesIndex - index of the series
+//arg.eventIndex - index of the event
+//arg.finishPosition - placement of player (0- first, 1-seconds etc)
+//arg.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
+//arg.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
+handlers.endRace_event = function (args, context) {
+
+    //first we load the race reward parameters from the title data
+    var eventRewardsJSON = loadTitleDataJson("RaceRewards_Events");
+
+    if (eventRewardsJSON == undefined || eventRewardsJSON == null)
+        return generateErrObj("RaceRewards_Events JSON undefined or null");
+
+    //cache the season json
+    var seasonJSON = eventRewardsJSON[args.seriesIndex];
+
+    //check the series index exists
+    if (seasonJSON == undefined || seasonJSON == null)
+        return generateErrObj("Series with index: " + args.seriesIndex + "not found");
+
+    log.debug("1st place SC reward: ", seasonJSON.EventsList[args.eventIndex]);
+
+    //now, check if the event with given index exists
+
+}
+
 function GiveRaceRewards(args, raceRewardJSON) {
 
     var scReward = Number(0);
