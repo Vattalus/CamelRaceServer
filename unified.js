@@ -205,10 +205,10 @@ handlers.endRace_event = function (args, context) {
     //now, we need to check if the player is eligible for this reward
 
     //initialize the reached season and event values to 0 (in case they do not exist yet)
-    var currSeason = Number(0);
+    var currSeries = Number(0);
     var currEvent = Number(0);
 
-    //read the 'CurrentSeries' and 'CurrentEvent' variable from player's read only data
+    //read the 'CurrentSeries' and 'CurrentEvent' variable from player's read-only data
     var playerData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
@@ -216,7 +216,7 @@ handlers.endRace_event = function (args, context) {
     });
 
     if (playerData.Data.CurrentSeries != undefined && playerData.Data.CurrentSeries != null && !isNaN(playerData.Data.CurrentSeries.Value)) {
-        currSeason = Number(playerData.Data.CurrentSeries.Value);
+        currSeries = Number(playerData.Data.CurrentSeries.Value);
     }
 
     if (playerData.Data.CurrentEvent != undefined && playerData.Data.CurrentEvent != null && !isNaN(playerData.Data.CurrentEvent.Value)) {
@@ -224,18 +224,39 @@ handlers.endRace_event = function (args, context) {
     }
 
     //check if player is eligible for reward
-    if (currSeason != args.seriesIndex || currEvent != args.eventIndex)
+    if (currSeries != args.seriesIndex || currEvent != args.eventIndex)
         return generateFailObj("Player is not eligible for this event");
 
     //calculate and give rewards based on placement, start qte, finish speed
-    //var errorMessage = GiveRaceRewards(args, raceRewardJSON);
+    var errorMessage = GiveRaceRewards(args, raceRewardJSON);
 
-    ////check for errors
-    //if (errorMessage != null)
-    //    return generateErrObj(errorMessage);
+    //check for errors
+    if (errorMessage != null)
+        return generateErrObj(errorMessage);
 
-    //if the player won, increment the current event value (and the series, if event was last in the list)
-    log.debug("Events: " + seriesJSON.EventsList.length);
+    //if the player won, increment the current event value
+    if (arg.finishPosition == 0) {
+        //increment series and set event to 0, if event was last in the list
+        if (args.eventIndex == seriesJSON.EventsList.length) {
+
+            //TODO here we give the series completion reward for the currSeries
+
+            currSeries++;
+            currEvent = 0;
+        } else {
+            currEvent++;
+        }
+    }
+
+    //update the current season and event values in the player's read-only data
+    server.UpdateUserReadOnlyData(
+        {
+            PlayFabId: currentPlayerId,
+            Data: { "CurrentSeries": currSeries, "CurrentEvent": currEvent }
+        }
+    );
+
+    //return the updated virtual currency and current series/event values
 }
 
 function GiveRaceRewards(args, raceRewardJSON) {
