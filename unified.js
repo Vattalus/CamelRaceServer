@@ -203,24 +203,39 @@ handlers.endRace_event = function (args, context) {
     eventRewardsJSON = null;
 
     //now, we need to check if the player is eligible for this reward
-    var reachedSeason = Number(0);
-    var reachedEvent = Number(0);
 
-    //read the 'ReachedSeries' and 'ReachedEvent' variable from player's read only data
+    //initialize the reached season and event values to 0 (in case they do not exist yet)
+    var currSeason = Number(0);
+    var currEvent = Number(0);
+
+    //read the 'CurrentSeries' and 'CurrentEvent' variable from player's read only data
     var playerData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["ReachedSeries", "ReachedEvent"]
+        Keys: ["CurrentSeries", "CurrentEvent"]
     });
 
-    if (playerData.Data.ReachedSeries != undefined && playerData.Data.ReachedSeries != null && !isNaN(playerData.Data.ReachedSeries.Value)) {
-        reachedSeason = Number(playerData.Data.ReachedSeries.Value);
+    if (playerData.Data.CurrentSeries != undefined && playerData.Data.CurrentSeries != null && !isNaN(playerData.Data.CurrentSeries.Value)) {
+        currSeason = Number(playerData.Data.CurrentSeries.Value);
     }
 
-    log.debug(playerData);
+    if (playerData.Data.CurrentEvent != undefined && playerData.Data.CurrentEvent != null && !isNaN(playerData.Data.CurrentEvent.Value)) {
+        currEvent = Number(playerData.Data.CurrentEvent.Value);
+    }
 
-    //now, check if the event with given index exists
+    //check if player is eligible for reward
+    if (currSeason != args.seriesIndex || currEvent != args.eventIndex)
+        return generateFailObj("Player is not eligible for this event");
 
+    //calculate and give rewards based on placement, start qte, finish speed
+    //var errorMessage = GiveRaceRewards(args, raceRewardJSON);
+
+    ////check for errors
+    //if (errorMessage != null)
+    //    return generateErrObj(errorMessage);
+
+    //if the player won, increment the current event value (and the series, if event was last in the list)
+    log.debug("Events: " + seriesJSON.EventsList.length);
 }
 
 function GiveRaceRewards(args, raceRewardJSON) {
