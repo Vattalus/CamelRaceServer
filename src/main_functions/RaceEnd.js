@@ -60,7 +60,14 @@ handlers.endRace_event = function (args, context) {
     if (seriesJSON.EventsList == undefined || seriesJSON.EventsList == null)
         return generateErrObj("List of events not found for series with index: " + args.seriesIndex);
 
-    log.debug("1st place SC reward: ", seriesJSON.EventsList[args.eventIndex]);
+    //at this point, we have found the series and the list of events for that series
+    //now, we need to check if the player is eligible for this reward
+    var currSeries = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["CurrentSeries"]
+    });
+    log.debug("Player current series: ", currSeries + "| undefined: " + currSeries == undefined + " null: " + currSeries == null);
 
     //now, check if the event with given index exists
 
