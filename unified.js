@@ -104,7 +104,7 @@ handlers.grantOasis = function (args, context) {
     //return new timestamp and new inventory
     return {
         Result: "OK",
-        lastOasisTimestamp: serverTime,
+        NextOasisTime: serverTime + Number(oasisBalancing.rechargeInterval) * 3600,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
