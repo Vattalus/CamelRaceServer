@@ -103,6 +103,7 @@ handlers.grantOasis = function (args, context) {
 
     //return new timestamp and new inventory
     return {
+        Result: "OK",
         lastOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
@@ -116,7 +117,10 @@ handlers.getOasisData = function (args, context) {
     if (oasisBalancing == undefined || oasisBalancing == null)
         return generateErrObj("Oasis Balancing JSON undefined or null");
 
-    return getNextOasisTime(oasisBalancing.rechargeInterval);
+    return {
+        Result: "OK",
+        NextOasisTime: getNextOasisTime(oasisBalancing.rechargeInterval)
+    }
 }
 
 //get the timestamp of the next oasis
@@ -168,8 +172,9 @@ handlers.endRace_quick = function (args, context) {
     var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
     var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
 
-    //return new inventory
+    //return new currency balance
     return {
+        Result: "OK",
         VirtualCurrency: VirtualCurrencyObject
     }
 }
@@ -257,6 +262,12 @@ handlers.endRace_event = function (args, context) {
     );
 
     //return the updated virtual currency and current series/event values
+    return {
+        Result: "OK",
+        VirtualCurrency: userInventoryObject.VirtualCurrency,
+        CurrentSeries: currSeries,
+        CurrentEvent: currEvent
+    }
 }
 
 function GiveRaceRewards(args, raceRewardJSON) {

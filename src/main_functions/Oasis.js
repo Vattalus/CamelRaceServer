@@ -46,6 +46,7 @@ handlers.grantOasis = function (args, context) {
 
     //return new timestamp and new inventory
     return {
+        Result: "OK",
         lastOasisTimestamp: serverTime,
         VirtualCurrency: VirtualCurrencyObject
     }
@@ -59,7 +60,10 @@ handlers.getOasisData = function (args, context) {
     if (oasisBalancing == undefined || oasisBalancing == null)
         return generateErrObj("Oasis Balancing JSON undefined or null");
 
-    return getNextOasisTime(oasisBalancing.rechargeInterval);
+    return {
+        Result: "OK",
+        NextOasisTime: getNextOasisTime(oasisBalancing.rechargeInterval)
+    }
 }
 
 //get the timestamp of the next oasis
