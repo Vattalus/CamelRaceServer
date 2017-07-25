@@ -96,7 +96,7 @@ handlers.pickStartingCamel = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": camelsJSON, "SelectedCamel": 0 }
+        Data: { "Camels": JSON.stringify(camelsJSON), "SelectedCamel": 0 }
     });
 }
 handlers.grantOasis = function (args, context) {
