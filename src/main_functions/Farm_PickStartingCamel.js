@@ -13,7 +13,7 @@ handlers.pickStartingCamel = function (args, context) {
     });
 
     if (camels.Data.Camels == undefined || camels.Data.Camels == null)
-        camels.Data = "";
+        camels.Data = "[]";
 
     //parse to JSON
     var camelsJSON = JSON.parse(camels.Data);
