@@ -69,16 +69,22 @@ handlers.pickStartingCamel = function (args, context) {
         Keys: ["Camels"]
     });
 
-    if (camels.Data.Camels == undefined || camels.Data.Camels == null || camels.Data.Camels.length == undefined || camels.Data.Camels.length == null || camels.Data.Camels.length == 0) {
+    if (camels.Data.Camels == undefined || camels.Data.Camels == null)
+        camels.Data = "";
+
+    //parse to JSON
+    var camelsJSON = JSON.parse(camels.Data);
+
+    if (camelsJSON == undefined || camelsJSON == null || camelsJSON.length == undefined || camelsJSON.length == null || camelsJSON.length == 0) {
         log.debug("is all good");
     }
 
     log.debug({
-        "undefined ": camels.Data.Camels == undefined,
-        "null ": camels.Data.Camels == null,
-        "length ": camels.Data.Camels.length,
-        "lenght undefined:": camels.Data.Camels.length == undefined,
-        "lenght null:": camels.Data.Camels.length == null,
+        "undefined ": camelsJSON == undefined,
+        "null ": camelsJSON == null,
+        "length ": camelsJSON.length,
+        "lenght undefined:": camelsJSON.length == undefined,
+        "lenght null:": camelsJSON.length == null,
     });
 
 }
