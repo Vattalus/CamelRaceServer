@@ -70,7 +70,7 @@ handlers.pickStartingCamel = function (args, context) {
     });
 
     if (camels.Data.Camels == undefined || camels.Data.Camels == null || camels.Data.Camels.length == undefined || camels.Data.Camels.length == null || camels.Data.Camels.length == 0) {
-        return "is all good";
+        log.debug("is all good");
     }
 
     log.debug({
