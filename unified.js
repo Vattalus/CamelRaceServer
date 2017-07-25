@@ -73,7 +73,7 @@ handlers.pickStartingCamel = function (args, context) {
         camels.Data.Camels = "{}";
 
     //parse to JSON
-    var camelsJSON = JSON.parse(camels.Data[Camels]);
+    var camelsJSON = JSON.parse(camels.Data["Camels"]);
 
     if (camelsJSON == undefined || camelsJSON == null || camelsJSON.length == undefined || camelsJSON.length == null || camelsJSON.length == 0) {
         log.debug("is all good");
