@@ -12,24 +12,13 @@ handlers.pickStartingCamel = function (args, context) {
         Keys: ["Camels"]
     });
 
-    if (camels.Data.Camels == undefined || camels.Data.Camels == null)
-        camels.Data.Camels.Value = "";
+    //Json data of the Camels list
+    var camelsJSON = JSON.parse("[]");
 
-    log.debug("camels.Data.Camels.Value ", camels.Data.Camels.Value);
+    if ((camels.Data.Camels != undefined && camels.Data.Camels != null))
+        var camelsJSON = JSON.parse(camels.Data.Camels.Value);
 
-    //parse to JSON
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-
-    if (camelsJSON == undefined || camelsJSON == null || camelsJSON.length == undefined || camelsJSON.length == null || camelsJSON.length == 0) {
-        log.debug("is all good");
-    }
-
-    log.debug({
-        "undefined ": camelsJSON == undefined,
-        "null ": camelsJSON == null,
-        "length ": camelsJSON.length,
-        "lenght undefined:": camelsJSON.length == undefined,
-        "lenght null:": camelsJSON.length == null,
-    });
-
+    //if the player already owns at least one camel, they cannot pick a starting camel again. So, return a fail object
+    if (camelsJSON.length > 0 && (camelsJSON[0].name != undefined || camelsJSON[0].name != null))
+        return generateFailObj("Player already owns a camel");
 }
