@@ -15,19 +15,25 @@ handlers.pickStartingCamel = function (args, context) {
     if (camels.Data.Camels == undefined || camels.Data.Camels == null)
         camels.Data.Camels = "{}";
 
-    //parse to JSON
-    var camelsJSON = JSON.parse(camels.Data["Camels"]);
-
-    if (camelsJSON == undefined || camelsJSON == null || camelsJSON.length == undefined || camelsJSON.length == null || camelsJSON.length == 0) {
-        log.debug("is all good");
-    }
-
     log.debug({
-        "undefined ": camelsJSON == undefined,
-        "null ": camelsJSON == null,
-        "length ": camelsJSON.length,
-        "lenght undefined:": camelsJSON.length == undefined,
-        "lenght null:": camelsJSON.length == null,
+        "camels.Data": camels.Data,
+        "camels.Data.Camels": camels.Data.Camels,
+        "camels.Data['Camels']": camels.Data["Camels"],
     });
+
+    //parse to JSON
+    //var camelsJSON = JSON.parse(camels.Data["Camels"]);
+
+    //if (camelsJSON == undefined || camelsJSON == null || camelsJSON.length == undefined || camelsJSON.length == null || camelsJSON.length == 0) {
+    //    log.debug("is all good");
+    //}
+
+    //log.debug({
+    //    "undefined ": camelsJSON == undefined,
+    //    "null ": camelsJSON == null,
+    //    "length ": camelsJSON.length,
+    //    "lenght undefined:": camelsJSON.length == undefined,
+    //    "lenght null:": camelsJSON.length == null,
+    //});
 
 }
