@@ -12,8 +12,12 @@ handlers.pickStartingCamel = function (args, context) {
         Keys: ["Camels"]
     });
 
-    log.debug("Undefined", camels.Data == undefined);
-    log.debug("null", camels.Data == null);
-    log.debug("length", camels.Data.length);
+    log.debug({
+        "undefined ": camels.Data.Camels == undefined,
+        "null ": camels.Data.Camels == null,
+        "length ": camels.Data.Camels.length,
+        "lenght undefined:": camels.Data.Camels.length == undefined,
+        "lenght null:": camels.Data.Camels.length == null,
+    });
 
 }
