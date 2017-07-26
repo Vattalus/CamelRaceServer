@@ -15,19 +15,18 @@ handlers.pickStartingCamel = function (args, context) {
     });
 
     //Json data of the Camels list
-    var camelsJSON = JSON.parse("[]");
+    var camelsJSON = JSON.parse("{}");
 
     if ((camels.Data.Camels != undefined && camels.Data.Camels != null))
         camelsJSON = JSON.parse(camels.Data.Camels.Value);
 
     //if the player already owns at least one camel, they cannot pick a starting camel again. So, return a fail object
-    if (camelsJSON.length > 0 && (camelsJSON[0].name != undefined || camelsJSON[0].name != null))
+    if (camelsJSON.OwnedCamelsList != undefined && camelsJSON.OwnedCamelsList != null && camelsJSON.OwnedCamelsList.length > 0 && (camelsJSON[0].name != undefined || camelsJSON[0].name != null))
         return generateFailObj("Player already owns a camel");
 
     //so far, everything seems to be ok
-
-    camelsJSON = new Array();
-    camelsJSON.push({
+    camelsJSON.OwnedCamelsList = new Array();
+    camelsJSON.OwnedCamelsList.push({
         "name": "CamelName",
         "baseAcc": 5,
         "baseSpeed": 8,
@@ -35,10 +34,13 @@ handlers.pickStartingCamel = function (args, context) {
         "baseStamina": 2
     });
 
+    //set selected camel to 0
+    camelsJSON.SelectedCamel = 0;
+
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON), "SelectedCamel": 0 }
+        Data: { "Camels": JSON.stringify(camelsJSON) }
     });
 }
