@@ -28,6 +28,11 @@ handlers.pickStartingCamel = function (args, context) {
         return generateFailObj("Player already owns a camel");
 
     //so far, everything seems to be ok
+
+    //set selected camel to 0
+    camelsJSON.SelectedCamel = 0;
+
+    //create a new array and add the new camel as the first element
     camelsJSON.OwnedCamelsList = new Array();
     camelsJSON.OwnedCamelsList.push({
         "name": "CamelName",
@@ -37,13 +42,14 @@ handlers.pickStartingCamel = function (args, context) {
         "baseStamina": 2
     });
 
-    //set selected camel to 0
-    camelsJSON.SelectedCamel = 0;
-
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Data: { "Camels": JSON.stringify(camelsJSON) }
     });
+
+    return {
+        Result: "OK"
+    }
 }
