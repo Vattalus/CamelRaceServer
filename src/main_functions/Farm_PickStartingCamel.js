@@ -63,11 +63,11 @@ handlers.pickStartingCamel = function (args, context) {
         "currentGallop": baseGallop,
         "currentStamina": baseStamina,
         //item levels
-        "headGearLv": 0,
-        "robotLv": 0,
-        "whipLv": 0,
-        "robeLv": 0,
-        "bridleLv": 0,
+        "HeadGear": 0,
+        "Robot": 0,
+        "Whip": 0,
+        "Robe": 0,
+        "Bridle": 0,
         //steroids
         "steroidsLeft": 0,
         //training

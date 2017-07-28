@@ -120,11 +120,11 @@ handlers.pickStartingCamel = function (args, context) {
         "currentGallop": baseGallop,
         "currentStamina": baseStamina,
         //item levels
-        "headGearLv": 0,
-        "robotLv": 0,
-        "whipLv": 0,
-        "robeLv": 0,
-        "bridleLv": 0,
+        "HeadGear": 0,
+        "Robot": 0,
+        "Whip": 0,
+        "Robe": 0,
+        "Bridle": 0,
         //steroids
         "steroidsLeft": 0,
         //training
@@ -174,10 +174,14 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateFailObj("Player's 'Camels' object was not found")
 
     var camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
 
-    var camelObject = camelsJSON.OwnedCamelsList[0];
+    if (camelObject == undefined || camelObject == null)
+        return generateFailObj("Camel with index: " + args.camelIndex + "not found.")
 
-    camelObject.value = Math.random() * 100;
+    var nextItemLevel = camelObject[args.itemType] + Number(1);
+
+    log.debug("next level: " + nextItemLevel)
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(

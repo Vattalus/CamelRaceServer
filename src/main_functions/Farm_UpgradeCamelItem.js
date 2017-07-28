@@ -17,10 +17,14 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateFailObj("Player's 'Camels' object was not found")
 
     var camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
 
-    var camelObject = camelsJSON.OwnedCamelsList[0];
+    if (camelObject == undefined || camelObject == null)
+        return generateFailObj("Camel with index: " + args.camelIndex + "not found.")
 
-    camelObject.value = Math.random() * 100;
+    var nextItemLevel = camelObject[args.itemType] + Number(1);
+
+    log.debug("next level: " + nextItemLevel)
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
