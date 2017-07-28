@@ -32,15 +32,59 @@ handlers.pickStartingCamel = function (args, context) {
     //set selected camel to 0
     camelsJSON.SelectedCamel = 0;
 
-    //create a new array and add the new camel as the first element
-    camelsJSON.OwnedCamelsList = new Array();
-    camelsJSON.OwnedCamelsList.push({
+    var baseAcc = Number(0);
+    if (args.baseAcc != undefined && args.baseAcc != null && !isNaN(Number(args.baseAcc)))
+        baseAcc = args.baseAcc;
+
+    var baseSpeed = Number(0);
+    if (args.baseSpeed != undefined && args.baseSpeed != null && !isNaN(Number(args.baseSpeed)))
+        baseSpeed = args.baseSpeed;
+
+    var baseGallop = Number(0);
+    if (args.baseGallop != undefined && args.baseGallop != null && !isNaN(Number(args.baseGallop)))
+        baseGallop = args.baseGallop;
+
+    var baseStamina = Number(0);
+    if (args.baseStamina != undefined && args.baseStamina != null && !isNaN(Number(args.baseStamina)))
+        baseStamina = args.baseStamina;
+
+    //create the new camel object, and add it to the list of owned camels
+    var newCamelJson = {
         "name": "CamelName",
-        "baseAcc": 5,
-        "baseSpeed": 8,
-        "baseGallop": 3,
-        "baseStamina": 2
-    });
+        "quality": 0,
+        //base stats
+        "baseAcc": baseAcc,
+        "baseSpeed": baseSpeed,
+        "baseGallop": baseGallop,
+        "baseStamina": baseStamina,
+        //current stats (with training and upgrade bonuses)
+        "currentAcc": baseAcc,
+        "currentSpeed": baseSpeed,
+        "currentGallop": baseGallop,
+        "currentStamina": baseStamina,
+        //item levels
+        "headGearLv": 0,
+        "robotLv": 0,
+        "whipLv": 0,
+        "robeLv": 0,
+        "bridleLv": 0,
+        //steroids
+        "steroidsLeft": 0,
+        //training
+        "accTrained": 0,
+        "speedTrained": 0,
+        "gallopTrained": 0,
+        "staminaTrained": 0,
+        //current training
+        "currentTrainingType": "none",
+        "trainingEnds": 0,
+        //Value
+        "camelValue": 0,
+        //TODO camel visual traits (seed)
+        //TODO camel customization
+    }
+    camelsJSON.OwnedCamelsList = new Array();
+    camelsJSON.OwnedCamelsList.push(newCamelJson);
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
@@ -50,6 +94,7 @@ handlers.pickStartingCamel = function (args, context) {
     });
 
     return {
-        Result: "OK"
+        Result: "OK",
+        CamelProfile: newCamelJson
     }
 }
