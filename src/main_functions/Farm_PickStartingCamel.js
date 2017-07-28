@@ -50,18 +50,18 @@ handlers.pickStartingCamel = function (args, context) {
 
     //create the new camel object, and add it to the list of owned camels
     var newCamelJson = {
-        "name": "CamelName",
-        "quality": 0,
+        "Name": "CamelName",
+        "Quality": 0,
         //base stats
-        "baseAcc": baseAcc,
-        "baseSpeed": baseSpeed,
-        "baseGallop": baseGallop,
-        "baseStamina": baseStamina,
+        "BaseAcc": baseAcc,
+        "BaseSpeed": baseSpeed,
+        "BaseGallop": baseGallop,
+        "BaseStamina": baseStamina,
         //current stats (with training and upgrade bonuses)
-        "currentAcc": baseAcc,
-        "currentSpeed": baseSpeed,
-        "currentGallop": baseGallop,
-        "currentStamina": baseStamina,
+        "CurrentAcc": baseAcc,
+        "CurrentSpeed": baseSpeed,
+        "CurrentGallop": baseGallop,
+        "CurrentStamina": baseStamina,
         //item levels
         "HeadGear": 0,
         "Robot": 0,
@@ -69,17 +69,17 @@ handlers.pickStartingCamel = function (args, context) {
         "Robe": 0,
         "Bridle": 0,
         //steroids
-        "steroidsLeft": 0,
+        "SteroidsLeft": 0,
         //training
-        "accTrained": 0,
-        "speedTrained": 0,
-        "gallopTrained": 0,
-        "staminaTrained": 0,
+        "AccTrained": 0,
+        "SpeedTrained": 0,
+        "GallopTrained": 0,
+        "StaminaTrained": 0,
         //current training
-        "currentTrainingType": "none",
-        "trainingEnds": 0,
+        "CurrentTrainingType": "none",
+        "TrainingEnds": 0,
         //Value
-        "camelValue": 0,
+        "CamelValue": 0,
         //TODO camel visual traits (seed)
         //TODO camel customization
     }
