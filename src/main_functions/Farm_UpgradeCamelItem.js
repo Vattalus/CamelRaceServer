@@ -59,7 +59,16 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateFailObj("Can't afford upgrade");
 
     //subtract currency
-    server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "SC": upgradeValues.CostSC, "HC": upgradeValues.CostHC });
+    if (Number(upgradeValues.CostSC) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": upgradeValues.CostSC });
+        VirtualCurrencyObject.SC -= upgradeValues.CostSC;
+    }
+
+
+    if (Number(upgradeValues.CostHC) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": upgradeValues.CostHC });
+        VirtualCurrencyObject.HC -= upgradeValues.CostHC;
+    }
 
     //increment item level
     camelObject[args.itemType] = currentLevel + Number(1);
@@ -95,6 +104,6 @@ handlers.upgradeCamelItem = function (args, context) {
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency
+        VirtualCurrency: VirtualCurrencyObject
     }
 }
