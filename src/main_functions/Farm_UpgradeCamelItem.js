@@ -5,7 +5,7 @@
 //args.itemType
 handlers.upgradeCamelItem = function (args, context) {
 
-    //first of all, we need to make sure that the player does not already own a camel (starting camel can only be picked once)
+    //first of all, load the player's owned camels list
     var camels = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
