@@ -155,7 +155,7 @@ handlers.pickStartingCamel = function (args, context) {
         CamelProfile: newCamelJson
     }
 }
-//Upgrades the given item on a camel
+//Trains the given stat
 //
 //Arguments
 //args.camelIndex
@@ -235,16 +235,16 @@ handlers.trainCamel = function (args, context) {
 
     //check if training values are set for given stat, at current level
     if (trainingBalancing.TrainingStages == undefined || trainingBalancing.TrainingStages == null ||
-        upgradeBalancing.TrainingStages[currentLevel] == undefined || upgradeBalancing.TrainingStages[currentLevel] == null)
+        trainingBalancing.TrainingStages[currentLevel] == undefined || trainingBalancing.TrainingStages[currentLevel] == null)
         return generateErrObj("Training values not found");
 
-    var trainingValues = upgradeBalancing.TrainingStages[currentLevel];
+    var trainingValues = trainingBalancing.TrainingStages[currentLevel];
 
-    //Now, load player's virtuar currency, to check if they can afford the upgrade
+    //Now, load player's virtual currency, to check if they can afford the training
     var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
 
     if (trainingValues.CostSC > VirtualCurrencyObject.SC || trainingValues.CostHC > VirtualCurrencyObject.HC)
-        return generateFailObj("Can't afford upgrade");
+        return generateFailObj("Can't afford training");
 
     //subtract currency
     if (Number(trainingValues.CostSC) > 0) {
@@ -257,7 +257,7 @@ handlers.trainCamel = function (args, context) {
         VirtualCurrencyObject.HC -= trainingValues.CostHC;
     }
 
-    //increment stat upgraded level
+    //increment stat trained level
     camelObject[trainingLevelKey] = currentLevel + Number(1);
 
     //grant stat gains
