@@ -57,7 +57,7 @@ handlers.trainCamel = function (args, context) {
     var currentLevel = Number(camelObject[trainingLevelKey]);
 
     //Now, load the balancing information to find out if next level would exceed level limit
-    var trainingBalancing = loadTitleDataJson("Balancing_Upgrade");
+    var trainingBalancing = loadTitleDataJson("Balancing_Training");
 
     if (trainingBalancing == undefined || trainingBalancing == null)
         return generateErrObj("Training Balancing JSON undefined or null");
