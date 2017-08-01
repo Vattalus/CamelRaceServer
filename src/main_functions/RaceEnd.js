@@ -8,9 +8,10 @@ handlers.raceEnd = function (args, context) {
 }
 
 //Arguments
-//arg.finishPosition - placement of player (0- first, 1-seconds etc)
-//arg.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
-//arg.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
+//args.camelIndex
+//args.finishPosition - placement of player (0- first, 1-seconds etc)
+//args.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
+//args.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
 handlers.endRace_quick = function (args, context) {
 
     //first we load the race reward parameters for the quick race.
@@ -25,6 +26,9 @@ handlers.endRace_quick = function (args, context) {
     //check for errors
     if (errorMessage != null)
         return generateErrObj(errorMessage);
+
+    //update camel statistics
+    CamelFinishedRace(args, args.camelIndex);
 
     var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
     var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
@@ -95,6 +99,9 @@ handlers.endRace_event = function (args, context) {
     //check for errors
     if (errorMessage != null)
         return generateErrObj(errorMessage);
+
+    //update camel statistics
+    CamelFinishedRace(args, args.camelIndex);
 
     //if the player won, increment the current event value
     if (args.finishPosition == 0) {
@@ -178,4 +185,37 @@ function GiveRaceRewards(args, raceRewardJSON) {
         addCurrency("TK", tkReward);
 
     return null;
+}
+
+//this function will do all the operations on the camel that finished the race (update statistics, decrement steroids charges etc)
+function CamelFinishedRace(args, camelIndex) {
+
+    //first of all, load the player's owned camels list
+    var camels = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["Camels"]
+    });
+
+    //check existance of Camels object
+    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+        return;
+
+    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    var camelObject = camelsJSON.OwnedCamelsList[camelIndex];
+
+    //check validity of JSON
+    if (camelObject == undefined || camelObject == null)
+        return;
+
+    //decrement steroid charges
+    if (Number(camelObject.SteroidsLeft) > Number(1))
+        camelObject.SteroidsLeft = Number(camelObject.SteroidsLeft) - Number(1);
+
+    //update the player's Camels data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { "Camels": JSON.stringify(camelsJSON) }
+    });
 }

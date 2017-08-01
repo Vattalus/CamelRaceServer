@@ -22,7 +22,7 @@ handlers.takeSteroids = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     if (Number(camelObject.SteroidsLeft) > Number(0))
-        return generateFailObj("Camel already steroids left");
+        return generateFailObj("Camel already on steroids");
 
     //load the steroids balancing values from title data
     var steroidsBalancing = loadTitleDataJson("Balancing_Steroids");
