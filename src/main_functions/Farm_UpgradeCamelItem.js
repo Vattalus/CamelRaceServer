@@ -14,13 +14,13 @@ handlers.upgradeCamelItem = function (args, context) {
 
     //check existance of Camels object
     if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
-        return generateErrObj("Player's 'Camels' object was not found")
+        return generateErrObj("Player's 'Camels' object was not found");
 
     var camelsJSON = JSON.parse(camels.Data.Camels.Value);
     var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
 
     if (camelObject == undefined || camelObject == null)
-        return generateErrObj("Camel with index: " + args.camelIndex + "not found.")
+        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     var currentLevel = Number(camelObject[args.itemType]);
 
@@ -41,7 +41,7 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateErrObj("Upgrade limit for this quality not defined");
 
     if (currentLevel >= upgradeLimit)
-        return generateFailObj("Item at max lvl")
+        return generateFailObj("Item at max lvl");
 
     //if we got this far, the camel is not at max level yet
 
@@ -63,7 +63,6 @@ handlers.upgradeCamelItem = function (args, context) {
         server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": upgradeValues.CostSC });
         VirtualCurrencyObject.SC -= upgradeValues.CostSC;
     }
-
 
     if (Number(upgradeValues.CostHC) > 0) {
         server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": upgradeValues.CostHC });
