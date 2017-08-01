@@ -575,7 +575,7 @@ handlers.endRace_quick = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args, args.camelIndex);
 
     var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
     var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
@@ -583,6 +583,7 @@ handlers.endRace_quick = function (args, context) {
     //return new currency balance
     return {
         Result: "OK",
+        CamelData: camelObject,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
@@ -648,7 +649,7 @@ handlers.endRace_event = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args, args.camelIndex);
 
     //if the player won, increment the current event value
     if (args.finishPosition == 0) {
@@ -675,6 +676,7 @@ handlers.endRace_event = function (args, context) {
     //return the updated virtual currency and current series/event values
     return {
         Result: "OK",
+        CamelData: camelObject,
         VirtualCurrency: userInventoryObject.VirtualCurrency,
         CurrentSeries: currSeries,
         CurrentEvent: currEvent
@@ -765,4 +767,6 @@ function CamelFinishedRace(args, camelIndex) {
         PlayFabId: currentPlayerId,
         Data: { "Camels": JSON.stringify(camelsJSON) }
     });
+
+    return camelObject;
 }
