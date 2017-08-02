@@ -110,10 +110,10 @@ handlers.breedCamel = function (args, context) {
 
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
     var newCamelParams = {
-        "baseAcc": randomRange(camelObject.CurrentAcc, breedingCandidatesObj.Acceleration),
-        "baseSpeed": randomRange(camelObject.CurrentSpeed, breedingCandidatesObj.Speed),
-        "baseGallop": randomRange(camelObject.CurrentGallop, breedingCandidatesObj.Gallop),
-        "baseStamina": randomRange(camelObject.CurrentStamina, breedingCandidatesObj.Stamina)
+        "baseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration),
+        "baseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed),
+        "baseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop),
+        "baseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina)
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
