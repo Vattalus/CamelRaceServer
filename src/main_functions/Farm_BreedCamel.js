@@ -1,7 +1,7 @@
 //Breeds the player's camel of given index, with the breeding candidate of given index
 //args.camelIndex
 //args.candidateIndex
-handlers.pickStartingCamel = function (args, context) {
+handlers.breedCamel = function (args, context) {
     //first of all, load the player's owned camels list
     var readonlyData = server.GetUserReadOnlyData(
     {
@@ -58,6 +58,8 @@ handlers.pickStartingCamel = function (args, context) {
         "baseStamina": randomRange(camelObject.CurrentStamina, breedingCandidatesObj.Stamina)
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
+
+    //TODO set quality
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
