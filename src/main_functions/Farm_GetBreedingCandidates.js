@@ -33,7 +33,7 @@ handlers.getBreedingCandidates = function (args, context) {
 
 //generates a new list of breeding camel candidates, based on balancing values found in title data.
 //returns null, if something went wrong
-function GenerateBreedingCandidates(args) {
+function GenerateBreedingCandidates() {
 
     //Load the balancing values from title data
     var breedingCandidatesBalancing = loadTitleDataJson("Balancing_Breeding");
@@ -44,7 +44,7 @@ function GenerateBreedingCandidates(args) {
     //Check Validity
     if (breedingCandidatesBalancing.CandidatesResetTimeHours == undefined || breedingCandidatesBalancing.CandidatesResetTimeHours == null ||
         breedingCandidatesBalancing.BreedingCandidates == undefined || breedingCandidatesBalancing.BreedingCandidates == null ||
-        breedingCandidatesBalancing.BreedingCandidates.length > 0) {
+        breedingCandidatesBalancing.BreedingCandidates.length == 0) {
         return null;
     }
 
