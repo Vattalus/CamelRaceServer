@@ -11,7 +11,7 @@ handlers.getBreedingCandidates = function (args, context) {
     //Json data of the breeding candidates object
     var breedingCandidatesJSON = {};
 
-    if ((breedingCandidatesObj.Data.BreedingCandidates != undefined && breedingCandidatesObj.Data.BreedingCandidates != null))
+    if (breedingCandidatesObj.Data.BreedingCandidates != undefined && breedingCandidatesObj.Data.BreedingCandidates != null)
         breedingCandidatesJSON = JSON.parse(breedingCandidatesObj.Data.BreedingCandidates.Value);
 
     //if json parsing failed, OR json does not contain expiration timestamp OR expiration timestamp has passed, generate a new breedingCandidatesJSON
@@ -99,6 +99,9 @@ function GenerateBreedingCandidates() {
         newBreedingCandidate.Speed = speed;
         newBreedingCandidate.Gallop = gallop;
         newBreedingCandidate.Stamina = stamina;
+
+        //set wait time
+        newBreedingCandidate.WaitTimeHours = breedingCandidatesBalancing.BreedingCandidates[i].WaitTimeHours;
 
         //Add newly created candidate to list
         breedingCandidatesJSON.CandidateList.push(newBreedingCandidate);

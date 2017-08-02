@@ -49,40 +49,26 @@ handlers.pickStartingCamel = function (args, context) {
         baseStamina = args.baseStamina;
 
     //create the new camel object, and add it to the list of owned camels
-    var newCamelJson = {
-        "Name": "CamelName",
-        "Quality": 0,
-        //base stats
-        "BaseAcc": baseAcc,
-        "BaseSpeed": baseSpeed,
-        "BaseGallop": baseGallop,
-        "BaseStamina": baseStamina,
-        //current stats (with training and upgrade bonuses)
-        "CurrentAcc": baseAcc,
-        "CurrentSpeed": baseSpeed,
-        "CurrentGallop": baseGallop,
-        "CurrentStamina": baseStamina,
-        //item levels
-        "HeadGear": 0,
-        "Robot": 0,
-        "Whip": 0,
-        "Robe": 0,
-        "Bridle": 0,
-        //steroids
-        "SteroidsLeft": 0,
-        //training
-        "AccTrained": 0,
-        "SpeedTrained": 0,
-        "GallopTrained": 0,
-        "StaminaTrained": 0,
-        //current training
-        "CurrentTrainingType": "none",
-        "TrainingEnds": 0,
-        //Value
-        "CamelValue": 0,
-        //TODO camel visual traits (seed)
-        //TODO camel customization
+    var newCamelParams = {
+        "baseAcc": baseAcc,
+        "baseSpeed": baseSpeed,
+        "baseGallop": baseGallop,
+        "baseStamina": baseStamina
     }
+    var newCamelJson = createEmptyCamelProfile(newCamelParams);
+
+    //base stats
+    newCamelJson.BaseAcc = baseAcc;
+    newCamelJson.BaseSpeed = baseSpeed;
+    newCamelJson.BaseGallop = baseGallop;
+    newCamelJson.BaseStamina = baseStamina;
+
+    //current stats (with training and upgrade bonuses)
+    newCamelJson.CurrentAcc = baseAcc;
+    newCamelJson.CurrentSpeed = baseSpeed;
+    newCamelJson.CurrentGallop = baseGallop;
+    newCamelJson.CurrentStamina = baseStamina;
+
     camelsJSON.OwnedCamelsList = new Array();
     camelsJSON.OwnedCamelsList.push(newCamelJson);
 
