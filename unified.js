@@ -123,7 +123,7 @@ handlers.breedCamel = function (args, context) {
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
 
     //add the newly created camel to the player's list of owned camels
-    camelsJSON.push(newCamelJson);
+    camelsJSON.camelsJSON.OwnedCamelsList.push(newCamelJson);
 
     //mark the selected candidate as non-available
     selectedCandidate.Available = false;
