@@ -20,7 +20,7 @@ handlers.breedCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
-    if (camelsJSON.OwnedCamelsList.count >= Number(loadTitleDataJson("MaxCamelSlots")))
+    if (Number(camelsJSON.OwnedCamelsList.count) >= Number(loadTitleDataJson("MaxCamelSlots")))
         return generateFailObj("Number of owned camels reached max limit");
 
     //Now, find the breeding candidate of index [candidateIndex]
@@ -43,7 +43,7 @@ handlers.breedCamel = function (args, context) {
 
     //check if selected candidate is available
     if (selectedCandidate.Available == false)
-        return generateFailObj("Selected cnadidate is not available");
+        return generateFailObj("Selected candidate is not available");
 
     //Now, load player's virtuar currency, to check if they can afford the breeding
     var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
