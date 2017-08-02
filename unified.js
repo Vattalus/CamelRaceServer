@@ -77,7 +77,10 @@ handlers.breedCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
-    log.debug({ "Max": loadTitleDataJson("MaxCamelSlots") });
+    log.debug({
+        "Current": Number(camelsJSON.OwnedCamelsList.count),
+        "Max": Number(loadTitleDataJson("MaxCamelSlots"))
+    });
 
     if (Number(camelsJSON.OwnedCamelsList.count) >= Number(loadTitleDataJson("MaxCamelSlots")))
         return generateFailObj("Number of owned camels reached max limit");
