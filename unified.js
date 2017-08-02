@@ -77,12 +77,7 @@ handlers.breedCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
-    log.debug({
-        "Current": Number(camelsJSON.OwnedCamelsList.count),
-        "Max": Number(loadTitleDataJson("MaxCamelSlots"))
-    });
-
-    if (Number(camelsJSON.OwnedCamelsList.count) >= Number(loadTitleDataJson("MaxCamelSlots")))
+    if (Number(camelsJSON.OwnedCamelsList.length) >= Number(loadTitleDataJson("MaxCamelSlots")))
         return generateFailObj("Number of owned camels reached max limit");
 
     //Now, find the breeding candidate of index [candidateIndex]
@@ -96,7 +91,7 @@ handlers.breedCamel = function (args, context) {
     //make sure candidate of index [candidateIndex] exists
     if (breedingCandidatesData == undefined || breedingCandidatesData == null ||
         breedingCandidatesData.CandidateList == undefined || breedingCandidatesData.CandidateList == null ||
-        breedingCandidatesData.CandidateList.count <= Number(args.candidateIndex) ||
+        breedingCandidatesData.CandidateList.length <= Number(args.candidateIndex) ||
         breedingCandidatesData.CandidateList[Number(args.candidateIndex)] == undefined ||
         breedingCandidatesData.CandidateList[Number(args.candidateIndex)] == null)
         return generateErrObj("Breeding candidate of index" + args.candidateIndex + " not found");
