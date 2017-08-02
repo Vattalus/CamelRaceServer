@@ -66,7 +66,7 @@ handlers.getBreedingCandidates = function (args, context) {
     });
 
     //Json data of the breeding candidates object
-    var breedingCandidatesJSON = JSON.parse("");
+    var breedingCandidatesJSON = new JSON();
 
     log.debug(
     {
