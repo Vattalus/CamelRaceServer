@@ -42,7 +42,7 @@ handlers.breedCamel = function (args, context) {
     var selectedCandidate = breedingCandidatesData.CandidateList[Number(args.candidateIndex)];
 
     //check if selected candidate is available
-    if (selectedCandidate.Available.toLowerCase == "false")
+    if (selectedCandidate.Available == false)
         return generateFailObj("Selected cnadidate is not available");
 
     //Now, load player's virtuar currency, to check if they can afford the breeding
