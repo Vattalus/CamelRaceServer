@@ -89,13 +89,14 @@ handlers.breedCamel = function (args, context) {
     var breedingCandidatesData = JSON.parse(readonlyData.Data.BreedingCandidates.Value);
 
     //make sure candidate of index [candidateIndex] exists
-    if (breedingCandidatesData.CandidateList == undefined || breedingCandidatesData.CandidateList == null ||
+    if (breedingCandidatesData == undefined || breedingCandidatesData == null ||
+        breedingCandidatesData.CandidateList == undefined || breedingCandidatesData.CandidateList == null ||
         breedingCandidatesData.CandidateList.count <= Number(args.candidateIndex) ||
         breedingCandidatesData.CandidateList[Number(args.candidateIndex)] == undefined ||
         breedingCandidatesData.CandidateList[Number(args.candidateIndex)] == null)
         return generateErrObj("Breeding candidate of index" + args.candidateIndex + " not found");
 
-    var selectedCandidate = readonlyData.Data.BreedingCandidates.Value.CandidateList[Number(args.candidateIndex)];
+    var selectedCandidate = breedingCandidatesData.CandidateList[Number(args.candidateIndex)];
 
     //check if selected candidate is available
     if (selectedCandidate.Available.toLowerCase == "false")
