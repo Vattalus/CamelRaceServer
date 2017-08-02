@@ -9,7 +9,7 @@ handlers.getBreedingCandidates = function (args, context) {
     });
 
     //Json data of the breeding candidates object
-    var breedingCandidatesJSON = new JSON();
+    var breedingCandidatesJSON = {};
 
     log.debug(
     {
