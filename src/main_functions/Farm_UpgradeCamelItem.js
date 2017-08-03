@@ -52,22 +52,11 @@ handlers.upgradeCamelItem = function (args, context) {
 
     var upgradeValues = upgradeBalancing[args.itemType][currentLevel];
 
-    //Now, load player's virtuar currency, to check if they can afford the upgrade
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(upgradeValues.CostSC, upgradeValues.CostHC);
 
-    if (upgradeValues.CostSC > VirtualCurrencyObject.SC || upgradeValues.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford upgrade");
-
-    //subtract currency
-    if (Number(upgradeValues.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": upgradeValues.CostSC });
-        VirtualCurrencyObject.SC -= upgradeValues.CostSC;
-    }
-
-    if (Number(upgradeValues.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": upgradeValues.CostHC });
-        VirtualCurrencyObject.HC -= upgradeValues.CostHC;
-    }
 
     //increment item level
     camelObject[args.itemType] = currentLevel + Number(1);

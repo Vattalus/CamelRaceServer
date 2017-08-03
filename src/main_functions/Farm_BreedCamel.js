@@ -45,10 +45,10 @@ handlers.breedCamel = function (args, context) {
     if (selectedCandidate.Available == false)
         return generateFailObj("Selected candidate is not available");
 
-    //Now, load player's virtuar currency, to check if they can afford the breeding
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(selectedCandidate.CostSC, selectedCandidate.CostHC);
 
-    if (selectedCandidate.CostSC > VirtualCurrencyObject.SC || selectedCandidate.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford breeding");
 
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
@@ -81,25 +81,10 @@ handlers.breedCamel = function (args, context) {
         }
     });
 
-    //subtract currency
-    if (Number(selectedCandidate.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": selectedCandidate.CostSC });
-        VirtualCurrencyObject.SC -= selectedCandidate.CostSC;
-    }
-
-    if (Number(selectedCandidate.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": selectedCandidate.CostHC });
-        VirtualCurrencyObject.HC -= selectedCandidate.CostHC;
-    }
-
     //return the profile data of the newly created camel, and the new currency balance
     return {
         Result: "OK",
         NewCamelProfile: newCamelJson,
         VirtualCurrency: VirtualCurrencyObject
     }
-}
-
-handlers.testTest = function (args, context) {
-    payCurrency();
 }

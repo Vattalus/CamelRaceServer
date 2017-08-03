@@ -59,10 +59,28 @@ function addCurrency(currCode, amount) {
 function payCurrency(scAmount, hcAmount, tkAmount) {
     var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
 
-    log.debug({
-        "sc undefined: ": scAmount == undefined,
-        "sc null: ": scAmount == null
-    });
+    if ((scAmount != undefined && scAmount != null && scAmount > VirtualCurrencyObject.SC) ||
+    (hcAmount != undefined && hcAmount != null && hcAmount > VirtualCurrencyObject.HC) ||
+    (tkAmount != undefined && tkAmount != null && tkAmount > VirtualCurrencyObject.TK))
+        return null;
+
+    //subtract currency
+    if (scAmount != undefined && scAmount != null && Number(scAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": scAmount });
+        VirtualCurrencyObject.SC -= scAmount;
+    }
+
+    if (hcAmount != undefined && hcAmount != null && Number(hcAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": hcAmount });
+        VirtualCurrencyObject.HC -= hcAmount;
+    }
+
+    if (tkAmount != undefined && tkAmount != null && Number(tkAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "TK", "Amount": tkAmount });
+        VirtualCurrencyObject.HC -= tkAmount;
+    }
+
+    return VirtualCurrencyObject;
 }
 //Breeds the player's camel of given index, with the breeding candidate of given index
 //args.camelIndex
@@ -111,10 +129,10 @@ handlers.breedCamel = function (args, context) {
     if (selectedCandidate.Available == false)
         return generateFailObj("Selected candidate is not available");
 
-    //Now, load player's virtuar currency, to check if they can afford the breeding
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(selectedCandidate.CostSC, selectedCandidate.CostHC);
 
-    if (selectedCandidate.CostSC > VirtualCurrencyObject.SC || selectedCandidate.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford breeding");
 
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
@@ -147,27 +165,12 @@ handlers.breedCamel = function (args, context) {
         }
     });
 
-    //subtract currency
-    if (Number(selectedCandidate.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": selectedCandidate.CostSC });
-        VirtualCurrencyObject.SC -= selectedCandidate.CostSC;
-    }
-
-    if (Number(selectedCandidate.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": selectedCandidate.CostHC });
-        VirtualCurrencyObject.HC -= selectedCandidate.CostHC;
-    }
-
     //return the profile data of the newly created camel, and the new currency balance
     return {
         Result: "OK",
         NewCamelProfile: newCamelJson,
         VirtualCurrency: VirtualCurrencyObject
     }
-}
-
-handlers.testTest = function (args, context) {
-    payCurrency();
 }
 //Returns the list of breeding candidates. If they are expired, it generates a new list of candidates
 handlers.getBreedingCandidates = function (args, context) {
@@ -375,6 +378,53 @@ handlers.pickStartingCamel = function (args, context) {
         CamelProfile: newCamelJson
     }
 }
+//Sets the selected camel index to the param value
+//args.camelIndex
+handlers.selectCamel = function (args, context) {
+    //first of all, load the player's owned camels list
+    var camels = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["Camels"]
+    });
+
+    //check existance of Camels object
+    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+        return generateErrObj("Player's 'Camels' object was not found");
+
+    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+
+    if (camelObject == undefined || camelObject == null)
+        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+
+    var serverTime = getServerTime();
+
+    //now check if we can select this camel
+    if (camelObject.BreedingCompletionTimestamp == undefined || camelObject.BreedingCompletionTimestamp == null || Number(camelObject.BreedingCompletionTimestamp) >= serverTime)
+        return generateFailObj("Camel cannot be selected: currently breeding");
+
+    if (camelObject.TrainingEnds == undefined || camelObject.TrainingEnds == null || Number(camelObject.TrainingEnds) >= serverTime)
+        return generateFailObj("Camel cannot be selected: currently training");
+
+    //change the slected camel index
+    camelsJSON.SelectedCamel = args.camelIndex;
+
+    //update the player's Camels data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { "Camels": JSON.stringify(camelsJSON) }
+    });
+
+    return {
+        Result: "OK"
+    }
+}
+//Sells the camel with the given index, and returns the new currency balance
+handlers.sellCamel = function (args, context) {
+
+}
 //Upgrades the given item on a camel
 //
 //Arguments
@@ -407,22 +457,11 @@ handlers.takeSteroids = function (args, context) {
     if (steroidsBalancing == undefined || steroidsBalancing == null)
         return generateErrObj("Steroids Balancing JSON undefined or null");
 
-    //Now, load player's virtual currency, to check if they can afford the training
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(steroidsBalancing.CostSC, steroidsBalancing.CostHC);
 
-    if (steroidsBalancing.CostSC > VirtualCurrencyObject.SC || steroidsBalancing.CostHC > VirtualCurrencyObject.HC)
-        return generateFailObj("Can't afford training");
-
-    //subtract currency
-    if (Number(steroidsBalancing.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": steroidsBalancing.CostSC });
-        VirtualCurrencyObject.SC -= steroidsBalancing.CostSC;
-    }
-
-    if (Number(steroidsBalancing.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": steroidsBalancing.CostHC });
-        VirtualCurrencyObject.HC -= steroidsBalancing.CostHC;
-    }
+    if (VirtualCurrencyObject == null)
+        return generateFailObj("Can't afford steroids");
 
     //set steroids charges left
     camelObject.SteroidsLeft = steroidsBalancing.EffectDuration;
@@ -525,22 +564,11 @@ handlers.trainCamel = function (args, context) {
 
     var trainingValues = trainingBalancing.TrainingStages[currentLevel];
 
-    //Now, load player's virtual currency, to check if they can afford the training
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(trainingValues.CostSC, trainingValues.CostHC);
 
-    if (trainingValues.CostSC > VirtualCurrencyObject.SC || trainingValues.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford training");
-
-    //subtract currency
-    if (Number(trainingValues.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": trainingValues.CostSC });
-        VirtualCurrencyObject.SC -= trainingValues.CostSC;
-    }
-
-    if (Number(trainingValues.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": trainingValues.CostHC });
-        VirtualCurrencyObject.HC -= trainingValues.CostHC;
-    }
 
     //increment stat trained level
     camelObject[trainingLevelKey] = currentLevel + Number(1);
@@ -621,22 +649,11 @@ handlers.upgradeCamelItem = function (args, context) {
 
     var upgradeValues = upgradeBalancing[args.itemType][currentLevel];
 
-    //Now, load player's virtuar currency, to check if they can afford the upgrade
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(upgradeValues.CostSC, upgradeValues.CostHC);
 
-    if (upgradeValues.CostSC > VirtualCurrencyObject.SC || upgradeValues.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford upgrade");
-
-    //subtract currency
-    if (Number(upgradeValues.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": upgradeValues.CostSC });
-        VirtualCurrencyObject.SC -= upgradeValues.CostSC;
-    }
-
-    if (Number(upgradeValues.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": upgradeValues.CostHC });
-        VirtualCurrencyObject.HC -= upgradeValues.CostHC;
-    }
 
     //increment item level
     camelObject[args.itemType] = currentLevel + Number(1);

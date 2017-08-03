@@ -30,22 +30,11 @@ handlers.takeSteroids = function (args, context) {
     if (steroidsBalancing == undefined || steroidsBalancing == null)
         return generateErrObj("Steroids Balancing JSON undefined or null");
 
-    //Now, load player's virtual currency, to check if they can afford the training
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(steroidsBalancing.CostSC, steroidsBalancing.CostHC);
 
-    if (steroidsBalancing.CostSC > VirtualCurrencyObject.SC || steroidsBalancing.CostHC > VirtualCurrencyObject.HC)
-        return generateFailObj("Can't afford training");
-
-    //subtract currency
-    if (Number(steroidsBalancing.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": steroidsBalancing.CostSC });
-        VirtualCurrencyObject.SC -= steroidsBalancing.CostSC;
-    }
-
-    if (Number(steroidsBalancing.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": steroidsBalancing.CostHC });
-        VirtualCurrencyObject.HC -= steroidsBalancing.CostHC;
-    }
+    if (VirtualCurrencyObject == null)
+        return generateFailObj("Can't afford steroids");
 
     //set steroids charges left
     camelObject.SteroidsLeft = steroidsBalancing.EffectDuration;

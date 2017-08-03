@@ -83,22 +83,11 @@ handlers.trainCamel = function (args, context) {
 
     var trainingValues = trainingBalancing.TrainingStages[currentLevel];
 
-    //Now, load player's virtual currency, to check if they can afford the training
-    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+    //Now, pay the virtual currency cost
+    var VirtualCurrencyObject = payCurrency(trainingValues.CostSC, trainingValues.CostHC);
 
-    if (trainingValues.CostSC > VirtualCurrencyObject.SC || trainingValues.CostHC > VirtualCurrencyObject.HC)
+    if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford training");
-
-    //subtract currency
-    if (Number(trainingValues.CostSC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": trainingValues.CostSC });
-        VirtualCurrencyObject.SC -= trainingValues.CostSC;
-    }
-
-    if (Number(trainingValues.CostHC) > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": trainingValues.CostHC });
-        VirtualCurrencyObject.HC -= trainingValues.CostHC;
-    }
 
     //increment stat trained level
     camelObject[trainingLevelKey] = currentLevel + Number(1);

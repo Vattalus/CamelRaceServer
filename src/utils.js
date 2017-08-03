@@ -59,8 +59,26 @@ function addCurrency(currCode, amount) {
 function payCurrency(scAmount, hcAmount, tkAmount) {
     var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
 
-    log.debug({
-        "sc undefined: ": scAmount == undefined,
-        "sc null: ": scAmount == null
-    });
+    if ((scAmount != undefined && scAmount != null && scAmount > VirtualCurrencyObject.SC) ||
+    (hcAmount != undefined && hcAmount != null && hcAmount > VirtualCurrencyObject.HC) ||
+    (tkAmount != undefined && tkAmount != null && tkAmount > VirtualCurrencyObject.TK))
+        return null;
+
+    //subtract currency
+    if (scAmount != undefined && scAmount != null && Number(scAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "SC", "Amount": scAmount });
+        VirtualCurrencyObject.SC -= scAmount;
+    }
+
+    if (hcAmount != undefined && hcAmount != null && Number(hcAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "HC", "Amount": hcAmount });
+        VirtualCurrencyObject.HC -= hcAmount;
+    }
+
+    if (tkAmount != undefined && tkAmount != null && Number(tkAmount) > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, "VirtualCurrency": "TK", "Amount": tkAmount });
+        VirtualCurrencyObject.HC -= tkAmount;
+    }
+
+    return VirtualCurrencyObject;
 }
