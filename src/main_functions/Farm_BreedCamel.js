@@ -99,3 +99,7 @@ handlers.breedCamel = function (args, context) {
         VirtualCurrency: VirtualCurrencyObject
     }
 }
+
+handlers.testTest = function (args, context) {
+    payCurrency();
+}

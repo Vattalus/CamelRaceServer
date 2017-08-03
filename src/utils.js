@@ -55,3 +55,12 @@ function addCurrency(currCode, amount) {
 });
 }
 
+//Pay Virtual Currency (returns null if cannot afford)
+function payCurrency(scAmount, hcAmount, tkAmount) {
+    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+
+    log.debug({
+        "sc undefined: ": scAmount == undefined,
+        "sc null: ": scAmount == null
+    });
+}

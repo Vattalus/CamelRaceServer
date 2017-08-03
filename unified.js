@@ -55,6 +55,15 @@ function addCurrency(currCode, amount) {
 });
 }
 
+//Pay Virtual Currency (returns null if cannot afford)
+function payCurrency(scAmount, hcAmount, tkAmount) {
+    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
+
+    log.debug({
+        "sc undefined: ": scAmount == undefined,
+        "sc null: ": scAmount == null
+    });
+}
 //Breeds the player's camel of given index, with the breeding candidate of given index
 //args.camelIndex
 //args.candidateIndex
@@ -155,6 +164,10 @@ handlers.breedCamel = function (args, context) {
         NewCamelProfile: newCamelJson,
         VirtualCurrency: VirtualCurrencyObject
     }
+}
+
+handlers.testTest = function (args, context) {
+    payCurrency();
 }
 //Returns the list of breeding candidates. If they are expired, it generates a new list of candidates
 handlers.getBreedingCandidates = function (args, context) {
