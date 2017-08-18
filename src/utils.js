@@ -99,9 +99,7 @@ function addExperience(expGain) {
         //successfully loaded player's level data
         playerLevelProgressJSON = JSON.parse(playerData.Data.LevelProgress.Value);
 
-        log.debug({"Level PRogress: ": playerLevelProgressJSON});
-
-        if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null) {
+        if (playerLevelProgressJSON == undefined || playerLevelProgressJSON == null) {
             return null; //Failed to convert to JSON
         }
     } else {
@@ -136,7 +134,7 @@ function addExperience(expGain) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: {"LevelProgress": JSON.stringify(playerLevelProgressJSON)}
+        Data: { "LevelProgress": JSON.stringify(playerLevelProgressJSON) }
     });
 
     //return the updated level data value
