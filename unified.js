@@ -928,14 +928,11 @@ handlers.endRace_quick = function (args, context) {
     //update camel statistics
     var camelObject = CamelFinishedRace(args, args.camelIndex);
 
-    var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
-    var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
-
     //return new currency balance
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: VirtualCurrencyObject
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency
     }
 }
 
@@ -1030,13 +1027,11 @@ handlers.endRace_event = function (args, context) {
         }
     );
 
-    //Now, give experience to the user
-
     //return the updated virtual currency and current series/event values
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: userInventoryObject.VirtualCurrency,
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency,
         CurrentSeries: currSeries,
         CurrentEvent: currEvent,
         LevelProgress: newLevelProgress
