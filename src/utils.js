@@ -93,7 +93,7 @@ function addExperience(expGain) {
         Keys: ["LevelProgress"]
     });
 
-    var playerLevelProgressJSON;
+    var playerLevelProgressJSON = {};
 
     if (playerData.Data.LevelProgress != undefined && playerData.Data.LevelProgress != null) {
         //successfully loaded player's level data
