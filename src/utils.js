@@ -129,6 +129,13 @@ function addExperience(expGain) {
     //Update level value
     playerLevelProgressJSON.Level = currLvl;
 
+    //update the player's level data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: {"LevelProgress": JSON.stringify(playerLevelProgressJSON)}
+    });
+
     //return the updated level data value
     return playerLevelProgressJSON;
 }
