@@ -55,7 +55,7 @@ handlers.endRace_event = function (args, context) {
     if (eventRewardsJSON == undefined || eventRewardsJSON == null)
         return generateErrObj("RaceRewards_Events JSON undefined or null");
 
-    //cache the season json
+    //cache the series json
     var seriesJSON = eventRewardsJSON[args.seriesIndex];
 
     //check the series index exists
@@ -97,6 +97,9 @@ handlers.endRace_event = function (args, context) {
     //calculate and give rewards based on placement, start qte, finish speed
     var errorMessage = GiveRaceRewards(args, seriesJSON.EventsList[args.eventIndex]);
 
+    //give experience
+    var newLevelProgress = null;
+
     //check for errors
     if (errorMessage != null)
         return generateErrObj(errorMessage);
@@ -116,6 +119,9 @@ handlers.endRace_event = function (args, context) {
         } else {
             currEvent++;
         }
+
+        //Grant Experience
+        newLevelProgress = addExperience(seriesJSON.EventsList[args.eventIndex].ExpGain);
     }
 
     //update the current season and event values in the player's read-only data
@@ -126,13 +132,16 @@ handlers.endRace_event = function (args, context) {
         }
     );
 
+    //Now, give experience to the user
+
     //return the updated virtual currency and current series/event values
     return {
         Result: "OK",
         CamelData: camelObject,
         VirtualCurrency: userInventoryObject.VirtualCurrency,
         CurrentSeries: currSeries,
-        CurrentEvent: currEvent
+        CurrentEvent: currEvent,
+        LevelProgress: newLevelProgress
     }
 }
 

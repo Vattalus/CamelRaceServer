@@ -82,3 +82,53 @@ function payCurrency(scAmount, hcAmount, tkAmount) {
 
     return VirtualCurrencyObject;
 }
+
+//Add Experience
+function addExperience(expGain) {
+
+    //read the 'LevelProgress' variable from player's read-only data
+    var playerData = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["LevelProgress"]
+    });
+
+    var playerLevelProgressJSON;
+
+    if (playerData.Data.LevelProgress != undefined && playerData.Data.LevelProgress != null) {
+        //successfully loaded player's level data
+        playerLevelProgressJSON = JSON.parse(playerData.Data.LevelProgress.Value);
+        if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null) {
+            return null; //Failed to convert to JSON
+        }
+    } else {
+        //player's level data does not exist yet, initialize
+        playerLevelProgressJSON.Experience = 0;
+        playerLevelProgressJSON.Level = 0;
+        playerLevelProgressJSON.LastLevelReward = 0;
+    }
+
+    //Increment Experience value
+    playerLevelProgressJSON.Experience = Number(playerLevelProgressJSON.Experience) + Number(expGain);
+
+    //Recalculate level (Load the level thresholds from title data)
+    var levelsBalancingJSON = loadTitleDataJson("Balancing_PlayerLevels");
+
+    if (levelsBalancingJSON == undefined || levelsBalancingJSON == null || levelsBalancingJSON.length == 0)
+        return null; //Failed to load balancing data
+
+    //Recalculate level
+    var currLvl = 0;
+    for (var i = 0; i < evelsBalancingJSON.length; i++) {
+        currLvl = i;
+        if (playerLevelProgressJSON.Experience < Number(evelsBalancingJSON[i].Threshold)) {
+            break;
+        }
+    }
+
+    //Update level value
+    playerLevelProgressJSON.Level = currLvl;
+
+    //return the updated level data value
+    return playerLevelProgressJSON;
+}
