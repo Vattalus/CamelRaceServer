@@ -119,9 +119,9 @@ function addExperience(expGain) {
 
     //Recalculate level
     var currLvl = 0;
-    for (var i = 0; i < evelsBalancingJSON.length; i++) {
+    for (var i = 0; i < levelsBalancingJSON.length; i++) {
         currLvl = i;
-        if (playerLevelProgressJSON.Experience < Number(evelsBalancingJSON[i].Threshold)) {
+        if (playerLevelProgressJSON.Experience < Number(levelsBalancingJSON[i].Threshold)) {
             break;
         }
     }
