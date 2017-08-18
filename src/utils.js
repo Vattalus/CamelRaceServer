@@ -98,6 +98,9 @@ function addExperience(expGain) {
     if (playerData.Data.LevelProgress != undefined && playerData.Data.LevelProgress != null) {
         //successfully loaded player's level data
         playerLevelProgressJSON = JSON.parse(playerData.Data.LevelProgress.Value);
+
+        log.debug({"Level PRogress: ": playerLevelProgressJSON});
+
         if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null) {
             return null; //Failed to convert to JSON
         }
