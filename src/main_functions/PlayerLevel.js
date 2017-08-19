@@ -9,7 +9,7 @@ handlers.claimLevelUpReward = function (args, context) {
     if (playerLevelProgress == undefined || playerLevelProgress == null || playerLevelProgress.Data.LevelProgress == undefined || playerLevelProgress.Data.LevelProgress == null)
         return generateErrObj("LevelProgress object undefined or null");
 
-    var playerLevelProgressJSON = JSON.parse(readonlyData.Data.LevelProgress.Value);
+    var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);
 
     if (playerLevelProgressJSON == undefined || playerLevelProgressJSON == null)
         return generateErrObj("playerLevelProgressJSON undefined or null");
