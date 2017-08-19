@@ -20,8 +20,13 @@ handlers.endRace_quick = function (args, context) {
     if (raceRewardJSON == undefined || raceRewardJSON == null)
         return generateErrObj("RaceRewards_Quick JSON undefined or null");
 
+    //calculate sc bonus based on player level
+    var scBonusFromLevel = Number(0);
+    if (raceRewardJSON.ScBonusPerPlayerLevel != undefined && raceRewardJSON.ScBonusPerPlayerLevel != null && raceRewardJSON.ScBonusPerPlayerLevel.length > args.finishPosition)
+        scBonusFromLevel = Number(raceRewardJSON.ScBonusPerPlayerLevel[args.finishPosition]);
+
     //calculate and give rewards based on placement, start qte, finish speed
-    var errorMessage = GiveRaceRewards(args, raceRewardJSON);
+    var errorMessage = GiveRaceRewards(args, raceRewardJSON, scBonusFromLevel);
 
     //check for errors
     if (errorMessage != null)
@@ -140,7 +145,7 @@ handlers.endRace_event = function (args, context) {
     }
 }
 
-function GiveRaceRewards(args, raceRewardJSON) {
+function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
 
     var scReward = Number(0);
     var hcReward = Number(0);
@@ -179,6 +184,10 @@ function GiveRaceRewards(args, raceRewardJSON) {
     //SC from finish speed
     if (!isNaN(Number(args.finishSpeedFactor)) && !isNaN(Number(raceRewardJSON.MaxFinishBonus)))
         scReward += Math.round(Number(raceRewardJSON.MaxFinishBonus) * Number(args.finishSpeedFactor));
+
+    //SC from player level bonus
+    if (playerLevelBonusSC != undefined && playerLevelBonusSC != null && !isNaN(Number(playerLevelBonusSC)))
+        scReward += Number(playerLevelBonusSC);
 
     //Give currencies to player
     if (scReward > 0)

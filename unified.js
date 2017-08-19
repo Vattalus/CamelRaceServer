@@ -193,16 +193,32 @@ handlers.breedCamel = function (args, context) {
     if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford breeding");
 
+    //determine quality
+    var quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
+
+    //add xp
+    var newLevelProgress = null;
+    var breedingBalancing = loadTitleDataJson("Balancing_Breeding");
+    if (breedingBalancing != undefined && breedingBalancing != null && breedingBalancing.ExpGain != undefined && breedingBalancing.ExpGain != null && breedingBalancing.ExpGain.length > newCamelJson.Quality) {
+        newLevelProgress = addExperience(Number(breedingBalancing.ExpGain[newCamelJson.Quality]));
+    }
+
+    //determine level bonus to stat
+    var statBonusFromLevel = Number(0);
+
+    if (newLevelProgress != null && newLevelProgress.Level != undefined && newLevelProgress.Level != null) {
+        statBonusFromLevel = Number(newLevelProgress.Level);
+    }
+
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
     var newCamelParams = {
-        "baseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration),
-        "baseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed),
-        "baseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop),
-        "baseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina)
+        "BaseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
+        "BaseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
+        "BaseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
+        "BaseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
-
-    //TODO set quality
+    newCamelJson.Quality = quality;
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
@@ -227,7 +243,8 @@ handlers.breedCamel = function (args, context) {
     return {
         Result: "OK",
         NewCamelProfile: newCamelJson,
-        VirtualCurrency: VirtualCurrencyObject
+        VirtualCurrency: VirtualCurrencyObject,
+        LevelProgress: newLevelProgress //Add XP
     }
 }
 //Returns the list of breeding candidates. If they are expired, it generates a new list of candidates
@@ -796,24 +813,24 @@ function createEmptyCamelProfile(args) {
     }
 
     //apply provided base stats
-    if (args.baseAcc != undefined && args.baseAcc != null) {
-        newCamelJson.BaseAcc = args.baseAcc;
-        newCamelJson.CurrentAcc = args.baseAcc;
+    if (args.BaseAcc != undefined && args.BaseAcc != null) {
+        newCamelJson.BaseAcc = args.BaseAcc;
+        newCamelJson.CurrentAcc = args.BaseAcc;
     }
 
-    if (args.baseSpeed != undefined && args.baseSpeed != null) {
-        newCamelJson.BaseSpeed = args.baseSpeed;
-        newCamelJson.CurrentSpeed = args.baseSpeed;
+    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
+        newCamelJson.BaseSpeed = args.BaseSpeed;
+        newCamelJson.CurrentSpeed = args.BaseSpeed;
     }
 
-    if (args.baseGallop != undefined && args.baseGallop != null) {
-        newCamelJson.BaseGallop = args.baseGallop;
-        newCamelJson.CurrentGallop = args.baseGallop;
+    if (args.BaseGallop != undefined && args.BaseGallop != null) {
+        newCamelJson.BaseGallop = args.BaseGallop;
+        newCamelJson.CurrentGallop = args.BaseGallop;
     }
 
-    if (args.baseStamina != undefined && args.baseStamina != null) {
-        newCamelJson.BaseStamina = args.baseStamina;
-        newCamelJson.CurrentStamina = args.baseStamina;
+    if (args.BaseStamina != undefined && args.BaseStamina != null) {
+        newCamelJson.BaseStamina = args.BaseStamina;
+        newCamelJson.CurrentStamina = args.BaseStamina;
     }
 
     return newCamelJson;
@@ -847,6 +864,12 @@ handlers.grantOasis = function (args, context) {
     var scReward = randomRange(oasisBalancing.scRewardBase, oasisBalancing.scRewardBase * 2);
     var hcReward = randomRange(oasisBalancing.hcRewardMin, oasisBalancing.hcRewardMax);
     var tkReward = randomRange(oasisBalancing.ticketsRewardMin, oasisBalancing.ticketsRewardMax);
+
+    log.debug({
+        "scReward": scReward,
+        "hcReward": hcReward,
+        "tkReward": tkReward
+    });
 
     //increment virtual currency
     addCurrency("SC", scReward);
@@ -926,8 +949,13 @@ handlers.endRace_quick = function (args, context) {
     if (raceRewardJSON == undefined || raceRewardJSON == null)
         return generateErrObj("RaceRewards_Quick JSON undefined or null");
 
+    //calculate sc bonus based on player level
+    var scBonusFromLevel = Number(0);
+    if (raceRewardJSON.ScBonusPerPlayerLevel != undefined && raceRewardJSON.ScBonusPerPlayerLevel != null && raceRewardJSON.ScBonusPerPlayerLevel.length > args.finishPosition)
+        scBonusFromLevel = Number(raceRewardJSON.ScBonusPerPlayerLevel[args.finishPosition]);
+
     //calculate and give rewards based on placement, start qte, finish speed
-    var errorMessage = GiveRaceRewards(args, raceRewardJSON);
+    var errorMessage = GiveRaceRewards(args, raceRewardJSON, scBonusFromLevel);
 
     //check for errors
     if (errorMessage != null)
@@ -1046,7 +1074,7 @@ handlers.endRace_event = function (args, context) {
     }
 }
 
-function GiveRaceRewards(args, raceRewardJSON) {
+function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
 
     var scReward = Number(0);
     var hcReward = Number(0);
@@ -1085,6 +1113,10 @@ function GiveRaceRewards(args, raceRewardJSON) {
     //SC from finish speed
     if (!isNaN(Number(args.finishSpeedFactor)) && !isNaN(Number(raceRewardJSON.MaxFinishBonus)))
         scReward += Math.round(Number(raceRewardJSON.MaxFinishBonus) * Number(args.finishSpeedFactor));
+
+    //SC from player level bonus
+    if (playerLevelBonusSC != undefined && playerLevelBonusSC != null && !isNaN(Number(playerLevelBonusSC)))
+        scReward += Number(playerLevelBonusSC);
 
     //Give currencies to player
     if (scReward > 0)

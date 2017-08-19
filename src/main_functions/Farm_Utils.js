@@ -44,24 +44,24 @@ function createEmptyCamelProfile(args) {
     }
 
     //apply provided base stats
-    if (args.baseAcc != undefined && args.baseAcc != null) {
-        newCamelJson.BaseAcc = args.baseAcc;
-        newCamelJson.CurrentAcc = args.baseAcc;
+    if (args.BaseAcc != undefined && args.BaseAcc != null) {
+        newCamelJson.BaseAcc = args.BaseAcc;
+        newCamelJson.CurrentAcc = args.BaseAcc;
     }
 
-    if (args.baseSpeed != undefined && args.baseSpeed != null) {
-        newCamelJson.BaseSpeed = args.baseSpeed;
-        newCamelJson.CurrentSpeed = args.baseSpeed;
+    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
+        newCamelJson.BaseSpeed = args.BaseSpeed;
+        newCamelJson.CurrentSpeed = args.BaseSpeed;
     }
 
-    if (args.baseGallop != undefined && args.baseGallop != null) {
-        newCamelJson.BaseGallop = args.baseGallop;
-        newCamelJson.CurrentGallop = args.baseGallop;
+    if (args.BaseGallop != undefined && args.BaseGallop != null) {
+        newCamelJson.BaseGallop = args.BaseGallop;
+        newCamelJson.CurrentGallop = args.BaseGallop;
     }
 
-    if (args.baseStamina != undefined && args.baseStamina != null) {
-        newCamelJson.BaseStamina = args.baseStamina;
-        newCamelJson.CurrentStamina = args.baseStamina;
+    if (args.BaseStamina != undefined && args.BaseStamina != null) {
+        newCamelJson.BaseStamina = args.BaseStamina;
+        newCamelJson.CurrentStamina = args.BaseStamina;
     }
 
     return newCamelJson;

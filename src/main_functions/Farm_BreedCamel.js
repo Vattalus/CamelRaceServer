@@ -51,16 +51,32 @@ handlers.breedCamel = function (args, context) {
     if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford breeding");
 
+    //determine quality
+    var quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
+
+    //add xp
+    var newLevelProgress = null;
+    var breedingBalancing = loadTitleDataJson("Balancing_Breeding");
+    if (breedingBalancing != undefined && breedingBalancing != null && breedingBalancing.ExpGain != undefined && breedingBalancing.ExpGain != null && breedingBalancing.ExpGain.length > newCamelJson.Quality) {
+        newLevelProgress = addExperience(Number(breedingBalancing.ExpGain[newCamelJson.Quality]));
+    }
+
+    //determine level bonus to stat
+    var statBonusFromLevel = Number(0);
+
+    if (newLevelProgress != null && newLevelProgress.Level != undefined && newLevelProgress.Level != null) {
+        statBonusFromLevel = Number(newLevelProgress.Level);
+    }
+
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
     var newCamelParams = {
-        "baseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration),
-        "baseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed),
-        "baseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop),
-        "baseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina)
+        "BaseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
+        "BaseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
+        "BaseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
+        "BaseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
-
-    //TODO set quality
+    newCamelJson.Quality = quality;
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
@@ -85,6 +101,7 @@ handlers.breedCamel = function (args, context) {
     return {
         Result: "OK",
         NewCamelProfile: newCamelJson,
-        VirtualCurrency: VirtualCurrencyObject
+        VirtualCurrency: VirtualCurrencyObject,
+        LevelProgress: newLevelProgress //Add XP
     }
 }
