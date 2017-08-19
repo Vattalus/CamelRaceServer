@@ -41,8 +41,7 @@ handlers.grantOasis = function (args, context) {
             }
         );
 
-    var userInventoryObject = server.GetUserInventory({ PlayFabId: currentPlayerId });
-    var VirtualCurrencyObject = userInventoryObject.VirtualCurrency;
+    var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
 
     //return new timestamp and new inventory
     return {
