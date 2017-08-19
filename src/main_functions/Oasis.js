@@ -28,12 +28,6 @@ handlers.grantOasis = function (args, context) {
     var hcReward = randomRange(oasisBalancing.hcRewardMin, oasisBalancing.hcRewardMax);
     var tkReward = randomRange(oasisBalancing.ticketsRewardMin, oasisBalancing.ticketsRewardMax);
 
-    log.debug({
-        "scReward": scReward,
-        "hcReward": hcReward,
-        "tkReward": tkReward
-    });
-
     //increment virtual currency
     addCurrency("SC", scReward);
     addCurrency("HC", hcReward);

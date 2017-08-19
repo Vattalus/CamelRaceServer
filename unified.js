@@ -193,16 +193,6 @@ handlers.breedCamel = function (args, context) {
     if (VirtualCurrencyObject == null)
         return generateFailObj("Can't afford breeding");
 
-    //determine quality
-    var quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
-
-    //add xp
-    var newLevelProgress = null;
-    var breedingBalancing = loadTitleDataJson("Balancing_Breeding");
-    if (breedingBalancing != undefined && breedingBalancing != null && breedingBalancing.ExpGain != undefined && breedingBalancing.ExpGain != null && breedingBalancing.ExpGain.length > newCamelJson.Quality) {
-        newLevelProgress = addExperience(Number(breedingBalancing.ExpGain[newCamelJson.Quality]));
-    }
-
     //determine level bonus to stat
     var statBonusFromLevel = Number(0);
 
@@ -218,7 +208,9 @@ handlers.breedCamel = function (args, context) {
         "BaseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
-    newCamelJson.Quality = quality;
+
+    //determine quality
+    newCamelJson.Quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
@@ -238,6 +230,13 @@ handlers.breedCamel = function (args, context) {
             "BreedingCandidates": JSON.stringify(breedingCandidatesData)
         }
     });
+
+    //add xp
+    var newLevelProgress = null;
+    var breedingBalancing = loadTitleDataJson("Balancing_Breeding");
+    if (breedingBalancing != undefined && breedingBalancing != null && breedingBalancing.ExpGain != undefined && breedingBalancing.ExpGain != null && breedingBalancing.ExpGain.length > newCamelJson.Quality) {
+        newLevelProgress = addExperience(Number(breedingBalancing.ExpGain[newCamelJson.Quality]));
+    }
 
     //return the profile data of the newly created camel, and the new currency balance
     return {
@@ -864,12 +863,6 @@ handlers.grantOasis = function (args, context) {
     var scReward = randomRange(oasisBalancing.scRewardBase, oasisBalancing.scRewardBase * 2);
     var hcReward = randomRange(oasisBalancing.hcRewardMin, oasisBalancing.hcRewardMax);
     var tkReward = randomRange(oasisBalancing.ticketsRewardMin, oasisBalancing.ticketsRewardMax);
-
-    log.debug({
-        "scReward": scReward,
-        "hcReward": hcReward,
-        "tkReward": tkReward
-    });
 
     //increment virtual currency
     addCurrency("SC", scReward);
