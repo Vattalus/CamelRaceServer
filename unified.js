@@ -265,7 +265,7 @@ handlers.getBreedingCandidates = function (args, context) {
     //if json parsing failed, OR json does not contain expiration timestamp OR expiration timestamp has passed, generate a new breedingCandidatesJSON
     if (breedingCandidatesJSON == undefined || breedingCandidatesJSON == null ||
         breedingCandidatesJSON.ExpirationTimestamp == undefined || breedingCandidatesJSON.ExpirationTimestamp == null ||
-        Number(breedingCandidatesJSON.ExpirationTimestamp) >= getServerTime()) {
+        Number(breedingCandidatesJSON.ExpirationTimestamp) <= getServerTime()) {
         //Generate new Breeding Candidates
         breedingCandidatesJSON = GenerateBreedingCandidates();
     }
