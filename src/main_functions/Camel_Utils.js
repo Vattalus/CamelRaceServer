@@ -1,3 +1,24 @@
+//Load camel data
+function loadCamelsData() {
+
+    var camels = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["Camels"]
+    });
+
+    //check existance of Camels object
+    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+        return null;
+
+    var camelsDataJSON = JSON.parse(camels.Data.Camels.Value);
+
+    if (camelsDataJSON == undefined || camelsDataJSON == null)
+        return null;
+
+    return camelsDataJSON;
+}
+
 //Generate new camel
 
 //args.baseAcc

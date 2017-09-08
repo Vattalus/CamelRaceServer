@@ -140,6 +140,95 @@ function addExperience(expGain) {
     //return the updated level data value
     return playerLevelProgressJSON;
 }
+//Load camel data
+function loadCamelsData() {
+
+    var camels = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["Camels"]
+    });
+
+    //check existance of Camels object
+    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+        return null;
+
+    var camelsDataJSON = JSON.parse(camels.Data.Camels.Value);
+
+    if (camelsDataJSON == undefined || camelsDataJSON == null)
+        return null;
+
+    return camelsDataJSON;
+}
+
+//Generate new camel
+
+//args.baseAcc
+//args.baseSpeed
+//args.baseGallop
+//args.baseStamina
+function createEmptyCamelProfile(args) {
+    var newCamelJson = {
+        "Name": "CamelName",
+        "Quality": 0,
+        //base stats
+        "BaseAcc": 0,
+        "BaseSpeed": 0,
+        "BaseGallop": 0,
+        "BaseStamina": 0,
+        //current stats (with training and upgrade bonuses)
+        "CurrentAcc": 0,
+        "CurrentSpeed": 0,
+        "CurrentGallop": 0,
+        "CurrentStamina": 0,
+        //item levels
+        "HeadGear": 0,
+        "Robot": 0,
+        "Whip": 0,
+        "Robe": 0,
+        "Bridle": 0,
+        //steroids
+        "SteroidsLeft": 0,
+        //training
+        "AccTrained": 0,
+        "SpeedTrained": 0,
+        "GallopTrained": 0,
+        "StaminaTrained": 0,
+        //current training
+        "CurrentTrainingType": "none",
+        "TrainingEnds": 0,
+        //Value
+        "CamelValue": 0,
+
+        "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
+
+        //TODO camel visual traits (seed)
+        //TODO camel customization
+    }
+
+    //apply provided base stats
+    if (args.BaseAcc != undefined && args.BaseAcc != null) {
+        newCamelJson.BaseAcc = args.BaseAcc;
+        newCamelJson.CurrentAcc = args.BaseAcc;
+    }
+
+    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
+        newCamelJson.BaseSpeed = args.BaseSpeed;
+        newCamelJson.CurrentSpeed = args.BaseSpeed;
+    }
+
+    if (args.BaseGallop != undefined && args.BaseGallop != null) {
+        newCamelJson.BaseGallop = args.BaseGallop;
+        newCamelJson.CurrentGallop = args.BaseGallop;
+    }
+
+    if (args.BaseStamina != undefined && args.BaseStamina != null) {
+        newCamelJson.BaseStamina = args.BaseStamina;
+        newCamelJson.CurrentStamina = args.BaseStamina;
+    }
+
+    return newCamelJson;
+}
 //Breeds the player's camel of given index, with the breeding candidate of given index
 //args.camelIndex
 //args.candidateIndex
@@ -156,9 +245,9 @@ handlers.breedCamel = function (args, context) {
         return generateErrObj("Player's 'Camels' object was not found");
 
     var camelsJSON = JSON.parse(readonlyData.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsJSON.OwnedCamelsList[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
@@ -202,15 +291,15 @@ handlers.breedCamel = function (args, context) {
 
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
     var newCamelParams = {
-        "BaseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
-        "BaseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
-        "BaseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
-        "BaseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
+        "BaseAcc": randomRange(selectedCamel.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
+        "BaseSpeed": randomRange(selectedCamel.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
+        "BaseGallop": randomRange(selectedCamel.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
+        "BaseStamina": randomRange(selectedCamel.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
     //determine quality
-    newCamelJson.Quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
+    newCamelJson.Quality = Math.floor(Number(selectedCamel.Quality) + Number(selectedCandidate.Quality));
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
@@ -376,29 +465,22 @@ function GenerateBreedingCandidates() {
 //args.baseStamina
 handlers.pickStartingCamel = function (args, context) {
     //first of all, we need to make sure that the player does not already own a camel (starting camel can only be picked once)
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var camelsData = loadCamelsData();
 
-    //Json data of the Camels list
-    var camelsJSON = JSON.parse("{}");
-
-    if ((camels.Data.Camels != undefined && camels.Data.Camels != null))
-        camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    if (camelsData == null)
+        camelsData = {};
 
     //if the player already owns at least one camel, they cannot pick a starting camel again. So, return a fail object
-    if (camelsJSON.OwnedCamelsList != undefined
-        && camelsJSON.OwnedCamelsList != null
-        && camelsJSON.OwnedCamelsList.length > 0
-        && (camelsJSON.OwnedCamelsList[0].name != undefined || camelsJSON[0].OwnedCamelsList.name != null))
+    if (camelsData.OwnedCamelsList != undefined
+        && camelsData.OwnedCamelsList != null
+        && camelsData.OwnedCamelsList.length > 0
+        && (camelsData.OwnedCamelsList[0].name != undefined || camelsData[0].OwnedCamelsList.name != null))
         return generateFailObj("Player already owns a camel");
 
     //so far, everything seems to be ok
 
     //set selected camel to 0
-    camelsJSON.SelectedCamel = 0;
+    camelsData.SelectedCamel = 0;
 
     var baseAcc = Number(0);
     if (args.baseAcc != undefined && args.baseAcc != null && !isNaN(Number(args.baseAcc)))
@@ -437,8 +519,8 @@ handlers.pickStartingCamel = function (args, context) {
     newCamelJson.CurrentGallop = baseGallop;
     newCamelJson.CurrentStamina = baseStamina;
 
-    camelsJSON.OwnedCamelsList = new Array();
-    camelsJSON.OwnedCamelsList.push(newCamelJson);
+    camelsData.OwnedCamelsList = new Array();
+    camelsData.OwnedCamelsList.push(newCamelJson);
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
@@ -506,23 +588,17 @@ handlers.sellCamel = function (args, context) {
 handlers.takeSteroids = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var camelsData = loadCamelsData();
 
-    //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsData[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    if (Number(camelObject.SteroidsLeft) > Number(0))
+    if (Number(selectedCamel.SteroidsLeft) > Number(0))
         return generateFailObj("Camel already on steroids");
 
     //load the steroids balancing values from title data
@@ -538,18 +614,18 @@ handlers.takeSteroids = function (args, context) {
         return generateFailObj("Can't afford steroids");
 
     //set steroids charges left
-    camelObject.SteroidsLeft = steroidsBalancing.EffectDuration;
+    selectedCamel.SteroidsLeft = steroidsBalancing.EffectDuration;
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData) }
     });
 
     return {
         Result: "OK",
-        CamelData: camelObject,
+        CamelData: selectedCamel,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
@@ -558,23 +634,17 @@ handlers.takeSteroids = function (args, context) {
 //Arguments
 //args.camelIndex
 //args.statType
-handlers.trainCamel = function (args, context) {
+handlers.startTraining = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var camelsData = loadCamelsData();
 
-    //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsData[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if any camel is currently training
@@ -609,7 +679,7 @@ handlers.trainCamel = function (args, context) {
             currentStatKey = "CurrentStamina";
             break;
     }
-    var currentLevel = Number(camelObject[trainingLevelKey]);
+    var currentLevel = Number(selectedCamel[trainingLevelKey]);
 
     //Now, load the balancing information to find out if next level would exceed level limit
     var trainingBalancing = loadTitleDataJson("Balancing_Training");
@@ -621,7 +691,7 @@ handlers.trainCamel = function (args, context) {
     if (trainingBalancing.TrainingLimits == undefined || trainingBalancing.TrainingLimits == null)
         return generateErrObj("Training Limits not defined");
 
-    var trainingLimit = Number(trainingBalancing.TrainingLimits[camelObject.Quality]);
+    var trainingLimit = Number(trainingBalancing.TrainingLimits[selectedCamel.Quality]);
 
     if (trainingLimit == undefined || trainingLimit == null)
         return generateErrObj("Training limit for this quality not defined");
@@ -645,14 +715,14 @@ handlers.trainCamel = function (args, context) {
         return generateFailObj("Can't afford training");
 
     //increment stat trained level
-    camelObject[trainingLevelKey] = currentLevel + Number(1);
+    selectedCamel[trainingLevelKey] = currentLevel + Number(1);
 
     //grant stat gains
-    camelObject[currentStatKey] = Number(camelObject[currentStatKey]) + Number(trainingValues.StatGain);
+    selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + Number(trainingValues.StatGain);
 
     //Set current training type and wait time
-    camelObject.CurrentTrainingType = args.statType;
-    camelObject.TrainingEnds = serverTime + Number(trainingValues.WaitTimeMins) * Number(60);
+    selectedCamel.CurrentTrainingType = args.statType;
+    selectedCamel.TrainingEnds = serverTime + Number(trainingValues.WaitTimeMins) * Number(60);
 
     //TODO increment camel value
 
@@ -665,11 +735,85 @@ handlers.trainCamel = function (args, context) {
 
     return {
         Result: "OK",
-        CamelData: camelObject,
+        CamelData: selectedCamel,
         VirtualCurrency: VirtualCurrencyObject
     }
 }
-//Upgrades the given item on a camel
+
+//args.camelIndex
+//args.qteOutcome index (0-perfect,4-Slow)
+handlers.finishTraining = function (args, context) {
+
+    //first of all, load the player's owned camels list
+    var camelsData = loadCamelsData();
+
+    if (camelsData == undefined || camelsData == null)
+        return generateErrObj("Player's 'Camels' object was not found");
+
+    var selectedCamel = camelsData[args.camelIndex];
+
+    if (selectedCamel == undefined || selectedCamel == null)
+        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+
+    //make sure the selected camel is eligible for finishing training
+    if (selectedCamel.CurrentTrainingType == "none" || isNaN(Number(selectedCamel.TrainingEnds)) || Number(selectedCamel.TrainingEnds <= 0 || Number(selectedCamel.TrainingEnds > getServerTime()))) {
+        return generateFailObj("Camel cannot finish training");
+    }
+
+    //camel eligible to finish training
+
+    //Now, load the balancing information to find out how much extra stats does the camel receive
+    var trainingBalancing = loadTitleDataJson("Balancing_Training");
+
+    if (trainingBalancing == undefined || trainingBalancing == null)
+        return generateErrObj("Training Balancing JSON undefined or null");
+
+    //check if qte bonuses information is defined
+    if (trainingBalancing.QteBonuses == undefined || trainingBalancing.QteBonuses == null)
+        return generateErrObj("Training Qte bonuses not defined or corrupt");
+
+    var statBonus = Number(0);
+    if (trainingBalancing.QteBonuses.length > 0 && trainingBalancing.QteBonuses.length < Number(args.qteOutcome))
+        statBonus = Number(trainingBalancing.QteBonuses[Number(args.qteOutcome)]);
+
+    var currentStatKey = ""; // the key of the value that defines the current value of the given stat
+    switch (args.statType) {
+        case "Acceleration":
+            currentStatKey = "CurrentAcc";
+            break;
+
+        case "Speed":
+            currentStatKey = "CurrentSpeed";
+            break;
+
+        case "Gallop":
+            currentStatKey = "CurrentGallop";
+            break;
+
+        case "Stamina":
+            currentStatKey = "CurrentStamina";
+            break;
+    }
+
+    //increment the stat by the value defined in the balancing
+    selectedCamel.currentStatKey = Number(selectedCamel.currentStatKey) + statBonus;
+
+    //reset the training timestamp
+    selectedCamel.TrainingEnds = 0;
+
+    //update the player's Camels data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { "Camels": JSON.stringify(camelsJSON) }
+    });
+
+
+    return {
+        Result: "OK",
+        BonusStat: Number(trainingBalancing.QteBonuses[args.qteOutcome])
+    }
+}//Upgrades the given item on a camel
 //
 //Arguments
 //args.camelIndex
@@ -677,23 +821,16 @@ handlers.trainCamel = function (args, context) {
 handlers.upgradeCamelItem = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
-
-    //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    var camelsData = loadCamelsData();
+    if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsData[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    var currentLevel = Number(camelObject[args.itemType]);
+    var currentLevel = Number(selectedCamel[args.itemType]);
 
 
     //Now, load the balancing information to find out if next level would exceed level limit
@@ -706,7 +843,7 @@ handlers.upgradeCamelItem = function (args, context) {
     if (upgradeBalancing.UpgradeLimits == undefined || upgradeBalancing.UpgradeLimits == null)
         return generateErrObj("Upgrade Limits not defined");
 
-    var upgradeLimit = Number(upgradeBalancing.UpgradeLimits[camelObject.Quality]);
+    var upgradeLimit = Number(upgradeBalancing.UpgradeLimits[selectedCamel.Quality]);
 
     if (upgradeLimit == undefined || upgradeLimit == null)
         return generateErrObj("Upgrade limit for this quality not defined");
@@ -730,26 +867,26 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateFailObj("Can't afford upgrade");
 
     //increment item level
-    camelObject[args.itemType] = currentLevel + Number(1);
+    selectedCamel[args.itemType] = currentLevel + Number(1);
 
     //grant stat gains
     var splitStats = upgradeValues.StatBonuses.split(",");
 
     //Acceleration
     if (splitStats.length > 0 && !isNaN(Number(splitStats[0])) && Number(splitStats[0]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[0]);
+        selectedCamel.CurrentAcc += Number(splitStats[0]);
 
     //Speed
     if (splitStats.length > 1 && !isNaN(Number(splitStats[1])) && Number(splitStats[1]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[1]);
+        selectedCamel.CurrentAcc += Number(splitStats[1]);
 
     //Gallop
     if (splitStats.length > 2 && !isNaN(Number(splitStats[2])) && Number(splitStats[2]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[2]);
+        selectedCamel.CurrentAcc += Number(splitStats[2]);
 
     //Stamina
     if (splitStats.length > 3 && !isNaN(Number(splitStats[3])) && Number(splitStats[3]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[3]);
+        selectedCamel.CurrentAcc += Number(splitStats[3]);
 
     //TODO increment camel value
 
@@ -757,82 +894,14 @@ handlers.upgradeCamelItem = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData.playerCamels) }
     });
 
     return {
         Result: "OK",
-        CamelData: camelObject,
+        CamelData: playerCamels,
         VirtualCurrency: VirtualCurrencyObject
     }
-}
-//Generate new camel
-
-//args.baseAcc
-//args.baseSpeed
-//args.baseGallop
-//args.baseStamina
-function createEmptyCamelProfile(args) {
-    var newCamelJson = {
-        "Name": "CamelName",
-        "Quality": 0,
-        //base stats
-        "BaseAcc": 0,
-        "BaseSpeed": 0,
-        "BaseGallop": 0,
-        "BaseStamina": 0,
-        //current stats (with training and upgrade bonuses)
-        "CurrentAcc": 0,
-        "CurrentSpeed": 0,
-        "CurrentGallop": 0,
-        "CurrentStamina": 0,
-        //item levels
-        "HeadGear": 0,
-        "Robot": 0,
-        "Whip": 0,
-        "Robe": 0,
-        "Bridle": 0,
-        //steroids
-        "SteroidsLeft": 0,
-        //training
-        "AccTrained": 0,
-        "SpeedTrained": 0,
-        "GallopTrained": 0,
-        "StaminaTrained": 0,
-        //current training
-        "CurrentTrainingType": "none",
-        "TrainingEnds": 0,
-        //Value
-        "CamelValue": 0,
-
-        "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
-
-        //TODO camel visual traits (seed)
-        //TODO camel customization
-    }
-
-    //apply provided base stats
-    if (args.BaseAcc != undefined && args.BaseAcc != null) {
-        newCamelJson.BaseAcc = args.BaseAcc;
-        newCamelJson.CurrentAcc = args.BaseAcc;
-    }
-
-    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
-        newCamelJson.BaseSpeed = args.BaseSpeed;
-        newCamelJson.CurrentSpeed = args.BaseSpeed;
-    }
-
-    if (args.BaseGallop != undefined && args.BaseGallop != null) {
-        newCamelJson.BaseGallop = args.BaseGallop;
-        newCamelJson.CurrentGallop = args.BaseGallop;
-    }
-
-    if (args.BaseStamina != undefined && args.BaseStamina != null) {
-        newCamelJson.BaseStamina = args.BaseStamina;
-        newCamelJson.CurrentStamina = args.BaseStamina;
-    }
-
-    return newCamelJson;
 }
 handlers.grantOasis = function (args, context) {
 

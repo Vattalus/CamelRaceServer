@@ -5,23 +5,17 @@
 handlers.takeSteroids = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var camelsData = loadCamelsData();
 
-    //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsData[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    if (Number(camelObject.SteroidsLeft) > Number(0))
+    if (Number(selectedCamel.SteroidsLeft) > Number(0))
         return generateFailObj("Camel already on steroids");
 
     //load the steroids balancing values from title data
@@ -37,18 +31,18 @@ handlers.takeSteroids = function (args, context) {
         return generateFailObj("Can't afford steroids");
 
     //set steroids charges left
-    camelObject.SteroidsLeft = steroidsBalancing.EffectDuration;
+    selectedCamel.SteroidsLeft = steroidsBalancing.EffectDuration;
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData) }
     });
 
     return {
         Result: "OK",
-        CamelData: camelObject,
+        CamelData: selectedCamel,
         VirtualCurrency: VirtualCurrencyObject
     }
 }

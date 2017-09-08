@@ -14,9 +14,9 @@ handlers.breedCamel = function (args, context) {
         return generateErrObj("Player's 'Camels' object was not found");
 
     var camelsJSON = JSON.parse(readonlyData.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsJSON.OwnedCamelsList[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
@@ -60,15 +60,15 @@ handlers.breedCamel = function (args, context) {
 
     //so far everything is ok, let's create a new camel json object and populate it based on selected camel and selected candidate
     var newCamelParams = {
-        "BaseAcc": randomRange(camelObject.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
-        "BaseSpeed": randomRange(camelObject.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
-        "BaseGallop": randomRange(camelObject.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
-        "BaseStamina": randomRange(camelObject.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
+        "BaseAcc": randomRange(selectedCamel.CurrentAcc, selectedCandidate.Acceleration) + statBonusFromLevel,
+        "BaseSpeed": randomRange(selectedCamel.CurrentSpeed, selectedCandidate.Speed) + statBonusFromLevel,
+        "BaseGallop": randomRange(selectedCamel.CurrentGallop, selectedCandidate.Gallop) + statBonusFromLevel,
+        "BaseStamina": randomRange(selectedCamel.CurrentStamina, selectedCandidate.Stamina) + statBonusFromLevel
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
     //determine quality
-    newCamelJson.Quality = Math.floor(Number(camelObject.Quality) + Number(selectedCandidate.Quality));
+    newCamelJson.Quality = Math.floor(Number(selectedCamel.Quality) + Number(selectedCandidate.Quality));
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);

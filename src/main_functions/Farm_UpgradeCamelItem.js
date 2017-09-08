@@ -6,23 +6,16 @@
 handlers.upgradeCamelItem = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
-
-    //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    var camelsData = loadCamelsData();
+    if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = camelsData[args.camelIndex];
 
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    var currentLevel = Number(camelObject[args.itemType]);
+    var currentLevel = Number(selectedCamel[args.itemType]);
 
 
     //Now, load the balancing information to find out if next level would exceed level limit
@@ -35,7 +28,7 @@ handlers.upgradeCamelItem = function (args, context) {
     if (upgradeBalancing.UpgradeLimits == undefined || upgradeBalancing.UpgradeLimits == null)
         return generateErrObj("Upgrade Limits not defined");
 
-    var upgradeLimit = Number(upgradeBalancing.UpgradeLimits[camelObject.Quality]);
+    var upgradeLimit = Number(upgradeBalancing.UpgradeLimits[selectedCamel.Quality]);
 
     if (upgradeLimit == undefined || upgradeLimit == null)
         return generateErrObj("Upgrade limit for this quality not defined");
@@ -59,26 +52,26 @@ handlers.upgradeCamelItem = function (args, context) {
         return generateFailObj("Can't afford upgrade");
 
     //increment item level
-    camelObject[args.itemType] = currentLevel + Number(1);
+    selectedCamel[args.itemType] = currentLevel + Number(1);
 
     //grant stat gains
     var splitStats = upgradeValues.StatBonuses.split(",");
 
     //Acceleration
     if (splitStats.length > 0 && !isNaN(Number(splitStats[0])) && Number(splitStats[0]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[0]);
+        selectedCamel.CurrentAcc += Number(splitStats[0]);
 
     //Speed
     if (splitStats.length > 1 && !isNaN(Number(splitStats[1])) && Number(splitStats[1]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[1]);
+        selectedCamel.CurrentAcc += Number(splitStats[1]);
 
     //Gallop
     if (splitStats.length > 2 && !isNaN(Number(splitStats[2])) && Number(splitStats[2]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[2]);
+        selectedCamel.CurrentAcc += Number(splitStats[2]);
 
     //Stamina
     if (splitStats.length > 3 && !isNaN(Number(splitStats[3])) && Number(splitStats[3]) > 0)
-        camelObject.CurrentAcc += Number(splitStats[3]);
+        selectedCamel.CurrentAcc += Number(splitStats[3]);
 
     //TODO increment camel value
 
@@ -86,12 +79,12 @@ handlers.upgradeCamelItem = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData.playerCamels) }
     });
 
     return {
         Result: "OK",
-        CamelData: camelObject,
+        CamelData: playerCamels,
         VirtualCurrency: VirtualCurrencyObject
     }
 }

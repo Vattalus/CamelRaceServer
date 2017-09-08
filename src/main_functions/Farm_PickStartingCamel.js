@@ -8,29 +8,22 @@
 //args.baseStamina
 handlers.pickStartingCamel = function (args, context) {
     //first of all, we need to make sure that the player does not already own a camel (starting camel can only be picked once)
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var camelsData = loadCamelsData();
 
-    //Json data of the Camels list
-    var camelsJSON = JSON.parse("{}");
-
-    if ((camels.Data.Camels != undefined && camels.Data.Camels != null))
-        camelsJSON = JSON.parse(camels.Data.Camels.Value);
+    if (camelsData == null)
+        camelsData = {};
 
     //if the player already owns at least one camel, they cannot pick a starting camel again. So, return a fail object
-    if (camelsJSON.OwnedCamelsList != undefined
-        && camelsJSON.OwnedCamelsList != null
-        && camelsJSON.OwnedCamelsList.length > 0
-        && (camelsJSON.OwnedCamelsList[0].name != undefined || camelsJSON[0].OwnedCamelsList.name != null))
+    if (camelsData.OwnedCamelsList != undefined
+        && camelsData.OwnedCamelsList != null
+        && camelsData.OwnedCamelsList.length > 0
+        && (camelsData.OwnedCamelsList[0].name != undefined || camelsData[0].OwnedCamelsList.name != null))
         return generateFailObj("Player already owns a camel");
 
     //so far, everything seems to be ok
 
     //set selected camel to 0
-    camelsJSON.SelectedCamel = 0;
+    camelsData.SelectedCamel = 0;
 
     var baseAcc = Number(0);
     if (args.baseAcc != undefined && args.baseAcc != null && !isNaN(Number(args.baseAcc)))
@@ -69,8 +62,8 @@ handlers.pickStartingCamel = function (args, context) {
     newCamelJson.CurrentGallop = baseGallop;
     newCamelJson.CurrentStamina = baseStamina;
 
-    camelsJSON.OwnedCamelsList = new Array();
-    camelsJSON.OwnedCamelsList.push(newCamelJson);
+    camelsData.OwnedCamelsList = new Array();
+    camelsData.OwnedCamelsList.push(newCamelJson);
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
