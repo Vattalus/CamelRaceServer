@@ -798,11 +798,11 @@ handlers.finishTraining = function (args, context) {
     //increment the stat by the value defined in the balancing
     selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + statBonus;
 
-    log.debug(selectedCamel[currentStatKey]);
-
     //reset the training timestamp
     selectedCamel.TrainingEnds = 0;
     selectedCamel.CurrentTrainingType = "none";
+
+    log.debug(JSON.stringify(camelsData));
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
