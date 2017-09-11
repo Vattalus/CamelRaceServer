@@ -119,10 +119,12 @@ handlers.finishTraining = function (args, context) {
     if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
+    log.debug(camelsData);
+
     var selectedCamel = camelsData[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
-        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+        return generateErrObj("Camel with index: " + args.camelIndex + " not found.");
 
     //make sure the selected camel is eligible for finishing training
     if (selectedCamel.CurrentTrainingType == "none" || isNaN(Number(selectedCamel.TrainingEnds)) || Number(selectedCamel.TrainingEnds <= 0 || Number(selectedCamel.TrainingEnds > getServerTime()))) {
