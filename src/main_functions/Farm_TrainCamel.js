@@ -167,6 +167,8 @@ handlers.finishTraining = function (args, context) {
     //increment the stat by the value defined in the balancing
     selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + statBonus;
 
+    log.debug(selectedCamel[currentStatKey]);
+
     //reset the training timestamp
     selectedCamel.TrainingEnds = 0;
     selectedCamel.CurrentTrainingType = "none";
@@ -178,10 +180,9 @@ handlers.finishTraining = function (args, context) {
         Data: { "Camels": JSON.stringify(camelsData) }
     });
 
-
     return {
         Result: "OK",
-        BonusStat: Number(trainingBalancing.QteBonuses[args.qteOutcome]),
+        BonusStat: statBonus,
         CamelData: selectedCamel
     }
 }
