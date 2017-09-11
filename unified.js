@@ -776,8 +776,27 @@ handlers.finishTraining = function (args, context) {
     if (trainingBalancing.QteBonuses.length > 0 && trainingBalancing.QteBonuses.length < Number(args.qteOutcome))
         statBonus = Number(trainingBalancing.QteBonuses[Number(args.qteOutcome)]);
 
+    var currentStatKey = ""; // the key of the value that defines the current value of the given stat
+    switch (selectedCamel.CurrentTrainingType) {
+        case "Acceleration":
+            currentStatKey = "CurrentAcc";
+            break;
+
+        case "Speed":
+            currentStatKey = "CurrentSpeed";
+            break;
+
+        case "Gallop":
+            currentStatKey = "CurrentGallop";
+            break;
+
+        case "Stamina":
+            currentStatKey = "CurrentStamina";
+            break;
+    }
+
     //increment the stat by the value defined in the balancing
-    selectedCamel[CurrentTrainingType] = Number(selectedCamel[CurrentTrainingType]) + statBonus;
+    selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + statBonus;
 
     //reset the training timestamp
     selectedCamel.TrainingEnds = 0;
@@ -795,8 +814,7 @@ handlers.finishTraining = function (args, context) {
         Result: "OK",
         BonusStat: Number(trainingBalancing.QteBonuses[args.qteOutcome])
     }
-}
-//Upgrades the given item on a camel
+}//Upgrades the given item on a camel
 //
 //Arguments
 //args.camelIndex
