@@ -142,8 +142,8 @@ handlers.finishTraining = function (args, context) {
         return generateErrObj("Training Qte bonuses not defined or corrupt");
 
     var statBonus = Number(0);
-    if (trainingBalancing.QteBonuses.length > 0 && trainingBalancing.QteBonuses.length < Number(args.qteOutcome))
-        statBonus = Number(trainingBalancing.QteBonuses[args.qteOutcome]);
+    if (trainingBalancing.QteBonuses.length > 0 && trainingBalancing.QteBonuses.length > Number(args.qteOutcome))
+        statBonus = Number(trainingBalancing.QteBonuses[Number(args.qteOutcome)]);
 
     var currentStatKey = ""; // the key of the value that defines the current value of the given stat
     switch (selectedCamel.CurrentTrainingType) {
@@ -170,11 +170,6 @@ handlers.finishTraining = function (args, context) {
     //reset the training timestamp
     selectedCamel.TrainingEnds = 0;
     selectedCamel.CurrentTrainingType = "none";
-
-    log.debug({
-        "Qte bonuses": trainingBalancing.QteBonuses,
-        "bonus": statBonus
-    });
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
