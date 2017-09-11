@@ -19,8 +19,8 @@ handlers.startTraining = function (args, context) {
     //check if any camel is currently training
     var serverTime = getServerTime();
 
-    for (var i = 0; i < camelsJSON.OwnedCamelsList.length; i++) {
-        if (Number(camelsJSON.OwnedCamelsList[i].TrainingEnds) > serverTime)
+    for (var i = 0; i < camelsData.OwnedCamelsList.length; i++) {
+        if (Number(camelsData.OwnedCamelsList[i].TrainingEnds) > serverTime)
             return generateFailObj("A camel is already training");
     }
 
@@ -99,7 +99,7 @@ handlers.startTraining = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData) }
     });
 
     return {
@@ -174,7 +174,7 @@ handlers.finishTraining = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "Camels": JSON.stringify(camelsData) }
     });
 
 
