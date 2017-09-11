@@ -10,7 +10,7 @@ handlers.takeSteroids = function (args, context) {
     if (camelsData == undefined || camelsData == null)
         return generateErrObj("Player's 'Camels' object was not found");
 
-    var selectedCamel = camelsData[args.camelIndex];
+    var selectedCamel = camelsData.OwnedCamelsList[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
