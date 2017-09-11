@@ -802,7 +802,10 @@ handlers.finishTraining = function (args, context) {
     selectedCamel.TrainingEnds = 0;
     selectedCamel.CurrentTrainingType = "none";
 
-    log.debug(JSON.stringify(camelsData));
+    log.debug({
+        "new stat": selectedCamel[currentStatKey],
+        "bonus": statBonus
+    });
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
