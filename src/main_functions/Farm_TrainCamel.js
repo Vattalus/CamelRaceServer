@@ -172,7 +172,7 @@ handlers.finishTraining = function (args, context) {
     selectedCamel.CurrentTrainingType = "none";
 
     log.debug({
-        "new stat": selectedCamel[currentStatKey],
+        "Qte bonuses": trainingBalancing.QteBonuses,
         "bonus": statBonus
     });
 
