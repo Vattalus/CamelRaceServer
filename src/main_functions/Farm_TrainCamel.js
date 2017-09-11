@@ -181,6 +181,7 @@ handlers.finishTraining = function (args, context) {
 
     return {
         Result: "OK",
-        BonusStat: Number(trainingBalancing.QteBonuses[args.qteOutcome])
+        BonusStat: Number(trainingBalancing.QteBonuses[args.qteOutcome]),
+        CamelData: selectedCamel
     }
 }
