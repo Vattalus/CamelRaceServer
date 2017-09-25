@@ -684,7 +684,7 @@ handlers.startTraining = function (args, context) {
         return generateFailObj("Cannot train last available camel");
 
     //the training level for the given stat
-    var currentLevel = Number(selectedCamel.TrainingLevel[args.statType]);
+    var currentLevel = Number(selectedCamel.TrainingLevels[args.statType]);
 
     //Now, load the balancing information to find out if next level would exceed level limit
     var trainingBalancing = loadTitleDataJson("Balancing_Training");
@@ -720,7 +720,7 @@ handlers.startTraining = function (args, context) {
         return generateFailObj("Can't afford training");
 
     //increment stat trained level
-    selectedCamel[trainingLevelKey] = currentLevel + Number(1);
+    selectedCamel.TrainingLevels[args.statType] = currentLevel + Number(1);
 
     //grant stat gains
     selectedCamel[args.statType] = Number(selectedCamel[args.statType]) + Number(trainingValues.StatGain);
