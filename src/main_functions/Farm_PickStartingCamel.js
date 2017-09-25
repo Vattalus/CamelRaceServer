@@ -50,18 +50,6 @@ handlers.pickStartingCamel = function (args, context) {
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
-    //base stats
-    newCamelJson.BaseAcc = baseAcc;
-    newCamelJson.BaseSpeed = baseSpeed;
-    newCamelJson.BaseGallop = baseGallop;
-    newCamelJson.BaseStamina = baseStamina;
-
-    //current stats (with training and upgrade bonuses)
-    newCamelJson.CurrentAcc = baseAcc;
-    newCamelJson.CurrentSpeed = baseSpeed;
-    newCamelJson.CurrentGallop = baseGallop;
-    newCamelJson.CurrentStamina = baseStamina;
-
     camelsData.OwnedCamelsList = new Array();
     camelsData.OwnedCamelsList.push(newCamelJson);
 

@@ -16,39 +16,26 @@ handlers.startTraining = function (args, context) {
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    //check if any camel is currently training
     var serverTime = getServerTime();
 
+    //check if camel is 'fully grown'
+    if (Number(selectedCamel.BreedingCompletionTimestamp) > serverTime)
+        return generateFailObj("Selected camel is not fully grown yet");
+
+    //check if any camel is currently training
     for (var i = 0; i < camelsData.OwnedCamelsList.length; i++) {
-        if (Number(camelsData.OwnedCamelsList[i].TrainingEnds) > serverTime)
+        if (Number(camelsData.OwnedCamelsList[i].TrainingEnds) > 0)
             return generateFailObj("A camel is already training");
     }
 
+    //make sure there is another available camel left after this one starts training
+    var nrOfAvailableCamels = getNumberOfAvailableCamels(camelsData.OwnedCamelsList);
+
+    if (nrOfAvailableCamels == undefined || nrOfAvailableCamels == null || isNaN(Number(nrOfAvailableCamels)) || Number(nrOfAvailableCamels) <= 1)
+        return generateFailObj("Cannot train last available camel");
+
     //the training level for the given stat
-    var trainingLevelKey = "";
-    var currentStatKey = ""; // the key of the value that defines the current value of the given stat
-    switch (args.statType) {
-        case "Acceleration":
-            trainingLevelKey = "AccTrained";
-            currentStatKey = "CurrentAcc";
-            break;
-
-        case "Speed":
-            trainingLevelKey = "SpeedTrained";
-            currentStatKey = "CurrentSpeed";
-            break;
-
-        case "Gallop":
-            trainingLevelKey = "GallopTrained";
-            currentStatKey = "CurrentGallop";
-            break;
-
-        case "Stamina":
-            trainingLevelKey = "StaminaTrained";
-            currentStatKey = "CurrentStamina";
-            break;
-    }
-    var currentLevel = Number(selectedCamel[trainingLevelKey]);
+    var currentLevel = Number(selectedCamel.TrainingLevel[args.statType]);
 
     //Now, load the balancing information to find out if next level would exceed level limit
     var trainingBalancing = loadTitleDataJson("Balancing_Training");
@@ -87,10 +74,10 @@ handlers.startTraining = function (args, context) {
     selectedCamel[trainingLevelKey] = currentLevel + Number(1);
 
     //grant stat gains
-    selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + Number(trainingValues.StatGain);
+    selectedCamel[args.statType] = Number(selectedCamel[args.statType]) + Number(trainingValues.StatGain);
 
     //Set current training type and wait time
-    selectedCamel.CurrentTrainingType = args.statType;
+    selectedCamel.CurrentlyTrainingStat = args.statType;
     selectedCamel.TrainingEnds = serverTime + Number(trainingValues.WaitTimeMins) * Number(60);
 
     //TODO increment camel value
@@ -125,7 +112,7 @@ handlers.finishTraining = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + " not found.");
 
     //make sure the selected camel is eligible for finishing training
-    if (selectedCamel.CurrentTrainingType == "none" || isNaN(Number(selectedCamel.TrainingEnds)) || Number(selectedCamel.TrainingEnds <= 0 || Number(selectedCamel.TrainingEnds > getServerTime()))) {
+    if (selectedCamel.CurrentlyTrainingStat == "none" || isNaN(Number(selectedCamel.TrainingEnds)) || Number(selectedCamel.TrainingEnds <= 0 || Number(selectedCamel.TrainingEnds > getServerTime()))) {
         return generateFailObj("Camel cannot finish training");
     }
 
@@ -145,31 +132,12 @@ handlers.finishTraining = function (args, context) {
     if (trainingBalancing.QteBonuses.length > 0 && trainingBalancing.QteBonuses.length > Number(args.qteOutcome))
         statBonus = Number(trainingBalancing.QteBonuses[Number(args.qteOutcome)]);
 
-    var currentStatKey = ""; // the key of the value that defines the current value of the given stat
-    switch (selectedCamel.CurrentTrainingType) {
-        case "Acceleration":
-            currentStatKey = "CurrentAcc";
-            break;
-
-        case "Speed":
-            currentStatKey = "CurrentSpeed";
-            break;
-
-        case "Gallop":
-            currentStatKey = "CurrentGallop";
-            break;
-
-        case "Stamina":
-            currentStatKey = "CurrentStamina";
-            break;
-    }
-
     //increment the stat by the value defined in the balancing
-    selectedCamel[currentStatKey] = Number(selectedCamel[currentStatKey]) + statBonus;
+    selectedCamel[selectedCamel.CurrentlyTrainingStat] = Number(selectedCamel[selectedCamel.CurrentlyTrainingStat]) + statBonus;
 
     //reset the training timestamp
     selectedCamel.TrainingEnds = 0;
-    selectedCamel.CurrentTrainingType = "none";
+    selectedCamel.CurrentlyTrainingStat = "none";
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(

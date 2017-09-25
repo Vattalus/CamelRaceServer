@@ -59,19 +59,19 @@ handlers.upgradeCamelItem = function (args, context) {
 
     //Acceleration
     if (splitStats.length > 0 && !isNaN(Number(splitStats[0])) && Number(splitStats[0]) > 0)
-        selectedCamel.CurrentAcc += Number(splitStats[0]);
+        selectedCamel.Acceleration += Number(splitStats[0]);
 
     //Speed
     if (splitStats.length > 1 && !isNaN(Number(splitStats[1])) && Number(splitStats[1]) > 0)
-        selectedCamel.CurrentAcc += Number(splitStats[1]);
+        selectedCamel.Speed += Number(splitStats[1]);
 
     //Gallop
     if (splitStats.length > 2 && !isNaN(Number(splitStats[2])) && Number(splitStats[2]) > 0)
-        selectedCamel.CurrentAcc += Number(splitStats[2]);
+        selectedCamel.Gallop += Number(splitStats[2]);
 
     //Stamina
     if (splitStats.length > 3 && !isNaN(Number(splitStats[3])) && Number(splitStats[3]) > 0)
-        selectedCamel.CurrentAcc += Number(splitStats[3]);
+        selectedCamel.Stamina += Number(splitStats[3]);
 
     //TODO increment camel value
 

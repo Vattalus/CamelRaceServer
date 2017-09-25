@@ -35,10 +35,10 @@ function createEmptyCamelProfile(args) {
         "BaseGallop": 0,
         "BaseStamina": 0,
         //current stats (with training and upgrade bonuses)
-        "CurrentAcc": 0,
-        "CurrentSpeed": 0,
-        "CurrentGallop": 0,
-        "CurrentStamina": 0,
+        "Acceleration": 0,
+        "Speed": 0,
+        "Gallop": 0,
+        "Stamina": 0,
         //item levels
         "HeadGear": 0,
         "Robot": 0,
@@ -48,12 +48,15 @@ function createEmptyCamelProfile(args) {
         //steroids
         "SteroidsLeft": 0,
         //training
-        "AccTrained": 0,
-        "SpeedTrained": 0,
-        "GallopTrained": 0,
-        "StaminaTrained": 0,
+        "TrainingLevels":
+        {
+            "Acceleration": 0,
+            "Speed": 0,
+            "Gallop": 0,
+            "Stamina": 0
+        },
         //current training
-        "CurrentTrainingType": "none",
+        "CurrentlyTrainingStat": "none",
         "TrainingEnds": 0,
         //Value
         "CamelValue": 0,
@@ -67,23 +70,49 @@ function createEmptyCamelProfile(args) {
     //apply provided base stats
     if (args.BaseAcc != undefined && args.BaseAcc != null) {
         newCamelJson.BaseAcc = args.BaseAcc;
-        newCamelJson.CurrentAcc = args.BaseAcc;
+        newCamelJson.Acceleration = args.BaseAcc;
     }
 
     if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
         newCamelJson.BaseSpeed = args.BaseSpeed;
-        newCamelJson.CurrentSpeed = args.BaseSpeed;
+        newCamelJson.Speed = args.BaseSpeed;
     }
 
     if (args.BaseGallop != undefined && args.BaseGallop != null) {
         newCamelJson.BaseGallop = args.BaseGallop;
-        newCamelJson.CurrentGallop = args.BaseGallop;
+        newCamelJson.Gallop = args.BaseGallop;
     }
 
     if (args.BaseStamina != undefined && args.BaseStamina != null) {
         newCamelJson.BaseStamina = args.BaseStamina;
-        newCamelJson.CurrentStamina = args.BaseStamina;
+        newCamelJson.Stamina = args.BaseStamina;
     }
 
     return newCamelJson;
+}
+
+//returns the number of camels that the player can actually use at the moment
+function getNumberOfAvailableCamels(ownedCamelsListJSON) {
+
+    if (ownedCamelsListJSON == undefined || ownedCamelsListJSON == null || Number(ownedCamelsListJSON.length) <= 0) //provided list is corrupted or empty
+        return 0;
+
+    var serverTime = getServerTime();
+
+    var availableCamels = 0;
+
+    for (var i = 0; i < ownedCamelsListJSON.length; i++) {
+
+        //check if 'fully grown'
+        if (Number(selectedCamel.BreedingCompletionTimestamp) > serverTime)
+            continue;
+
+        //check if camel is currently training
+        if (Number(camelJSON.TrainingEnds) > 0)
+            continue;
+
+        availableCamels++;
+    }
+
+    return availableCamels;
 }
