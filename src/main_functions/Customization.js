@@ -91,7 +91,7 @@ handlers.customizeCamel = function (args, context) {
         return generateFailObj("Can't afford customization");
 
     //add the purchased customization item to list of owned items
-    ownedCustomizationJSON[args.customizationType].add(args.itemId);
+    ownedCustomizationJSON[args.customizationType].push(args.itemId);
 
     //set the customization as current customization for the selected camel
     selectedCamel.Customization[args.customizationType] = args.itemId;
