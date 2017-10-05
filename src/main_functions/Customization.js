@@ -56,7 +56,9 @@ handlers.customizeCamel = function (args, context) {
     //customization not owned
 
     //check to see it item exists in the catalog
-    var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType }).data.Catalog;
+    var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType });
+
+    log.debug(catalogData);
 
     var catalogItemsList = JSON.parse(catalogData.data.Catalog);
 
