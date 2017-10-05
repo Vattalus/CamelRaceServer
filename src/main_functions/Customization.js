@@ -1,7 +1,7 @@
 //args.camelIndex
 //args.customizationType
 //args.itemId
-handlers.cusomizeCamel = function (args, context) {
+handlers.customizeCamel = function (args, context) {
 
     //first of all, load the player's owned camels list
     var camelsData = loadCamelsData();
