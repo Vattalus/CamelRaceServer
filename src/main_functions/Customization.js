@@ -31,8 +31,17 @@ handlers.customizeCamel = function (args, context) {
         ownedCustomizationJSON = JSON.parse(tData.Data.OwnedCustomizationItems);
     }
 
-    if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0)
+    if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0) {
         ownedCustomizationJSON[args.customizationType] = ["Basic"];
+
+        //update on server
+        server.UpdateUserReadOnlyData(
+        {
+            PlayFabId: currentPlayerId,
+            Data: { "OwnedCustomizationItems": JSON.stringify(ownedCustomizationJSON) }
+        });
+    }
+
 
     var itemOwned = contains(ownedCustomizationJSON[args.customizationType], args.itemId);
 
@@ -49,7 +58,7 @@ handlers.customizeCamel = function (args, context) {
 
         return {
             Result: "OK",
-            CamelData: selectedCamel,
+            CamelData: selectedCamel
         }
     }
 
@@ -58,9 +67,7 @@ handlers.customizeCamel = function (args, context) {
     //check to see it item exists in the catalog
     var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType });
 
-    log.debug(catalogData);
-
-    var catalogItemsList = JSON.parse(catalogData.data.Catalog);
+    var catalogItemsList = JSON.parse(catalogData.Catalog);
 
     //check if data loaded correctly
     if (catalogItemsList == undefined || catalogItemsList == null || catalogItemsList.length == 0)
