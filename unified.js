@@ -299,7 +299,7 @@ handlers.customizeCamel = function (args, context) {
     if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0)
         ownedCustomizationJSON[args.customizationType] = ["Basic"];
 
-    var itemOwned = ownedCustomizationJSON[args.customizationType].contains(args.itemId);
+    var itemOwned = ownedCustomizationJSON[args.customizationType].prototype.contains(args.itemId);
 
     //var itemOwned = false;
 
