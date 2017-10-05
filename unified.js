@@ -340,6 +340,8 @@ handlers.customizeCamel = function (args, context) {
     //check to see it item exists in the catalog
     var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType });
 
+    log.debug(catalogData.Catalog);
+
     var catalogItemsList = JSON.parse(catalogData.Catalog);
 
     //check if data loaded correctly
