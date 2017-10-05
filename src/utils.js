@@ -140,3 +140,11 @@ function addExperience(expGain) {
     //return the updated level data value
     return playerLevelProgressJSON;
 }
+
+function contains(arr, value) {
+    var i = arr.length;
+    while (i--) {
+        if (arr[i] === value) return true;
+    }
+    return false;
+}

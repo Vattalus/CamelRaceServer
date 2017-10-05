@@ -140,6 +140,14 @@ function addExperience(expGain) {
     //return the updated level data value
     return playerLevelProgressJSON;
 }
+
+function contains(arr, value) {
+    var i = arr.length;
+    while (i--) {
+        if (arr[i] === value) return true;
+    }
+    return false;
+}
 //Load camel data
 function loadCamelsData() {
 
@@ -299,7 +307,7 @@ handlers.customizeCamel = function (args, context) {
     if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0)
         ownedCustomizationJSON[args.customizationType] = ["Basic"];
 
-    var itemOwned = ownedCustomizationJSON[args.customizationType].prototype.contains(args.itemId);
+    var itemOwned = contains(ownedCustomizationJSON[args.customizationType], args.itemId);
 
     //var itemOwned = false;
 
