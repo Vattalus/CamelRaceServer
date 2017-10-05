@@ -56,13 +56,13 @@ handlers.customizeCamel = function (args, context) {
     //customization not owned
 
     //check to see it item exists in the catalog
-    var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + customizationType }).data.Catalog;
+    var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType }).data.Catalog;
 
     var catalogItemsList = JSON.parse(catalogData.data.Catalog);
 
     //check if data loaded correctly
     if (catalogItemsList == undefined || catalogItemsList == null || catalogItemsList.length == 0)
-        return generateErrObj("Catalog version: Customization" + customizationType + "not found or empty");
+        return generateErrObj("Catalog version: Customization" + args.customizationType + "not found or empty");
 
     var customizationItemData = {};
 
