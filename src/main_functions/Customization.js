@@ -14,6 +14,10 @@ handlers.customizeCamel = function (args, context) {
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
+    //make sure the camel has a customization object
+    if (selectedCamel.Customization == undefined || selectedCamel.Customization == null)
+        selectedCamel.Customization = {};
+
     //check to see if given item is already owned
     //load title data
     var tData = server.GetTitleData(
