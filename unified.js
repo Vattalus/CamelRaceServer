@@ -309,17 +309,6 @@ handlers.customizeCamel = function (args, context) {
 
     var itemOwned = contains(ownedCustomizationJSON[args.customizationType], args.itemId);
 
-    //var itemOwned = false;
-
-    //for (var i = 0; i < ownedCustomizationJSON[args.customizationType].length; i++) {
-    //    if (ownedCustomizationJSON[args.customizationType][i] == args.itemId) {
-    //        itemOwned = true;
-    //        break;
-    //    }
-    //}
-
-    log.debug("Item Owned: " + itemOwned);
-
     //if customization already owned, set it as current customization for the selected camel and return
     if (itemOwned == true) {
         selectedCamel.Customization[args.customizationType] = args.itemId;
@@ -340,7 +329,7 @@ handlers.customizeCamel = function (args, context) {
     //customization not owned
 
     //check to see it item exists in the catalog
-    var catalogData = GetCatalogItems({ "CatalogVersion": "Customization" + customizationType }).data.Catalog;
+    var catalogData = server.GetCatalogItems({ "CatalogVersion": "Customization" + customizationType }).data.Catalog;
 
     var catalogItemsList = JSON.parse(catalogData.data.Catalog);
 
