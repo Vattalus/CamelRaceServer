@@ -22,8 +22,8 @@ handlers.customizeCamel = function (args, context) {
         Keys: "OwnedCustomizationItems"
     });
 
-    if (tData == undefined || tData.Data == undefined)
-        return generateErrObj("Player's owned customization list not found.");
+    if (tData == undefined || tData.Data == null)
+        return generateErrObj("Error retrieving 'OwnedCustomizationItems'.");
 
     var ownedCustomizationJSON = {};
 
@@ -34,14 +34,18 @@ handlers.customizeCamel = function (args, context) {
     if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0)
         ownedCustomizationJSON[args.customizationType] = ["Basic"];
 
-    var itemOwned = false;
+    var itemOwned = ownedCustomizationJSON[args.customizationType].contains(args.itemId);
 
-    for (var i = 0; i < ownedCustomizationJSON[args.customizationType].length; i++) {
-        if (ownedCustomizationJSON[args.customizationType][i] == args.itemId) {
-            itemOwned = true;
-            break;
-        }
-    }
+    //var itemOwned = false;
+
+    //for (var i = 0; i < ownedCustomizationJSON[args.customizationType].length; i++) {
+    //    if (ownedCustomizationJSON[args.customizationType][i] == args.itemId) {
+    //        itemOwned = true;
+    //        break;
+    //    }
+    //}
+
+    log.debug("Item Owned: " + itemOwned);
 
     //if customization already owned, set it as current customization for the selected camel and return
     if (itemOwned == true) {
