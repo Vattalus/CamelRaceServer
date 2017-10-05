@@ -60,11 +60,16 @@ function createEmptyCamelProfile(args) {
         "TrainingEnds": 0,
         //Value
         "CamelValue": 0,
-
         "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
 
-        //TODO camel visual traits (seed)
-        //TODO camel customization
+        "Customization": {
+            "CamelModel": 0,
+            "CamelSeed": 0,
+            "Saddle": "Basic",
+            "Robot": "Basic",
+            "Hat": "Basic",
+            "Shoes": "Basic"
+        }
     }
 
     //apply provided base stats
