@@ -84,7 +84,7 @@ handlers.upgradeCamelItem = function (args, context) {
 
     return {
         Result: "OK",
-        CamelData: playerCamels,
+        CamelData: selectedCamel,
         VirtualCurrency: VirtualCurrencyObject
     }
 }

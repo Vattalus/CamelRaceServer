@@ -212,14 +212,7 @@ function createEmptyCamelProfile(args) {
         "CamelValue": 0,
         "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
 
-        "Customization": {
-            "CamelModel": 0,
-            "CamelSeed": 0,
-            "Saddle": "Basic",
-            "Robot": "Basic",
-            "Hat": "Basic",
-            "Shoes": "Basic"
-        }
+        "Customization": createEmptyCustomizationObject
     }
 
     //apply provided base stats
@@ -244,6 +237,17 @@ function createEmptyCamelProfile(args) {
     }
 
     return newCamelJson;
+}
+
+function createEmptyCustomizationObject() {
+    return {
+        "CamelModel": "Basic",
+        "CamelSeed": 0,
+        "Saddle": "Basic",
+        "Robot": "Basic",
+        "Hat": "Basic",
+        "Shoes": "Basic"
+    }
 }
 
 //returns the number of camels that the player can actually use at the moment
@@ -272,7 +276,7 @@ function getNumberOfAvailableCamels(ownedCamelsListJSON) {
     return availableCamels;
 }
 //args.camelIndex
-//args.customizationType
+//args.customizationCategory
 //args.itemId
 handlers.customizeCamel = function (args, context) {
 
@@ -289,7 +293,7 @@ handlers.customizeCamel = function (args, context) {
 
     //make sure the camel has a customization object
     if (selectedCamel.Customization == undefined || selectedCamel.Customization == null)
-        selectedCamel.Customization = {};
+        selectedCamel.Customization = createEmptyCustomizationObject;
 
     //check to see if given item is already owned
     //load title data
@@ -308,8 +312,8 @@ handlers.customizeCamel = function (args, context) {
         ownedCustomizationJSON = JSON.parse(tData.Data.OwnedCustomizationItems);
     }
 
-    if (ownedCustomizationJSON[args.customizationType] == undefined || ownedCustomizationJSON[args.customizationType] == null || ownedCustomizationJSON[args.customizationType].length == 0) {
-        ownedCustomizationJSON[args.customizationType] = ["Basic"];
+    if (ownedCustomizationJSON[args.customizationCategory] == undefined || ownedCustomizationJSON[args.customizationCategory] == null || ownedCustomizationJSON[args.customizationCategory].length == 0) {
+        ownedCustomizationJSON[args.customizationCategory] = ["Basic"];
 
         //update on server
         server.UpdateUserReadOnlyData(
@@ -320,11 +324,11 @@ handlers.customizeCamel = function (args, context) {
     }
 
 
-    var itemOwned = contains(ownedCustomizationJSON[args.customizationType], args.itemId);
+    var itemOwned = contains(ownedCustomizationJSON[args.customizationCategory], args.itemId);
 
     //if customization already owned, set it as current customization for the selected camel and return
     if (itemOwned == true) {
-        selectedCamel.Customization[args.customizationType] = args.itemId;
+        selectedCamel.Customization[args.customizationCategory] = args.itemId;
 
         //update the player's Camels data
         server.UpdateUserReadOnlyData(
@@ -342,11 +346,11 @@ handlers.customizeCamel = function (args, context) {
     //customization not owned
 
     //check to see it item exists in the catalog
-    var catalogItemsList = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationType }).Catalog;
+    var catalogItemsList = server.GetCatalogItems({ "CatalogVersion": "Customization" + args.customizationCategory }).Catalog;
 
     //check if data loaded correctly
     if (catalogItemsList == undefined || catalogItemsList == null || catalogItemsList.length == 0)
-        return generateErrObj("Catalog version: Customization" + args.customizationType + " not found or empty");
+        return generateErrObj("Catalog version: Customization" + args.customizationCategory + " not found or empty");
 
     var customizationItemData = {};
 
@@ -368,10 +372,10 @@ handlers.customizeCamel = function (args, context) {
         return generateFailObj("Can't afford customization");
 
     //add the purchased customization item to list of owned items
-    ownedCustomizationJSON[args.customizationType].push(args.itemId);
+    ownedCustomizationJSON[args.customizationCategory].push(args.itemId);
 
     //set the customization as current customization for the selected camel
-    selectedCamel.Customization[args.customizationType] = args.itemId;
+    selectedCamel.Customization[args.customizationCategory] = args.itemId;
 
     //update the players owned customization list and cameldata in titledata
     server.UpdateUserReadOnlyData(
@@ -1017,7 +1021,7 @@ handlers.upgradeCamelItem = function (args, context) {
 
     return {
         Result: "OK",
-        CamelData: playerCamels,
+        CamelData: selectedCamel,
         VirtualCurrency: VirtualCurrencyObject
     }
 }

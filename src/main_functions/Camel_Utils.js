@@ -62,14 +62,7 @@ function createEmptyCamelProfile(args) {
         "CamelValue": 0,
         "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
 
-        "Customization": {
-            "CamelModel": 0,
-            "CamelSeed": 0,
-            "Saddle": "Basic",
-            "Robot": "Basic",
-            "Hat": "Basic",
-            "Shoes": "Basic"
-        }
+        "Customization": createEmptyCustomizationObject
     }
 
     //apply provided base stats
@@ -94,6 +87,17 @@ function createEmptyCamelProfile(args) {
     }
 
     return newCamelJson;
+}
+
+function createEmptyCustomizationObject() {
+    return {
+        "CamelModel": "Basic",
+        "CamelSeed": 0,
+        "Saddle": "Basic",
+        "Robot": "Basic",
+        "Hat": "Basic",
+        "Shoes": "Basic"
+    }
 }
 
 //returns the number of camels that the player can actually use at the moment
