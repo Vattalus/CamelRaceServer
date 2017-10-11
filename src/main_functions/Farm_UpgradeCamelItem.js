@@ -6,17 +6,17 @@
 handlers.upgradeCamelItem = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camelsData = loadCamelsData();
-    if (camelsData == undefined || camelsData == null)
-        return generateErrObj("Player's 'Camels' object was not found");
+    var ownedCamels = loadOwnedCamels();
 
-    var selectedCamel = camelsData.OwnedCamelsList[args.camelIndex];
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
+
+    var selectedCamel = ownedCamels[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     var currentLevel = Number(selectedCamel[args.itemType]);
-
 
     //Now, load the balancing information to find out if next level would exceed level limit
     var upgradeBalancing = loadTitleDataJson("Balancing_Upgrade");
@@ -79,7 +79,7 @@ handlers.upgradeCamelItem = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsData.playerCamels) }
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
     return {

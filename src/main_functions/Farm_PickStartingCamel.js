@@ -8,22 +8,16 @@
 //args.baseStamina
 handlers.pickStartingCamel = function (args, context) {
     //first of all, we need to make sure that the player does not already own a camel (starting camel can only be picked once)
-    var camelsData = loadCamelsData();
+    var ownedCamels = loadOwnedCamels();
 
-    if (camelsData == null)
-        camelsData = {};
+    if (ownedCamels == null)
+        ownedCamels = [];
 
     //if the player already owns at least one camel, they cannot pick a starting camel again. So, return a fail object
-    if (camelsData.OwnedCamelsList != undefined
-        && camelsData.OwnedCamelsList != null
-        && camelsData.OwnedCamelsList.length > 0
-        && (camelsData.OwnedCamelsList[0].name != undefined || camelsData[0].OwnedCamelsList.name != null))
+    if (ownedCamels != undefined && ownedCamels.length > 0 && (ownedCamels[0].name != undefined || ownedCamels[0].name != null))
         return generateFailObj("Player already owns a camel");
 
     //so far, everything seems to be ok
-
-    //set selected camel to 0
-    camelsData.SelectedCamel = 0;
 
     var baseAcc = Number(0);
     if (args.baseAcc != undefined && args.baseAcc != null && !isNaN(Number(args.baseAcc)))
@@ -50,14 +44,14 @@ handlers.pickStartingCamel = function (args, context) {
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
-    camelsData.OwnedCamelsList = new Array();
-    camelsData.OwnedCamelsList.push(newCamelJson);
+    ownedCamels = new Array();
+    ownedCamels.push(newCamelJson);
 
     //update the player's readonly data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsData) }
+        Data: { "Camels": JSON.stringify(ownedCamels) }
     });
 
     return {

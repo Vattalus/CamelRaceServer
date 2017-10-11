@@ -1,22 +1,22 @@
 //Load camel data
-function loadCamelsData() {
+function loadOwnedCamels() {
 
     var camels = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
+        Keys: ["OwnedCamels"]
     });
 
     //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
+    if ((camels.Data.OwnedCamels == undefined || camels.Data.OwnedCamels == null))
         return null;
 
-    var camelsDataJSON = JSON.parse(camels.Data.Camels.Value);
+    var ownedCamelsJSON = JSON.parse(camels.Data.OwnedCamels.Value);
 
-    if (camelsDataJSON == undefined || camelsDataJSON == null)
+    if (ownedCamelsJSON == undefined || ownedCamelsJSON == null)
         return null;
 
-    return camelsDataJSON;
+    return ownedCamelsJSON;
 }
 
 //Generate new camel

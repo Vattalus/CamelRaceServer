@@ -4,12 +4,12 @@
 handlers.customizeCamel = function (args, context) {
 
     //first of all, load the player's owned camels list
-    var camelsData = loadCamelsData();
+    var ownedCamels = loadOwnedCamels();
 
-    if (camelsData == undefined || camelsData == null)
-        return generateErrObj("Player's 'Camels' object was not found");
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var selectedCamel = camelsData.OwnedCamelsList[args.camelIndex];
+    var selectedCamel = ownedCamels[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
@@ -57,7 +57,7 @@ handlers.customizeCamel = function (args, context) {
         server.UpdateUserReadOnlyData(
         {
             PlayFabId: currentPlayerId,
-            Data: { "Camels": JSON.stringify(camelsData) }
+            Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
         });
 
         return {
@@ -106,7 +106,7 @@ handlers.customizeCamel = function (args, context) {
         PlayFabId: currentPlayerId,
         Data: {
             "OwnedCustomizationItems": JSON.stringify(ownedCustomizationJSON),
-            "Camels": JSON.stringify(camelsData)
+            "OwnedCamels": JSON.stringify(ownedCamels)
         }
     });
 
