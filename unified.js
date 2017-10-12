@@ -1110,15 +1110,6 @@ handlers.claimLevelUpReward = function (args, context) {
         VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency
     }
 }
-handlers.raceEnd = function (args, context) {
-
-    if (args != null && args.endRaceReward && Number(args.endRaceReward)) {
-        addCurrency("SC", Number(args.endRaceReward));
-    }
-
-    return { Result: "OK" };
-}
-
 //Arguments
 //args.camelIndex
 //args.finishPosition - placement of player (0- first, 1-seconds etc)
@@ -1339,7 +1330,7 @@ function CamelFinishedRace(args) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "OwnedCamels": JSON.stringify(camelsJSON) }
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
     return selectedCamel;
