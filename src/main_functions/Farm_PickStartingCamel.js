@@ -51,7 +51,7 @@ handlers.pickStartingCamel = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(ownedCamels) }
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
     return {

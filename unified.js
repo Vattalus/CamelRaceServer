@@ -401,21 +401,21 @@ handlers.breedCamel = function (args, context) {
     var readonlyData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["Camels", "BreedingCandidates"]
+        Keys: ["OwnedCamels", "BreedingCandidates"]
     });
 
     //check existance of Camels object
-    if ((readonlyData.Data.Camels == undefined || readonlyData.Data.Camels == null))
-        return generateErrObj("Player's 'Camels' object was not found");
+    if ((readonlyData.Data.OwnedCamels == undefined || readonlyData.Data.OwnedCamels == null))
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var camelsJSON = JSON.parse(readonlyData.Data.Camels.Value);
-    var selectedCamel = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var camelsJSON = JSON.parse(readonlyData.Data.OwnedCamels.Value);
+    var selectedCamel = camelsJSON[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
-    if (Number(camelsJSON.OwnedCamelsList.length) >= Number(loadTitleDataJson("MaxCamelSlots")))
+    if (Number(camelsJSON.length) >= Number(loadTitleDataJson("MaxCamelSlots")))
         return generateFailObj("Number of owned camels reached max limit");
 
     //Now, find the breeding candidate of index [candidateIndex]
@@ -469,7 +469,7 @@ handlers.breedCamel = function (args, context) {
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
 
     //add the newly created camel to the player's list of owned camels
-    camelsJSON.OwnedCamelsList.push(newCamelJson);
+    camelsJSON.push(newCamelJson);
 
     //mark the selected candidate as non-available
     selectedCandidate.Available = false;
@@ -479,7 +479,7 @@ handlers.breedCamel = function (args, context) {
     {
         PlayFabId: currentPlayerId,
         Data: {
-            "Camels": JSON.stringify(camelsJSON),
+            "OwnedCamels": JSON.stringify(camelsJSON),
             "BreedingCandidates": JSON.stringify(breedingCandidatesData)
         }
     });
@@ -672,7 +672,7 @@ handlers.pickStartingCamel = function (args, context) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(ownedCamels) }
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
     return {
@@ -1145,7 +1145,7 @@ handlers.endRace_quick = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    var camelObject = CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args);
 
     //return new currency balance
     return {
@@ -1219,7 +1219,7 @@ handlers.endRace_event = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    var camelObject = CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args);
 
     //if the player won, increment the current event value
     if (args.finishPosition == 0) {
@@ -1315,36 +1315,32 @@ function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
 }
 
 //this function will do all the operations on the camel that finished the race (update statistics, decrement steroids charges etc)
-function CamelFinishedRace(args, camelIndex) {
+//args.camelIndex
+function CamelFinishedRace(args) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var ownedCamels = loadOwnedCamels();
 
     //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
-        return;
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[camelIndex];
+    var selectedCamel = ownedCamels[args.camelIndex];
 
     //check validity of JSON
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return;
 
     //decrement steroid charges
-    if (Number(camelObject.SteroidsLeft) > Number(1))
-        camelObject.SteroidsLeft = Number(camelObject.SteroidsLeft) - Number(1);
+    if (Number(selectedCamel.SteroidsLeft) > Number(1))
+        selectedCamel.SteroidsLeft = Number(selectedCamel.SteroidsLeft) - Number(1);
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "OwnedCamels": JSON.stringify(camelsJSON) }
     });
 
-    return camelObject;
+    return selectedCamel;
 }

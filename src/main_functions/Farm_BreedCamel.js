@@ -6,21 +6,21 @@ handlers.breedCamel = function (args, context) {
     var readonlyData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: ["Camels", "BreedingCandidates"]
+        Keys: ["OwnedCamels", "BreedingCandidates"]
     });
 
     //check existance of Camels object
-    if ((readonlyData.Data.Camels == undefined || readonlyData.Data.Camels == null))
-        return generateErrObj("Player's 'Camels' object was not found");
+    if ((readonlyData.Data.OwnedCamels == undefined || readonlyData.Data.OwnedCamels == null))
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var camelsJSON = JSON.parse(readonlyData.Data.Camels.Value);
-    var selectedCamel = camelsJSON.OwnedCamelsList[args.camelIndex];
+    var camelsJSON = JSON.parse(readonlyData.Data.OwnedCamels.Value);
+    var selectedCamel = camelsJSON[args.camelIndex];
 
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if number of owned camels has reached limit
-    if (Number(camelsJSON.OwnedCamelsList.length) >= Number(loadTitleDataJson("MaxCamelSlots")))
+    if (Number(camelsJSON.length) >= Number(loadTitleDataJson("MaxCamelSlots")))
         return generateFailObj("Number of owned camels reached max limit");
 
     //Now, find the breeding candidate of index [candidateIndex]
@@ -74,7 +74,7 @@ handlers.breedCamel = function (args, context) {
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
 
     //add the newly created camel to the player's list of owned camels
-    camelsJSON.OwnedCamelsList.push(newCamelJson);
+    camelsJSON.push(newCamelJson);
 
     //mark the selected candidate as non-available
     selectedCandidate.Available = false;
@@ -84,7 +84,7 @@ handlers.breedCamel = function (args, context) {
     {
         PlayFabId: currentPlayerId,
         Data: {
-            "Camels": JSON.stringify(camelsJSON),
+            "OwnedCamels": JSON.stringify(camelsJSON),
             "BreedingCandidates": JSON.stringify(breedingCandidatesData)
         }
     });

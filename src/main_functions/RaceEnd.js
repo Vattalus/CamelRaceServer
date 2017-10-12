@@ -33,7 +33,7 @@ handlers.endRace_quick = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    var camelObject = CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args);
 
     //return new currency balance
     return {
@@ -107,7 +107,7 @@ handlers.endRace_event = function (args, context) {
         return generateErrObj(errorMessage);
 
     //update camel statistics
-    var camelObject = CamelFinishedRace(args, args.camelIndex);
+    var camelObject = CamelFinishedRace(args);
 
     //if the player won, increment the current event value
     if (args.finishPosition == 0) {
@@ -203,36 +203,32 @@ function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
 }
 
 //this function will do all the operations on the camel that finished the race (update statistics, decrement steroids charges etc)
-function CamelFinishedRace(args, camelIndex) {
+//args.camelIndex
+function CamelFinishedRace(args) {
 
     //first of all, load the player's owned camels list
-    var camels = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["Camels"]
-    });
+    var ownedCamels = loadOwnedCamels();
 
     //check existance of Camels object
-    if ((camels.Data.Camels == undefined || camels.Data.Camels == null))
-        return;
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var camelsJSON = JSON.parse(camels.Data.Camels.Value);
-    var camelObject = camelsJSON.OwnedCamelsList[camelIndex];
+    var selectedCamel = ownedCamels[args.camelIndex];
 
     //check validity of JSON
-    if (camelObject == undefined || camelObject == null)
+    if (selectedCamel == undefined || selectedCamel == null)
         return;
 
     //decrement steroid charges
-    if (Number(camelObject.SteroidsLeft) > Number(1))
-        camelObject.SteroidsLeft = Number(camelObject.SteroidsLeft) - Number(1);
+    if (Number(selectedCamel.SteroidsLeft) > Number(1))
+        selectedCamel.SteroidsLeft = Number(selectedCamel.SteroidsLeft) - Number(1);
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "Camels": JSON.stringify(camelsJSON) }
+        Data: { "OwnedCamels": JSON.stringify(camelsJSON) }
     });
 
-    return camelObject;
+    return selectedCamel;
 }
