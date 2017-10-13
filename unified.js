@@ -308,8 +308,8 @@ handlers.customizeCamel = function (args, context) {
 
     var ownedCustomizationJSON = {};
 
-    if (tData.Data.OwnedCustomizationItems != undefined && tData.Data.OwnedCustomizationItems != null && JSON.parse(tData.Data.OwnedCustomizationItems) != undefined && JSON.parse(tData.Data.OwnedCustomizationItems) != null) {
-        ownedCustomizationJSON = JSON.parse(tData.Data.OwnedCustomizationItems);
+    if (tData.Data.OwnedCustomizationItems != undefined && tData.Data.OwnedCustomizationItems != null && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != undefined && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != null) {
+        ownedCustomizationJSON = JSON.parse(tData.Data.OwnedCustomizationItems.Value);
     }
 
     if (ownedCustomizationJSON[args.customizationCategory] == undefined || ownedCustomizationJSON[args.customizationCategory] == null || ownedCustomizationJSON[args.customizationCategory].length == 0) {
