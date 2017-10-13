@@ -36,8 +36,8 @@ handlers.customizeCamel = function (args, context) {
         "Owned Data: ": tData.Data.OwnedCustomizationItems,
         "Owned undefined: ": tData.Data.OwnedCustomizationItems == undefined,
         "Owned null: ": tData.Data.OwnedCustomizationItems == null,
-        "Owned Json undef: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == undefined,
-        "Owned Json null: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == null,
+        //"Owned Json undef: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == undefined,
+        //"Owned Json null: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == null,
     });
 
     if (tData.Data.OwnedCustomizationItems != undefined && tData.Data.OwnedCustomizationItems != null && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != undefined && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != null) {
