@@ -296,11 +296,10 @@ handlers.customizeCamel = function (args, context) {
         selectedCamel.Customization = createEmptyCustomizationObject;
 
     log.debug({
+        "selectedCamel.Customization keys": selectedCamel.Customization.keys.length,
         "selectedCamel.Customization undefined: ": selectedCamel.Customization == undefined,
         "selectedCamel.Customization null: ": selectedCamel.Customization == null,
     });
-    log.debug(selectedCamel);
-    log.debug(selectedCamel.Customization);
 
     //check to see if given item is already owned
     //load title data
