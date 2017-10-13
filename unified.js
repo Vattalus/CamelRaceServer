@@ -295,12 +295,10 @@ handlers.customizeCamel = function (args, context) {
     //if (selectedCamel.Customization == undefined || selectedCamel.Customization == null || selectedCamel.Customization.length == 0)
     //    selectedCamel.Customization = createEmptyCustomizationObject;
 
-    selectedCamel.Customization = createEmptyCustomizationObject;
+    selectedCamel.Customization = "WHAI";
 
     log.debug({
-        "selectedCamel.Customization length": selectedCamel.Customization.length,
-        "selectedCamel.Customization undefined: ": selectedCamel.Customization == undefined,
-        "selectedCamel.Customization null: ": selectedCamel.Customization == null,
+        "selectedCamel": selectedCamel
     });
 
     //check to see if given item is already owned
