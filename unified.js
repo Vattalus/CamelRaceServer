@@ -292,8 +292,8 @@ handlers.customizeCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //make sure the camel has a customization object
-    //if (selectedCamel.Customization == undefined || selectedCamel.Customization == null || selectedCamel.Customization.length == 0)
-    //    selectedCamel.Customization = createEmptyCustomizationObject;
+    if (selectedCamel.Customization == undefined || selectedCamel.Customization == null || selectedCamel.Customization.length == 0)
+        selectedCamel.Customization = createEmptyCustomizationObject;
 
 
     log.debug({
