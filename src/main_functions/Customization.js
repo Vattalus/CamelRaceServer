@@ -19,8 +19,8 @@ handlers.customizeCamel = function (args, context) {
         selectedCamel.Customization = createEmptyCustomizationObject;
 
     log.debug({
-        "SelectedCamel: ": selectedCamel,
-        "Selected camel customization: ": selectedCamel.Customization
+        "selectedCamel.Customization undefined: ": selectedCamel.Customization == undefined,
+        "selectedCamel.Customization null: ": selectedCamel.Customization == null
     });
 
     //check to see if given item is already owned
