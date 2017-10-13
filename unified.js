@@ -310,9 +310,9 @@ handlers.customizeCamel = function (args, context) {
 
     log.debug(
     {
-        "Owned Data: ": tData.Data.OwnedCustomizationItems,
-        "Owned undefined: ": tData.Data.OwnedCustomizationItems == undefined,
-        "Owned null: ": tData.Data.OwnedCustomizationItems == null,
+        "Owned Data: ": tData.Data.OwnedCustomizationItems
+        //"Owned undefined: ": tData.Data.OwnedCustomizationItems == undefined,
+        //"Owned null: ": tData.Data.OwnedCustomizationItems == null,
         //"Owned Json undef: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == undefined,
         //"Owned Json null: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == null,
     });
