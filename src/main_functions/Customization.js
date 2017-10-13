@@ -20,28 +20,28 @@ handlers.customizeCamel = function (args, context) {
 
     //check to see if given item is already owned
     //load title data
-    var tData = server.GetTitleData(
+    var playerData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
         Keys: "OwnedCustomizationItems"
     });
 
-    if (tData == undefined || tData.Data == null)
+    if (playerData == undefined || playerData.Data == null)
         return generateErrObj("Error retrieving 'OwnedCustomizationItems'.");
 
     var ownedCustomizationJSON = {};
 
     log.debug(
     {
-        "Owned Data: ": tData.Data.OwnedCustomizationItems
-        //"Owned undefined: ": tData.Data.OwnedCustomizationItems == undefined,
-        //"Owned null: ": tData.Data.OwnedCustomizationItems == null,
-        //"Owned Json undef: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == undefined,
-        //"Owned Json null: ": JSON.parse(tData.Data.OwnedCustomizationItems.Value) == null,
+        "Owned undefined: ": playerData.Data.OwnedCustomizationItems == undefined,
+        "Owned null: ": playerData.Data.OwnedCustomizationItems == null,
+        "Owned Json undef: ": JSON.parse(playerData.Data.OwnedCustomizationItems.Value) == undefined,
+        "Owned Json null: ": JSON.parse(playerData.Data.OwnedCustomizationItems.Value) == null,
     });
 
-    if (tData.Data.OwnedCustomizationItems != undefined && tData.Data.OwnedCustomizationItems != null && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != undefined && JSON.parse(tData.Data.OwnedCustomizationItems.Value) != null) {
-        ownedCustomizationJSON = JSON.parse(tData.Data.OwnedCustomizationItems.Value);
+    if (playerData.Data.OwnedCustomizationItems != undefined && playerData.Data.OwnedCustomizationItems != null &&
+        JSON.parse(playerData.Data.OwnedCustomizationItems.Value) != undefined && JSON.parse(playerData.Data.OwnedCustomizationItems.Value) != null) {
+        ownedCustomizationJSON = JSON.parse(playerData.Data.OwnedCustomizationItems.Value);
     }
 
     if (ownedCustomizationJSON[args.customizationCategory] == undefined || ownedCustomizationJSON[args.customizationCategory] == null || ownedCustomizationJSON[args.customizationCategory].length == 0) {
