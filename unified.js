@@ -308,14 +308,6 @@ handlers.customizeCamel = function (args, context) {
 
     var ownedCustomizationJSON = {};
 
-    log.debug(
-    {
-        "Owned undefined: ": playerData.Data.OwnedCustomizationItems == undefined,
-        "Owned null: ": playerData.Data.OwnedCustomizationItems == null,
-        "Owned Json undef: ": JSON.parse(playerData.Data.OwnedCustomizationItems.Value) == undefined,
-        "Owned Json null: ": JSON.parse(playerData.Data.OwnedCustomizationItems.Value) == null,
-    });
-
     if (playerData.Data.OwnedCustomizationItems != undefined && playerData.Data.OwnedCustomizationItems != null &&
         JSON.parse(playerData.Data.OwnedCustomizationItems.Value) != undefined && JSON.parse(playerData.Data.OwnedCustomizationItems.Value) != null) {
         ownedCustomizationJSON = JSON.parse(playerData.Data.OwnedCustomizationItems.Value);
@@ -338,6 +330,8 @@ handlers.customizeCamel = function (args, context) {
     //if customization already owned, set it as current customization for the selected camel and return
     if (itemOwned == true) {
         selectedCamel.Customization[args.customizationCategory] = args.itemId;
+
+        log.debug({ "SelectedCamel: ": selectedCamel });
 
         //update the player's Camels data
         server.UpdateUserReadOnlyData(
