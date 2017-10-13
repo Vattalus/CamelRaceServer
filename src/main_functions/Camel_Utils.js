@@ -62,7 +62,7 @@ function createEmptyCamelProfile(args) {
         "CamelValue": 0,
         "BreedingCompletionTimestamp": 0, //wait timer used for newly bred camels
 
-        "Customization": createEmptyCustomizationObject
+        "Customization": createEmptyCustomizationObject()
     }
 
     //apply provided base stats

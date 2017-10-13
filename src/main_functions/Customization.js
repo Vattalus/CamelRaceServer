@@ -15,12 +15,12 @@ handlers.customizeCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //make sure the camel has a customization object
-    if (selectedCamel.Customization == undefined || selectedCamel.Customization == null || selectedCamel.Customization.length == 0)
-        selectedCamel.Customization = createEmptyCustomizationObject;
+    if (selectedCamel.Customization == undefined || selectedCamel.Customization == null)
+        selectedCamel.Customization = createEmptyCustomizationObject();
 
 
     log.debug({
-        "customization object": createEmptyCustomizationObject
+        "customization object": createEmptyCustomizationObject()
     });
 
     //check to see if given item is already owned
