@@ -262,12 +262,12 @@ function getNumberOfAvailableCamels(ownedCamelsListJSON) {
 
     for (var i = 0; i < ownedCamelsListJSON.length; i++) {
 
-        //check if 'fully grown'
-        if (Number(selectedCamel.BreedingCompletionTimestamp) > serverTime)
+        //skip if not 'fully grown'
+        if (Number(ownedCamelsListJSON[i].BreedingCompletionTimestamp) > serverTime)
             continue;
 
-        //check if camel is currently training
-        if (Number(camelJSON.TrainingEnds) > 0)
+        //skip if camel is currently training
+        if (Number(ownedCamelsListJSON[i].TrainingEnds) > 0)
             continue;
 
         availableCamels++;
