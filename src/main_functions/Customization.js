@@ -18,6 +18,11 @@ handlers.customizeCamel = function (args, context) {
     if (selectedCamel.Customization == undefined || selectedCamel.Customization == null)
         selectedCamel.Customization = createEmptyCustomizationObject;
 
+    log.debug({
+        "SelectedCamel: ": selectedCamel,
+        "Selected camel customization: ": selectedCamel.Customization
+    });
+
     //check to see if given item is already owned
     //load title data
     var playerData = server.GetUserReadOnlyData(
@@ -53,8 +58,6 @@ handlers.customizeCamel = function (args, context) {
     //if customization already owned, set it as current customization for the selected camel and return
     if (itemOwned == true) {
         selectedCamel.Customization[args.customizationCategory] = args.itemId;
-
-        log.debug({ "SelectedCamel: ": selectedCamel });
 
         //update the player's Camels data
         server.UpdateUserReadOnlyData(
