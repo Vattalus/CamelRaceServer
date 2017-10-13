@@ -20,8 +20,10 @@ handlers.customizeCamel = function (args, context) {
 
     log.debug({
         "selectedCamel.Customization undefined: ": selectedCamel.Customization == undefined,
-        "selectedCamel.Customization null: ": selectedCamel.Customization == null
+        "selectedCamel.Customization null: ": selectedCamel.Customization == null,
     });
+    log.debug(selectedCamel);
+    log.debug(selectedCamel.Customization);
 
     //check to see if given item is already owned
     //load title data
