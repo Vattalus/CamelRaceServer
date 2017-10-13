@@ -19,7 +19,7 @@ handlers.customizeCamel = function (args, context) {
         selectedCamel.Customization = createEmptyCustomizationObject;
 
     log.debug({
-        "selectedCamel.Customization keys": selectedCamel.Customization.keys.length,
+        "selectedCamel.Customization length": selectedCamel.Customization.length,
         "selectedCamel.Customization undefined: ": selectedCamel.Customization == undefined,
         "selectedCamel.Customization null: ": selectedCamel.Customization == null,
     });
