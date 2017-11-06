@@ -19,10 +19,6 @@ handlers.customizeCamel = function (args, context) {
         selectedCamel.Customization = createEmptyCustomizationObject();
 
 
-    log.debug({
-        "customization object": createEmptyCustomizationObject()
-    });
-
     //check to see if given item is already owned
     //load title data
     var playerData = server.GetUserReadOnlyData(

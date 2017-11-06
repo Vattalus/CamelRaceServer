@@ -216,24 +216,24 @@ function createEmptyCamelProfile(args) {
     }
 
     //apply provided base stats
-    if (args.BaseAcc != undefined && args.BaseAcc != null) {
-        newCamelJson.BaseAcc = args.BaseAcc;
-        newCamelJson.Acceleration = args.BaseAcc;
+    if (args.baseAcc != undefined && args.baseAcc != null) {
+        newCamelJson.baseAcc = args.baseAcc;
+        newCamelJson.Acceleration = args.baseAcc;
     }
 
-    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
-        newCamelJson.BaseSpeed = args.BaseSpeed;
-        newCamelJson.Speed = args.BaseSpeed;
+    if (args.baseSpeed != undefined && args.baseSpeed != null) {
+        newCamelJson.baseSpeed = args.baseSpeed;
+        newCamelJson.Speed = args.baseSpeed;
     }
 
-    if (args.BaseGallop != undefined && args.BaseGallop != null) {
-        newCamelJson.BaseGallop = args.BaseGallop;
-        newCamelJson.Gallop = args.BaseGallop;
+    if (args.baseGallop != undefined && args.baseGallop != null) {
+        newCamelJson.baseGallop = args.baseGallop;
+        newCamelJson.Gallop = args.baseGallop;
     }
 
-    if (args.BaseStamina != undefined && args.BaseStamina != null) {
-        newCamelJson.BaseStamina = args.BaseStamina;
-        newCamelJson.Stamina = args.BaseStamina;
+    if (args.baseStamina != undefined && args.baseStamina != null) {
+        newCamelJson.baseStamina = args.baseStamina;
+        newCamelJson.Stamina = args.baseStamina;
     }
 
     return newCamelJson;
@@ -295,10 +295,6 @@ handlers.customizeCamel = function (args, context) {
     if (selectedCamel.Customization == undefined || selectedCamel.Customization == null)
         selectedCamel.Customization = createEmptyCustomizationObject();
 
-
-    log.debug({
-        "customization object": createEmptyCustomizationObject()
-    });
 
     //check to see if given item is already owned
     //load title data
