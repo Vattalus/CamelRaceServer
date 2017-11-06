@@ -119,3 +119,43 @@ handlers.customizeCamel = function (args, context) {
         VirtualCurrency: VirtualCurrencyObject
     }
 }
+
+//args.camelIndex
+//args.camelName
+//args.camelNumber
+handlers.renameCamel = function (args, context) {
+
+    //first of all, load the player's owned camels list
+    var ownedCamels = loadOwnedCamels();
+
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
+
+    var selectedCamel = ownedCamels[args.camelIndex];
+
+    if (selectedCamel == undefined || selectedCamel == null)
+        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+
+
+    //update camel name
+    if (args.camelName != undefined && args.camelName != null && args.camelName && !(args.camelName.length === 0)) {
+        selectedCamel.Name = args.camelName;
+    }
+
+    //update camel number
+    if (args.camelNumber != undefined && args.camelNumber != null && args.camelNumber && args.camelNumber.length === 2) {
+        selectedCamel.Number = args.camelNumber;
+    }
+
+    //update the player's Camels data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
+    });
+
+    //return confirmation to client
+    return {
+        Result: "OK"
+    }
+}

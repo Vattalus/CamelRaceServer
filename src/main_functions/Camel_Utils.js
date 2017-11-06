@@ -28,6 +28,7 @@ function loadOwnedCamels() {
 function createEmptyCamelProfile(args) {
     var newCamelJson = {
         "Name": "CamelName",
+        "Number" : "00",
         "Quality": 0,
         //base stats
         "BaseAcc": 0,
