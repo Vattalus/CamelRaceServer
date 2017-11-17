@@ -301,7 +301,7 @@ function SetPlayerTournamentData() {
     });
 
     if (tournamentData != undefined && tournamentData != null && tournamentData.Data.TournamentData != undefined && tournamentData.Data.TournamentData != null) {
-        tournamentDataJSON = JSON.parse(tournamentData.Data.LevelProgress.Value);
+        tournamentDataJSON = JSON.parse(tournamentData.Data.TournamentData.Value);
     }
 
     if (tournamentDataJSON == undefined || tournamentDataJSON == null ||
