@@ -1,10 +1,11 @@
 handlers.claimLevelUpReward = function (args, context) {
+
     //First off, load the player's level progress from read-only data
     var playerLevelProgress = server.GetUserReadOnlyData(
-{
-    PlayFabId: currentPlayerId,
-    Keys: ["LevelProgress"]
-});
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["LevelProgress"]
+    });
 
     if (playerLevelProgress == undefined || playerLevelProgress == null || playerLevelProgress.Data.LevelProgress == undefined || playerLevelProgress.Data.LevelProgress == null)
         return generateErrObj("LevelProgress object undefined or null");

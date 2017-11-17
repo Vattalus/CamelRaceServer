@@ -16,6 +16,9 @@ handlers.startRace = function (args, context) {
 
     //TODO increment stats (races started, decrement steroids etc)
 
+    //decrement steroid charges
+    if (Number(selectedCamel.SteroidsLeft) > Number(1))
+        selectedCamel.SteroidsLeft = Number(selectedCamel.SteroidsLeft) - Number(1);
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
