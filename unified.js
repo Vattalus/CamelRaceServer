@@ -1517,6 +1517,7 @@ function SetPlayerTournamentData() {
                 break;
         }
 
+        tournamentDataJSON = {};
         tournamentDataJSON.StatisticName = tournamentName;
     }
 
