@@ -1246,7 +1246,7 @@ handlers.endRace_event = function (args, context) {
         return generateFailObj("Player is not eligible for this event");
 
     //calculate and give rewards based on placement, start qte, finish speed
-    var receivedRewards = GiveRaceRewards(args, raceRewardJSON, scBonusFromLevel);
+    var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
 
     //check for errors
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
@@ -1312,7 +1312,7 @@ handlers.endRace_tournament = function (args, context) {
     //TODO also, what does the bonus per level mean? level*bonus? (only if first place?? O.o)
 
     //calculate and give rewards based on placement, start qte, finish speed
-    var receivedRewards = GiveRaceRewards(args, raceRewardJSON, scBonusFromLevel);
+    var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
 
     //check for errors
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
