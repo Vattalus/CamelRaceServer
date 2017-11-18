@@ -72,11 +72,11 @@ function GetCurrentTournament(args) {
 
 function AddToTournamentPlayersList(tournamentName) {
 
-    var recordingsObjectKey = "Recordings_" + tournamentName;
+    var playerListKey = "Recordings_" + tournamentName;
 
-    var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
+    var tournamentRecordingsJSON = loadTitleInternalDataJson(playerListKey);
 
-    log.debug(recordingsObjectKey);
+    log.debug(tournamentRecordingsJSON);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
@@ -99,7 +99,7 @@ function AddToTournamentPlayersList(tournamentName) {
     //update the recordings object in titledata
     server.SetTitleInternalData(
     {
-        Key: recordingsObjectKey,
+        Key: playerListKey,
         Value: JSON.stringify(tournamentRecordingsJSON)
     });
 }

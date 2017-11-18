@@ -27,8 +27,6 @@ function loadTitleDataJson(key) {
     if (tData == undefined || tData.Data == undefined || tData.Data[key] == undefined)
         return null;
 
-    log.debug(tData.Data[key]);
-
     var tDataJSON = JSON.parse(tData.Data[key]);
 
     if (tDataJSON == undefined)
@@ -48,6 +46,8 @@ function loadTitleInternalDataJson(key) {
     if (internalData == undefined || internalData.Data == undefined || internalData.Data[key] == undefined)
         return null;
 
+    log.debug(internalData.Data[key]);
+
     var internalDataJSON = JSON.parse(internalData.Data[key]);
 
     if (internalDataJSON == undefined)
@@ -66,9 +66,7 @@ function loadPlayerReadOnlyDataJson(key) {
     if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
         return null;
 
-    log.debug(playerReadOnlyData.Data[key]);
-
-    var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key]);
+    var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key].Value);
 
     if (playerReadOnlyJSON == undefined)
         return null;
@@ -1613,11 +1611,11 @@ function GetCurrentTournament(args) {
 
 function AddToTournamentPlayersList(tournamentName) {
 
-    var recordingsObjectKey = "Recordings_" + tournamentName;
+    var playerListKey = "Recordings_" + tournamentName;
 
-    var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
+    var tournamentRecordingsJSON = loadTitleInternalDataJson(playerListKey);
 
-    log.debug(recordingsObjectKey);
+    log.debug(tournamentRecordingsJSON);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
@@ -1640,7 +1638,7 @@ function AddToTournamentPlayersList(tournamentName) {
     //update the recordings object in titledata
     server.SetTitleInternalData(
     {
-        Key: recordingsObjectKey,
+        Key: playerListKey,
         Value: JSON.stringify(tournamentRecordingsJSON)
     });
 }
