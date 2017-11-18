@@ -35,6 +35,25 @@ function loadTitleDataJson(key) {
     return tDataJSON;
 }
 
+function loadTitleInternalDataJson(key) {
+    var internalData = server.GetTitleInternalData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: [key]
+    }
+    );
+
+    if (internalData == undefined || internalData.Data == undefined || internalData.Data[key] == undefined)
+        return null;
+
+    var internalDataJSON = JSON.parse(internalData.Data[key]);
+
+    if (internalDataJSON == undefined)
+        return null;
+
+    return internalDataJSON;
+}
+
 //get the current server time timestamp (seconds)
 function getServerTime() {
     return Math.floor((new Date().getTime() / 1000));

@@ -90,7 +90,7 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
 
     var recordingsObjectKey = "Recordings_" + tournamentName;
 
-    var tournamentRecordingsJSON = loadTitleDataJson(recordingsObjectKey);
+    var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
@@ -107,10 +107,15 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         delete tournamentRecordingsJSON[Object.keys(fruitObject)[0]];
     }
 
-    //update the recordings object in titledata
-    server.SetTitleData(
-    {
-        Key: recordingsObjectKey,
-        Value: {"Test": {} }
-    });
+    //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
+    //TODO Therefore we could just get a set of random playerIDs and get the recordings from each player respectively
+
+    if (JSON.stringify(tournamentRecordingsJSON) != null) {
+        //update the recordings object in titledata
+        server.SetTitleInternalData(
+        {
+            Key: recordingsObjectKey,
+            Value: JSON.stringify(tournamentRecordingsJSON)
+        });
+    }
 }
