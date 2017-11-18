@@ -27,6 +27,8 @@ function loadTitleDataJson(key) {
     if (tData == undefined || tData.Data == undefined || tData.Data[key] == undefined)
         return null;
 
+    log.debug(playerReadOnlyData.Data[key]);
+
     var tDataJSON = JSON.parse(tData.Data[key]);
 
     if (tDataJSON == undefined)
