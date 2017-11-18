@@ -1610,16 +1610,14 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
 
-    log.debug(
-{ "Data": tournamentRecordingsJSON },
-{ "Length": tournamentRecordingsJSON.length });
-
     //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
     if (tournamentRecordingsJSON.indexOf(currentPlayerId) < 0) {
         tournamentRecordingsJSON.push(tournamentRecordingsJSON);
     }
 
-
+    log.debug(
+{ "Data": tournamentRecordingsJSON },
+{ "Length": tournamentRecordingsJSON.length });
 
     //TEST
     for (var i = 0; i < 200; i++) {
