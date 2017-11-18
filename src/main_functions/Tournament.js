@@ -105,7 +105,19 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         tournamentRecordingsJSON.push(currentPlayerId + i);
     }
 
-    log.debug(tournamentRecordingsJSON.stringify);
+    var internalData = server.GetTitleInternalData(
+        {
+            PlayFabId: currentPlayerId,
+            Keys: [recordingsObjectKey]
+        }
+    );
+
+    log.debug(
+        { "Data": internalData.Data[recordingsObjectKey] },
+        { "Length": internalData.Data[recordingsObjectKey].length });
+
+
+    log.debug(tournamentRecordingsJSON);
 
     //if list of recordings exceeds maximum length, delete first entry
     if (tournamentRecordingsJSON.length > 300) {
