@@ -111,6 +111,6 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     server.SetTitleData(
     {
         Key: recordingsObjectKey,
-        Value: tournamentRecordingsJSON
+        Value: {"Test": {} }
     });
 }
