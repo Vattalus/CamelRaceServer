@@ -54,6 +54,24 @@ function loadTitleInternalDataJson(key) {
     return internalDataJSON;
 }
 
+function loadPlayerReadOnlyDataJson(key) {
+    var playerReadOnlyData = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: [key]
+    });
+
+    if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
+        return null;
+
+    var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key]);
+
+    if (playerReadOnlyJSON == undefined)
+        return null;
+
+    return playerReadOnlyJSON;
+}
+
 //get the current server time timestamp (seconds)
 function getServerTime() {
     return Math.floor((new Date().getTime() / 1000));

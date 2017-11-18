@@ -161,17 +161,18 @@ handlers.endRace_tournament = function (args, context) {
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
         return generateErrObj(receivedRewards.ErrorMessage);
 
-    var tournamentDataJSON = SetPlayerTournamentData();
+    //get the tournament name the player is currently competing in
+    var currentTournament = GetCurrentTournament();
 
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null || tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null)
-        return generateErrObj("error setting player tournamend data");
+    if (currentTournament == undefined || currentTournament == null)
+        return generateErrObj("error getting player tournamend data");
 
     //increment tournament leaderboard
     server.UpdatePlayerStatistics({
         PlayFabId: currentPlayerId,
         Statistics: [
             {
-                StatisticName: tournamentDataJSON.TournamentName,
+                StatisticName: currentTournament,
                 Value: receivedRewards.RewardsReceived.SC
             }
         ]
@@ -180,8 +181,11 @@ handlers.endRace_tournament = function (args, context) {
     //update camel statistics
     var camelObject = CamelFinishedRace(args);
 
-    //Add recording
-    AddTournamentRecording(tournamentDataJSON.TournamentName, args.finishTime, camelObject);
+    //save race recording into the "LastTournamentRaceRecording" player data
+    SaveTournamentRecording(args.startQteOutcome, args.finishTime, camelObject);
+
+    //Add player to list of players recently played
+    AddToTournamentPlayersList(currentTournament);
 
     //return new currency balance
     return {

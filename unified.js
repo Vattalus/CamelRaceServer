@@ -54,6 +54,24 @@ function loadTitleInternalDataJson(key) {
     return internalDataJSON;
 }
 
+function loadPlayerReadOnlyDataJson(key) {
+    var playerReadOnlyData = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: [key]
+    });
+
+    if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
+        return null;
+
+    var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key]);
+
+    if (playerReadOnlyJSON == undefined)
+        return null;
+
+    return playerReadOnlyJSON;
+}
+
 //get the current server time timestamp (seconds)
 function getServerTime() {
     return Math.floor((new Date().getTime() / 1000));
@@ -1337,17 +1355,18 @@ handlers.endRace_tournament = function (args, context) {
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
         return generateErrObj(receivedRewards.ErrorMessage);
 
-    var tournamentDataJSON = SetPlayerTournamentData();
+    //get the tournament name the player is currently competing in
+    var currentTournament = GetCurrentTournament();
 
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null || tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null)
-        return generateErrObj("error setting player tournamend data");
+    if (currentTournament == undefined || currentTournament == null)
+        return generateErrObj("error getting player tournamend data");
 
     //increment tournament leaderboard
     server.UpdatePlayerStatistics({
         PlayFabId: currentPlayerId,
         Statistics: [
             {
-                StatisticName: tournamentDataJSON.TournamentName,
+                StatisticName: currentTournament,
                 Value: receivedRewards.RewardsReceived.SC
             }
         ]
@@ -1356,8 +1375,11 @@ handlers.endRace_tournament = function (args, context) {
     //update camel statistics
     var camelObject = CamelFinishedRace(args);
 
-    //Add recording
-    AddTournamentRecording(tournamentDataJSON.TournamentName, args.finishTime, camelObject);
+    //save race recording into the "LastTournamentRaceRecording" player data
+    SaveTournamentRecording(args.startQteOutcome, args.finishTime, camelObject);
+
+    //Add player to list of players recently played
+    AddToTournamentPlayersList(currentTournament);
 
     //return new currency balance
     return {
@@ -1515,25 +1537,12 @@ handlers.startRace = function (args, context) {
     }
 }//sets the player's tournament rank based on player level
 //returns the player's TournamentData Json object. In case of error, returns null
-function SetPlayerTournamentData(args) {
+function GetCurrentTournament(args) {
 
     //load the player's tournament data
-    var tournamentDataJSON = null;
+    var currentTournament = loadPlayerReadOnlyDataJson("CurrentTournament");
 
-    var tournamentData = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["TournamentData"]
-    });
-
-    if (tournamentData != undefined && tournamentData != null && tournamentData.Data.TournamentData != undefined && tournamentData.Data.TournamentData != null) {
-        tournamentDataJSON = JSON.parse(tournamentData.Data.TournamentData.Value);
-    }
-
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null ||
-        tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null || tournamentDataJSON.TournamentName.length <= 0) {
-        //create new tournament object
-
+    if (currentTournament == undefined || currentTournament == null) {
         //load player's current level
         var playerLevelProgress = server.GetUserReadOnlyData(
         {
@@ -1551,58 +1560,56 @@ function SetPlayerTournamentData(args) {
             }
         }
 
-        var tournamentName = "TournamentBronze";
+        var currentTournament = "TournamentBronze";
 
         //determine tournament rank based on player level
         switch (playerLevel) {
             case 0:
             case 1:
             case 2:
-                tournamentName = "TournamentBronze";
+                currentTournament = "TournamentBronze";
                 break;
 
             case 3:
             case 4:
             case 5:
-                tournamentName = "TournamentSilver";
+                currentTournament = "TournamentSilver";
                 break;
 
             case 6:
             case 7:
             case 8:
-                tournamentName = "TournamentGold";
+                currentTournament = "TournamentGold";
                 break;
 
             case 9:
             case 10:
             case 11:
-                tournamentName = "TournamentPlatinum";
+                currentTournament = "TournamentPlatinum";
                 break;
 
             case 12:
             case 13:
             case 14:
-                tournamentName = "TournamentDiamond";
+                currentTournament = "TournamentDiamond";
                 break;
         }
-
-        tournamentDataJSON = {};
-        tournamentDataJSON.TournamentName = tournamentName;
 
         //update player's readonly data
         server.UpdateUserReadOnlyData(
             {
                 PlayFabId: currentPlayerId,
-                Data: { "TournamentData": JSON.stringify(tournamentDataJSON) }
+                Data: { CurrentTournament: JSON.stringify(currentTournament) }
             }
         );
     }
 
-    return tournamentDataJSON;
+    return currentTournament;
 }
 
-function AddTournamentRecording(tournamentName, finishTime, camelData) {
+function AddToTournamentPlayersList(tournamentName) {
 
+    AddToTournamentPlayersList(tournamentName);
     var recordingsObjectKey = "Recordings_" + tournamentName;
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
@@ -1623,12 +1630,27 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
     //TODO Therefore we could just get a set of random playerIDs and get the recordings from each player respectively
 
-
-
     //update the recordings object in titledata
     server.SetTitleInternalData(
     {
         Key: recordingsObjectKey,
         Value: JSON.stringify(tournamentRecordingsJSON)
     });
+}
+
+//save race recording into the "LastTournamentRaceRecording" player data
+function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
+
+    server.UpdateUserReadOnlyData(
+        {
+            PlayFabId: currentPlayerId,
+            Data: {
+                "LastTournamentRaceRecording": {
+                    camelName: camelData.Name,
+                    camelCustomization: camelData.Customization,
+                    startQteOutcome: Number(startQteOutcome),
+                    finishTime: Number(finishTime),
+                }
+            }
+        });
 }
