@@ -139,9 +139,9 @@ handlers.endRace_event = function (args, context) {
 
 //Arguments
 //args.camelIndex
-//arg.finishPosition - placement of player (0- first, 1-seconds etc)
-//arg.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
-//arg.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
+//args.finishPosition - placement of player (0- first, 1-seconds etc)
+//args.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
+//args.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
 //args.finishTime - time it took to finish the race (for recordings)
 handlers.endRace_tournament = function (args, context) {
 
@@ -163,18 +163,25 @@ handlers.endRace_tournament = function (args, context) {
 
     var tournamentDataJSON = SetPlayerTournamentData();
 
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null)
+    if (tournamentDataJSON == undefined || tournamentDataJSON == null || tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null)
         return generateErrObj("error setting player tournamend data");
 
-    //TODO increment tournament leaderboard
+    //increment tournament leaderboard
+    server.UpdatePlayerStatistics({
+        PlayFabId: currentPlayerId,
+        Statistics: [
+            {
+                StatisticName: tournamentDataJSON.TournamentName,
+                Value: receivedRewards.RewardsReceived.SC
+            }
+        ]
+    });
 
     //update camel statistics
     var camelObject = CamelFinishedRace(args);
 
-    //TODO perform tournament statistics update (update leaderboard, add recording etc)
-    //TODO store recordings in a titledata object, each player represented by a [playerid][recording data] object, in a list. When adding a new recording:
-    //if player already has a recording, replace it
-    //if player not on the list, add them at the beggining of the list, and if the list exceeds max length, delete last element
+    //Add recording
+    AddTournamentRecording(tournamentDataJSON.TournamentName, args.finishTime, camelObject);
 
     //return new currency balance
     return {
@@ -285,92 +292,4 @@ function CamelFinishedRace(args) {
     });
 
     return selectedCamel;
-}
-
-//sets the player's tournament rank based on player level
-//returns the player's TournamentData Json object. In case of error, returns null
-function SetPlayerTournamentData() {
-
-    //load the player's tournament data
-    var tournamentDataJSON = null;
-
-    var tournamentData = server.GetUserReadOnlyData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["TournamentData"]
-    });
-
-    if (tournamentData != undefined && tournamentData != null && tournamentData.Data.TournamentData != undefined && tournamentData.Data.TournamentData != null) {
-        tournamentDataJSON = JSON.parse(tournamentData.Data.TournamentData.Value);
-    }
-
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null ||
-        tournamentDataJSON.StatisticName == undefined || tournamentDataJSON.StatisticName == null || tournamentDataJSON.StatisticName.length <= 0) {
-        //create new tournament object
-
-        //load player's current level
-        var playerLevelProgress = server.GetUserReadOnlyData(
-        {
-            PlayFabId: currentPlayerId,
-            Keys: ["LevelProgress"]
-        });
-
-        var playerLevel = 0;
-
-        if (playerLevelProgress != undefined && playerLevelProgress != null && playerLevelProgress.Data.LevelProgress != undefined && playerLevelProgress.Data.LevelProgress != null) {
-            var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);
-
-            if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null && !isNaN(Number(playerLevelProgressJSON.Level))) {
-                playerLevel = Number(playerLevelProgressJSON.Level);
-            }
-        }
-
-        var tournamentName = "TournamentBronze";
-
-        //determine tournament rank based on player level
-        switch (playerLevel) {
-            case 0:
-            case 1:
-            case 2:
-                tournamentName = "TournamentBronze";
-                break;
-
-            case 3:
-            case 4:
-            case 5:
-                tournamentName = "TournamentSilver";
-                break;
-
-            case 6:
-            case 7:
-            case 8:
-                tournamentName = "TournamentGold";
-                break;
-
-            case 9:
-            case 10:
-            case 11:
-                tournamentName = "TournamentPlatinum";
-                break;
-
-            case 12:
-            case 13:
-            case 14:
-                tournamentName = "TournamentDiamond";
-                break;
-        }
-
-        tournamentDataJSON = {};
-        tournamentDataJSON.StatisticName = tournamentName;
-
-        //update player's readonly data
-        server.UpdateUserReadOnlyData(
-            {
-                PlayFabId: currentPlayerId,
-                Data: { "TournamentData": JSON.stringify(tournamentDataJSON) }
-            }
-        );
-    }
-
-    return tournamentDataJSON;
 }

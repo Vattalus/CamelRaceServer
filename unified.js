@@ -1296,9 +1296,9 @@ handlers.endRace_event = function (args, context) {
 
 //Arguments
 //args.camelIndex
-//arg.finishPosition - placement of player (0- first, 1-seconds etc)
-//arg.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
-//arg.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
+//args.finishPosition - placement of player (0- first, 1-seconds etc)
+//args.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
+//args.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
 //args.finishTime - time it took to finish the race (for recordings)
 handlers.endRace_tournament = function (args, context) {
 
@@ -1320,18 +1320,25 @@ handlers.endRace_tournament = function (args, context) {
 
     var tournamentDataJSON = SetPlayerTournamentData();
 
-    if (tournamentDataJSON == undefined || tournamentDataJSON == null)
+    if (tournamentDataJSON == undefined || tournamentDataJSON == null || tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null)
         return generateErrObj("error setting player tournamend data");
 
-    //TODO increment tournament leaderboard
+    //increment tournament leaderboard
+    server.UpdatePlayerStatistics({
+        PlayFabId: currentPlayerId,
+        Statistics: [
+            {
+                StatisticName: tournamentDataJSON.TournamentName,
+                Value: receivedRewards.RewardsReceived.SC
+            }
+        ]
+    });
 
     //update camel statistics
     var camelObject = CamelFinishedRace(args);
 
-    //TODO perform tournament statistics update (update leaderboard, add recording etc)
-    //TODO store recordings in a titledata object, each player represented by a [playerid][recording data] object, in a list. When adding a new recording:
-    //if player already has a recording, replace it
-    //if player not on the list, add them at the beggining of the list, and if the list exceeds max length, delete last element
+    //Add recording
+    AddTournamentRecording(tournamentDataJSON.TournamentName, args.finishTime, camelObject);
 
     //return new currency balance
     return {
@@ -1443,10 +1450,53 @@ function CamelFinishedRace(args) {
 
     return selectedCamel;
 }
+//Arguments
+//args.camelIndex
+//args.raceType
+handlers.startRace = function (args, context) {
 
-//sets the player's tournament rank based on player level
+    //first of all, load the player's owned camels list
+    var ownedCamels = loadOwnedCamels();
+
+    if (ownedCamels == undefined || ownedCamels == null)
+        return generateErrObj("Player's 'OwnedCamels' object was not found");
+
+    var selectedCamel = ownedCamels[args.camelIndex];
+
+    if (selectedCamel == undefined || selectedCamel == null)
+        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+
+    //TODO increment stats (races started, decrement steroids etc)
+
+    //decrement steroid charges
+    if (Number(selectedCamel.SteroidsLeft) > Number(1))
+        selectedCamel.SteroidsLeft = Number(selectedCamel.SteroidsLeft) - Number(1);
+
+    //update the player's Camels data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
+    });
+
+    //for tournaments, make sure the player has at least one ticket
+    if (args.raceType == "Tournament") {
+
+        var VirtualCurrencyObject = payCurrency(0, 0, 1);
+
+        if (VirtualCurrencyObject == null)
+            return generateFailObj("Can't afford customization");
+
+        //TODO return opponent data
+    }
+
+    return {
+        Result: "OK"
+        //CamelData: camelObject
+    }
+}//sets the player's tournament rank based on player level
 //returns the player's TournamentData Json object. In case of error, returns null
-function SetPlayerTournamentData() {
+function SetPlayerTournamentData(args) {
 
     //load the player's tournament data
     var tournamentDataJSON = null;
@@ -1462,7 +1512,7 @@ function SetPlayerTournamentData() {
     }
 
     if (tournamentDataJSON == undefined || tournamentDataJSON == null ||
-        tournamentDataJSON.StatisticName == undefined || tournamentDataJSON.StatisticName == null || tournamentDataJSON.StatisticName.length <= 0) {
+        tournamentDataJSON.TournamentName == undefined || tournamentDataJSON.TournamentName == null || tournamentDataJSON.TournamentName.length <= 0) {
         //create new tournament object
 
         //load player's current level
@@ -1518,7 +1568,7 @@ function SetPlayerTournamentData() {
         }
 
         tournamentDataJSON = {};
-        tournamentDataJSON.StatisticName = tournamentName;
+        tournamentDataJSON.TournamentName = tournamentName;
 
         //update player's readonly data
         server.UpdateUserReadOnlyData(
@@ -1531,48 +1581,31 @@ function SetPlayerTournamentData() {
 
     return tournamentDataJSON;
 }
-//Arguments
-//args.camelIndex
-//args.raceType
-handlers.startRace = function (args, context) {
 
-    //first of all, load the player's owned camels list
-    var ownedCamels = loadOwnedCamels();
+function AddTournamentRecording(tournamentName, finishTime, camelData) {
 
-    if (ownedCamels == undefined || ownedCamels == null)
-        return generateErrObj("Player's 'OwnedCamels' object was not found");
+    var recordingsObjectKey = "Recordings_" + tournamentName;
+    var tournamentRecordingsJSON = loadTitleDataJson(recordingsObjectKey);
 
-    var selectedCamel = ownedCamels[args.camelIndex];
+    if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
+        return null;
 
-    if (selectedCamel == undefined || selectedCamel == null)
-        return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
+    //add new recording. Player's id is the key, so a player can only have 1 recording active
+    tournamentRecordingsJSON.currentPlayerId = {
+        camelName: camelData.Name,
+        camelCustomization: camelData.Customization,
+        finishTime: finishTime
+    };
 
-    //TODO increment stats (races started, decrement steroids etc)
+    //if list of recordings exceeds maximum length, delete first entry
+    if (Object.keys(tournamentRecordingsJSON).length > 200) {
+        delete tournamentRecordingsJSON[Object.keys(fruitObject)[0]];
+    }
 
-    //decrement steroid charges
-    if (Number(selectedCamel.SteroidsLeft) > Number(1))
-        selectedCamel.SteroidsLeft = Number(selectedCamel.SteroidsLeft) - Number(1);
-
-    //update the player's Camels data
-    server.UpdateUserReadOnlyData(
+    //update the recordings object in titledata
+    server.SetTitleData(
     {
-        PlayFabId: currentPlayerId,
-        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
+        Key: recordingsObjectKey,
+        Value: tournamentRecordingsJSON
     });
-
-    //for tournaments, make sure the player has at least one ticket
-    if (args.raceType == "Tournament") {
-
-        var VirtualCurrencyObject = payCurrency(0, 0, 1);
-
-        if (VirtualCurrencyObject == null)
-            return generateFailObj("Can't afford customization");
-
-        //TODO return opponent data
-    }
-
-    return {
-        Result: "OK"
-        //CamelData: camelObject
-    }
 }
