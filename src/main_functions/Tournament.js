@@ -76,7 +76,7 @@ function AddToTournamentPlayersList(tournamentName) {
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
 
-    log.debug(tournamentRecordingsJSON);
+    log.debug(recordingsObjectKey);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;

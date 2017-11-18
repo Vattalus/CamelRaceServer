@@ -64,6 +64,8 @@ function loadPlayerReadOnlyDataJson(key) {
     if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
         return null;
 
+    log.debug(playerReadOnlyData.Data[key]);
+
     var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key]);
 
     if (playerReadOnlyJSON == undefined)

@@ -64,6 +64,8 @@ function loadPlayerReadOnlyDataJson(key) {
     if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
         return null;
 
+    log.debug(playerReadOnlyData.Data[key]);
+
     var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key]);
 
     if (playerReadOnlyJSON == undefined)
@@ -1613,7 +1615,7 @@ function AddToTournamentPlayersList(tournamentName) {
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
 
-    log.debug(tournamentRecordingsJSON);
+    log.debug(recordingsObjectKey);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
