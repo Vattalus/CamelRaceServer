@@ -105,7 +105,7 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         tournamentRecordingsJSON.push(currentPlayerId + i);
     }
 
-    log.debug(JSON.stringify(tournamentRecordingsJSON));
+    log.debug(tournamentRecordingsJSON.stringify);
 
     //if list of recordings exceeds maximum length, delete first entry
     if (tournamentRecordingsJSON.length > 300) {
