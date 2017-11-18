@@ -43,10 +43,16 @@ function loadTitleInternalDataJson(key) {
     }
     );
 
+    log.debug("Loading internal data key: " + key);
+
     if (internalData == undefined || internalData.Data == undefined || internalData.Data[key] == undefined)
         return null;
 
-    log.debug(internalData.Data[key]);
+    log.debug({
+        "internalData": internalData,
+        "internalData.Data": internalData.Data,
+        "internalData.Data[key]": internalData.Data[key]
+    });
 
     var internalDataJSON = JSON.parse(internalData.Data[key]);
 
@@ -65,6 +71,13 @@ function loadPlayerReadOnlyDataJson(key) {
 
     if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
         return null;
+
+    log.debug({
+        "playerReadOnlyData": playerReadOnlyData,
+        "playerReadOnlyData.Data": playerReadOnlyData.Data,
+        "playerReadOnlyData.Data[key]": playerReadOnlyData.Data[key]
+        //"playerReadOnlyData.Data[key].Value": playerReadOnlyData.Data[key].Value
+    });
 
     var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key].Value);
 
