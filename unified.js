@@ -1604,7 +1604,7 @@ function GetCurrentTournament(args) {
         );
     }
 
-    return currentTournament;
+    return JSON.stringify(currentTournament);
 }
 
 function AddToTournamentPlayersList(tournamentName) {
