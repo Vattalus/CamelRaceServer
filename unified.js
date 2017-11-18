@@ -1617,8 +1617,7 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
 
     //if list of recordings exceeds maximum length, delete first entry
     if (tournamentRecordingsJSON.length > 400) {
-        tournamentRecordingsJSON.delete(0);
-        //tournamentRecordingsJSON.splice(0, 1);
+        tournamentRecordingsJSON.splice(0, 1);
     }
 
     //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
