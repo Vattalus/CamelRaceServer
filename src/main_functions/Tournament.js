@@ -89,6 +89,9 @@ function SetPlayerTournamentData(args) {
 function AddTournamentRecording(tournamentName, finishTime, camelData) {
 
     var recordingsObjectKey = "Recordings_" + tournamentName;
+
+    log.debug(recordingsObjectKey);
+
     var tournamentRecordingsJSON = loadTitleDataJson(recordingsObjectKey);
 
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
