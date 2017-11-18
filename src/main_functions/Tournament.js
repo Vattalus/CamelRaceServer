@@ -76,10 +76,12 @@ function AddToTournamentPlayersList(tournamentName) {
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
 
+    log.debug(tournamentRecordingsJSON);
+
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
 
-    log.debug("Wha...");
+
 
     //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
     if (tournamentRecordingsJSON.indexOf(currentPlayerId) < 0) {
@@ -105,16 +107,16 @@ function AddToTournamentPlayersList(tournamentName) {
 //save race recording into the "LastTournamentRaceRecording" player data
 function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
 
+    var recording = {
+        camelName: camelData.Name,
+        camelCustomization: camelData.Customization,
+        startQteOutcome: Number(startQteOutcome),
+        finishTime: Number(finishTime),
+    }
+
     server.UpdateUserReadOnlyData(
-        {
-            PlayFabId: currentPlayerId,
-            Data: {
-                LastTournamentRaceRecording: {
-                    camelName: camelData.Name,
-                    camelCustomization: camelData.Customization,
-                    startQteOutcome: Number(startQteOutcome),
-                    finishTime: Number(finishTime),
-                }
-            }
-        });
+    {
+        PlayFabId: currentPlayerId,
+        Data: { LastTournamentRaceRecording: JSON.stringify(recording) }
+    });
 }
