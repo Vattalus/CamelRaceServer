@@ -1610,8 +1610,6 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
 
-    log.debug(tournamentRecordingsJSON);
-
     //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
     if (tournamentRecordingsJSON.indexOf(currentPlayerId) < 0) {
         tournamentRecordingsJSON.push(tournamentRecordingsJSON);
@@ -1621,6 +1619,8 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     for (var i = 0; i < 200; i++) {
         tournamentRecordingsJSON.push(currentPlayerId + i);
     }
+
+    log.debug(tournamentRecordingsJSON);
 
     //if list of recordings exceeds maximum length, delete first entry
     if (tournamentRecordingsJSON.length > 300) {
