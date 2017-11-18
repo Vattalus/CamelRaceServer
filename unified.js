@@ -1610,21 +1610,20 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
 
-    //add new recording. Player's id is the key, so a player can only have 1 recording active
-
+    //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
+    if (tournamentRecordingsJSON.indexOf(currentPlayerId) < 0) {
+        tournamentRecordingsJSON.push(tournamentRecordingsJSON);
+    }
 
     //TEST
-    for (var i = 0; i < 100; i++) {
-        tournamentRecordingsJSON["Playeridsomethin" + i] = {
-            camelName: camelData.Name,
-            camelCustomization: camelData.Customization,
-            finishTime: finishTime
-        };
+    for (var i = 0; i < 200; i++) {
+        tournamentRecordingsJSON.push(currentPlayerId + i);
     }
 
     //if list of recordings exceeds maximum length, delete first entry
-    if (Object.keys(tournamentRecordingsJSON).length > 200) {
-        delete tournamentRecordingsJSON[Object.keys(fruitObject)[0]];
+    if (tournamentRecordingsJSON.length > 300) {
+        tournamentRecordingsJSON.delete(0);
+        //tournamentRecordingsJSON.splice(0, 1);
     }
 
     //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
