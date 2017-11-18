@@ -96,11 +96,16 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         return null;
 
     //add new recording. Player's id is the key, so a player can only have 1 recording active
-    tournamentRecordingsJSON[currentPlayerId] = {
-        camelName: camelData.Name,
-        camelCustomization: camelData.Customization,
-        finishTime: finishTime
-    };
+
+
+    //TEST
+    for (var i = 0; i < 100; i++) {
+        tournamentRecordingsJSON["Playeridsomethin" + i] = {
+            camelName: camelData.Name,
+            camelCustomization: camelData.Customization,
+            finishTime: finishTime
+        };
+    }
 
     //if list of recordings exceeds maximum length, delete first entry
     if (Object.keys(tournamentRecordingsJSON).length > 200) {
