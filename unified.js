@@ -1358,6 +1358,8 @@ handlers.endRace_tournament = function (args, context) {
     //get the tournament name the player is currently competing in
     var currentTournament = GetCurrentTournament();
 
+    log.debug({ "Current tournament calculated": currentTournament });
+
     if (currentTournament == undefined || currentTournament == null)
         return generateErrObj("error getting player tournamend data");
 
@@ -1374,6 +1376,8 @@ handlers.endRace_tournament = function (args, context) {
 
     //update camel statistics
     var camelObject = CamelFinishedRace(args);
+
+    log.debug({ "camel object": camelObject });
 
     //save race recording into the "LastTournamentRaceRecording" player data
     SaveTournamentRecording(args.startQteOutcome, args.finishTime, camelObject);
@@ -1609,7 +1613,6 @@ function GetCurrentTournament(args) {
 
 function AddToTournamentPlayersList(tournamentName) {
 
-    AddToTournamentPlayersList(tournamentName);
     var recordingsObjectKey = "Recordings_" + tournamentName;
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
@@ -1640,6 +1643,8 @@ function AddToTournamentPlayersList(tournamentName) {
 
 //save race recording into the "LastTournamentRaceRecording" player data
 function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
+
+    log.debug("Saving recording: " + startQteOutcome + " " + finishTime + " " + camelData.Name);
 
     server.UpdateUserReadOnlyData(
         {

@@ -72,7 +72,6 @@ function GetCurrentTournament(args) {
 
 function AddToTournamentPlayersList(tournamentName) {
 
-    AddToTournamentPlayersList(tournamentName);
     var recordingsObjectKey = "Recordings_" + tournamentName;
 
     var tournamentRecordingsJSON = loadTitleInternalDataJson(recordingsObjectKey);
@@ -103,6 +102,8 @@ function AddToTournamentPlayersList(tournamentName) {
 
 //save race recording into the "LastTournamentRaceRecording" player data
 function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
+
+    log.debug("Saving recording: " + startQteOutcome + " " + finishTime + " " + camelData.Name);
 
     server.UpdateUserReadOnlyData(
         {
