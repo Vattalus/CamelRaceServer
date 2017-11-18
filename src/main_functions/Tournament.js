@@ -114,6 +114,8 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
     //TODO Therefore we could just get a set of random playerIDs and get the recordings from each player respectively
 
+    log.debug(tournamentRecordingsJSON);
+
     //update the recordings object in titledata  
     server.SetTitleInternalData(
     {
