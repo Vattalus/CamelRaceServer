@@ -1615,13 +1615,8 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         tournamentRecordingsJSON.push(currentPlayerId);
     }
 
-    //TEST
-    for (var i = 0; i < 200; i++) {
-        tournamentRecordingsJSON.push(currentPlayerId + i);
-    }
-
     //if list of recordings exceeds maximum length, delete first entry
-    if (tournamentRecordingsJSON.length > 300) {
+    if (tournamentRecordingsJSON.length > 400) {
         tournamentRecordingsJSON.delete(0);
         //tournamentRecordingsJSON.splice(0, 1);
     }
