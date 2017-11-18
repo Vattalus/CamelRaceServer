@@ -48,12 +48,6 @@ function loadTitleInternalDataJson(key) {
     if (internalData == undefined || internalData.Data == undefined || internalData.Data[key] == undefined)
         return null;
 
-    log.debug({
-        "internalData": internalData,
-        "internalData.Data": internalData.Data,
-        "internalData.Data[key]": internalData.Data[key]
-    });
-
     var internalDataJSON = JSON.parse(internalData.Data[key]);
 
     if (internalDataJSON == undefined)
@@ -69,15 +63,8 @@ function loadPlayerReadOnlyDataJson(key) {
         Keys: [key]
     });
 
-    if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined)
+    if (playerReadOnlyData == undefined || playerReadOnlyData.Data == undefined || playerReadOnlyData.Data[key] == undefined || playerReadOnlyData.Data[key].Value == undefined)
         return null;
-
-    log.debug({
-        "playerReadOnlyData": playerReadOnlyData,
-        "playerReadOnlyData.Data": playerReadOnlyData.Data,
-        "playerReadOnlyData.Data[key]": playerReadOnlyData.Data[key]
-        //"playerReadOnlyData.Data[key].Value": playerReadOnlyData.Data[key].Value
-    });
 
     var playerReadOnlyJSON = JSON.parse(playerReadOnlyData.Data[key].Value);
 
@@ -1619,7 +1606,7 @@ function GetCurrentTournament(args) {
         );
     }
 
-    return JSON.stringify(currentTournament);
+    return currentTournament;
 }
 
 function AddToTournamentPlayersList(tournamentName) {
