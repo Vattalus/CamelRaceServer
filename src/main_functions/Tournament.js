@@ -94,6 +94,8 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
     if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
         return null;
 
+    log.debug("ok, so far, key: " + recordingsObjectKey);
+
     //add new recording. Player's id is the key, so a player can only have 1 recording active
     tournamentRecordingsJSON.currentPlayerId = {
         camelName: camelData.Name,
@@ -101,10 +103,18 @@ function AddTournamentRecording(tournamentName, finishTime, camelData) {
         finishTime: finishTime
     };
 
+    log.debug({
+        "b4delete": tournamentRecordingsJSON
+    });
+
     //if list of recordings exceeds maximum length, delete first entry
     if (Object.keys(tournamentRecordingsJSON).length > 200) {
         delete tournamentRecordingsJSON[Object.keys(fruitObject)[0]];
     }
+
+    log.debug({
+        "afterdelete": tournamentRecordingsJSON
+    });
 
     //update the recordings object in titledata
     server.SetTitleData(
