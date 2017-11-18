@@ -1519,6 +1519,14 @@ function SetPlayerTournamentData() {
 
         tournamentDataJSON = {};
         tournamentDataJSON.StatisticName = tournamentName;
+
+        //update player's readonly data
+        server.UpdateUserReadOnlyData(
+            {
+                PlayFabId: currentPlayerId,
+                Data: { "TournamentData": JSON.stringify(tournamentDataJSON) }
+            }
+        );
     }
 
     return tournamentDataJSON;
