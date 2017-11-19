@@ -144,7 +144,7 @@ function GetListOfOpponentRecordings(nrOfOpponents) {
         //skip current player's entry if encountered
         if (playerListJSON[checkingIndex] != currentPlayerId) {
             //load this player's last tournament race data
-            var lastTournamentRecording = loadPlayerReadOnlyDataJson("LastTournamentRaceRecording");
+            var lastTournamentRecording = loadPlayerReadOnlyDataJson("LastTournamentRaceRecording", playerListJSON[checkingIndex]);
 
             if (lastTournamentRecording != undefined && lastTournamentRecording != null) {
                 listOfRecordings.push(lastTournamentRecording);
