@@ -14,7 +14,7 @@ handlers.startRace = function (args, context) {
     if (selectedCamel == undefined || selectedCamel == null)
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
-    //TODO increment stats (races started, decrement steroids etc)
+    //TODO increment statistics (races started, decrement steroids etc)
 
     //decrement steroid charges
     if (Number(selectedCamel.SteroidsLeft) > Number(1))
@@ -27,19 +27,23 @@ handlers.startRace = function (args, context) {
         Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
+    var OpponentData = {};
+
     //for tournaments, make sure the player has at least one ticket
     if (args.raceType == "Tournament") {
 
         var VirtualCurrencyObject = payCurrency(0, 0, 1);
 
         if (VirtualCurrencyObject == null)
-            return generateFailObj("Can't afford customization");
+            return generateFailObj("Not enough tickets");
 
-        //TODO return opponent data
+        //get opponent data
+        OpponentData = GetListOfOpponentRecordings;
     }
 
     return {
-        Result: "OK"
+        Result: "OK",
         //CamelData: camelObject
+        OpponentData: JSON.stringify(OpponentData)
     }
 }

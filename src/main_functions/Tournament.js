@@ -70,38 +70,6 @@ function GetCurrentTournament(args) {
     return currentTournament;
 }
 
-function AddToTournamentPlayersList(tournamentName) {
-
-    var playerListKey = "Recordings_" + tournamentName;
-
-    var tournamentRecordingsJSON = loadTitleInternalDataJson(playerListKey);
-
-    if (tournamentRecordingsJSON == undefined || tournamentRecordingsJSON == null)
-        return null;
-
-
-
-    //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
-    if (tournamentRecordingsJSON.indexOf(currentPlayerId) < 0) {
-        tournamentRecordingsJSON.push(currentPlayerId);
-    }
-
-    //if list of recordings exceeds maximum length, delete first entry
-    if (tournamentRecordingsJSON.length > 400) {
-        tournamentRecordingsJSON.splice(0, 1);
-    }
-
-    //TODO if size ever becomes an issue, a workaround would be to store a player's last recording on their player data, and only store playerIDs in the tournamentRecordingsJSON as a list.
-    //TODO Therefore we could just get a set of random playerIDs and get the recordings from each player respectively
-
-    //update the recordings object in titledata
-    server.SetTitleInternalData(
-    {
-        Key: playerListKey,
-        Value: JSON.stringify(tournamentRecordingsJSON)
-    });
-}
-
 //save race recording into the "LastTournamentRaceRecording" player data
 function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
 
@@ -117,4 +85,74 @@ function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
         PlayFabId: currentPlayerId,
         Data: { LastTournamentRaceRecording: JSON.stringify(recording) }
     });
+}
+
+function AddToTournamentPlayersList(tournamentName) {
+
+    var playerListKey = "Recordings_" + tournamentName;
+
+    var playerListJSON = loadTitleInternalDataJson(playerListKey);
+
+    if (playerListJSON == undefined || playerListJSON == null)
+        return null;
+
+    //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
+    if (playerListJSON.indexOf(currentPlayerId) < 0) {
+
+        playerListJSON.push(currentPlayerId);
+
+        //if list of recordings exceeds maximum length, delete first entry
+        if (playerListJSON.length > 400) {
+            playerListJSON.splice(0, 1);
+        }
+
+        //update the recordings object in titledata
+        server.SetTitleInternalData(
+        {
+            Key: playerListKey,
+            Value: JSON.stringify(playerListJSON)
+        });
+    }
+}
+
+//get a set of random playerIDs from the list and get the recordings from each player respectively
+function GetListOfOpponentRecordings(nrOfOpponents) {
+
+    //get the tournament name the player is currently competing in
+    var currentTournament = GetCurrentTournament();
+
+    //load the list of player ids from the list of players that recently played tournament
+    var playerListKey = "Recordings_" + currentTournament;
+
+    var playerListJSON = loadTitleInternalDataJson(playerListKey);
+
+    if (playerListJSON == undefined || playerListJSON == null || playerListJSON.count <= 0)
+        return null;
+
+    //shuffle the list, to randomize the elements
+    shuffleArray(playerListJSON);
+
+    var nrOfSelected = 0;
+    var checkingIndex = 0;
+
+    var listOfRecordings = [];
+
+    while (nrOfSelected < nrOfOpponents) {
+        //make sure index is not out of range
+        if (checkingIndex >= playerListJSON.length) break;
+
+        //skip current player's entry if encountered
+        if (playerListJSON[checkingIndex] != currentPlayerId) {
+            //load this player's last tournament race data
+            var lastTournamentRecording = loadPlayerReadOnlyDataJson("LastTournamentRaceRecording");
+
+            if (lastTournamentRecording != undefined && lastTournamentRecording != null) {
+                listOfRecordings.push(lastTournamentRecording);
+                nrOfSelected++;
+            }
+        }
+        checkingIndex++;
+    }
+
+    return listOfRecordings;
 }

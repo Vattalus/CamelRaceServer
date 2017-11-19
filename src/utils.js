@@ -43,8 +43,6 @@ function loadTitleInternalDataJson(key) {
     }
     );
 
-    log.debug("Loading internal data key: " + key);
-
     if (internalData == undefined || internalData.Data == undefined || internalData.Data[key] == undefined)
         return null;
 
@@ -56,10 +54,14 @@ function loadTitleInternalDataJson(key) {
     return internalDataJSON;
 }
 
-function loadPlayerReadOnlyDataJson(key) {
+function loadPlayerReadOnlyDataJson(key, playerId) {
+
+    if (playerId == undefined || playerId == null)
+        playerId = currentPlayerId;
+
     var playerReadOnlyData = server.GetUserReadOnlyData(
     {
-        PlayFabId: currentPlayerId,
+        PlayFabId: playerId,
         Keys: [key]
     });
 
@@ -186,4 +188,13 @@ function contains(arr, value) {
         if (arr[i] === value) return true;
     }
     return false;
+}
+
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
 }
