@@ -1544,7 +1544,7 @@ handlers.startRace = function (args, context) {
             return generateFailObj("Not enough tickets");
 
         //get opponent data
-        OpponentData = GetListOfOpponentRecordings;
+        OpponentData = GetListOfOpponentRecordings(3);
     }
 
     return {
