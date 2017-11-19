@@ -27,7 +27,7 @@ handlers.startRace = function (args, context) {
         Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
     });
 
-    var OpponentData = {};
+    var OpponentData = null;
 
     //for tournaments, make sure the player has at least one ticket
     if (args.raceType == "Tournament") {
