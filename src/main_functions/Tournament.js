@@ -156,3 +156,7 @@ function GetListOfOpponentRecordings(nrOfOpponents) {
 
     return listOfRecordings;
 }
+
+handlers.resetTournament = function (args, context) {
+
+}
