@@ -85,15 +85,16 @@ handlers.endRace_event = function (args, context) {
     }
 
     //check if player is eligible for reward
-    if (currSeries != args.seriesIndex || currEvent != args.eventIndex)
-        return generateFailObj("Player is not eligible for this event");
+    if (Number(args.seriesIndex) == currSeries && Number(args.eventIndex) == currEvent) {
+        //this is the current event from the current series, calculate reward
 
-    //calculate and give rewards based on placement, start qte, finish speed
-    var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
+        //calculate and give rewards based on placement, start qte, finish speed
+        var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
 
-    //check for errors
-    if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
-        return generateErrObj(receivedRewards.ErrorMessage);
+        //check for errors
+        if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
+            return generateErrObj(receivedRewards.ErrorMessage);
+    }
 
     //give experience
     var newLevelProgress = null;
