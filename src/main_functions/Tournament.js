@@ -7,7 +7,7 @@ function GetCurrentTournament(args) {
     //load the player's tournament data
     var playerReadOnlyData = server.GetUserReadOnlyData(
     {
-        PlayFabId: playerId,
+        PlayFabId: currentPlayerId,
         Keys: "CurrentTournament"
     });
 
