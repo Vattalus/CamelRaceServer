@@ -1620,7 +1620,7 @@ function GetCurrentTournament(args) {
         server.UpdateUserReadOnlyData(
             {
                 PlayFabId: currentPlayerId,
-                Data: { CurrentTournament: JSON.stringify(currentTournament) }
+                Data: { CurrentTournament: currentTournament }
             }
         );
     }
