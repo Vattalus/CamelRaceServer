@@ -172,10 +172,9 @@ function GetDummyCharacterId() {
     {
         PlayFabId: currentPlayerId,
         Keys: ["DummyPlayer"]
-    }
-    );
+    });
 
-    if (titleData == undefined || titleData.Data == undefined || titleData.Data.DummyPlayer == undefined)
+    if (titleData == undefined || titleData.Data == undefined)
         return null;
 
     return titleData.Data.DummyPlayer;
@@ -267,7 +266,6 @@ function GetPlayerLeaderboardPercentagePosition() {
     //error loading leaderboards
     if (playerPosition < 0 || lastPosition < 0) return null;
 
-
     return {
         "Position": playerPosition,
         "TopPercent": (playerPosition / lastPosition) * 100
@@ -324,7 +322,12 @@ handlers.endTournamentTitle = function (args, context) {
         Value: "[]"
     });
 
-    //TODO calculate the timestamp of the next leaderboard reset and save it to titledata
+    //calculate the timestamp of the next Tournament start (5 minutes after running this function)
+    server.SetTitleData(
+    {
+        "Key": "NextTournamentStart",
+        "Value": getServerTime() + 5 * 60
+    });
 }
 
 //TODO method for receiving the last tournament rewards (read LastTournamentRewards, give rewards, delete object and return relevant data)
