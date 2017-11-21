@@ -1803,7 +1803,7 @@ function GetPlayerLeaderboardPercentagePosition() {
     }
 }
 
-handlers.restTournamentLeaderboards = function (args, context) {
+handlers.endTournamentTitle = function (args, context) {
 
     //reset the dummy player's statistics to 1
     server.UpdatePlayerStatistics({
