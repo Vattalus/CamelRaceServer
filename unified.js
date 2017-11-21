@@ -1715,6 +1715,20 @@ function GetListOfOpponentRecordings(nrOfOpponents) {
     return listOfRecordings;
 }
 
+function GetDummyCharacterId() {
+    var titleData = server.GetTitleData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["DummyPlayer"]
+    }
+    );
+
+    if (titleData == undefined || titleData.Data == undefined || titleData.Data.DummyPlayer == undefined)
+        return null;
+
+    return titleData.Data.DummyPlayer;
+}
+
 
 handlers.endTournamentPlayer = function (args, context) {
 
@@ -1778,12 +1792,17 @@ function GetPlayerLeaderboardPercentagePosition() {
         playerPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
     }
 
-    //Load the dummy player's position (always be last), in order to find out how many players participated in the leaderboard
-    LeaderboardData = server.GetLeaderboardAroundUserRequest({
-        StatisticName: currentTournament,
-        PlayFabId: "00000000000000", //dummy player id
-        MaxResultsCount: 1
-    });
+    var DummyPlayerId = GetDummyCharacterId();
+
+    if (DummyPlayerId != undefined && DummyPlayerId != null) {
+        //Load the dummy player's position (always be last), in order to find out how many players participated in the leaderboard
+        LeaderboardData = server.GetLeaderboardAroundUserRequest({
+            StatisticName: currentTournament,
+            PlayFabId: DummyPlayerId,
+            MaxResultsCount: 1
+        });
+    }
+
 
     var lastPosition = -1;
 
@@ -1806,16 +1825,20 @@ function GetPlayerLeaderboardPercentagePosition() {
 handlers.endTournamentTitle = function (args, context) {
 
     //reset the dummy player's statistics to 1
-    server.UpdatePlayerStatistics({
-        PlayFabId: "00000000000000", //dummy player id, //TODO create a titledata entry from where to read this id
-        Statistics: [
-            { StatisticName: "TournamentBronze", Value: 1 },
-            { StatisticName: "TournamentSilver", Value: 1 },
-            { StatisticName: "TournamentGold", Value: 1 },
-            { StatisticName: "TournamentPlatinum", Value: 1 },
-            { StatisticName: "TournamentDiamond", Value: 1 }
-        ]
-    });
+    var DummyPlayerId = GetDummyCharacterId();
+
+    if (DummyPlayerId != undefined && DummyPlayerId != null) {
+        server.UpdatePlayerStatistics({
+            PlayFabId: DummyPlayerId,
+            Statistics: [
+                { StatisticName: "TournamentBronze", Value: 1 },
+                { StatisticName: "TournamentSilver", Value: 1 },
+                { StatisticName: "TournamentGold", Value: 1 },
+                { StatisticName: "TournamentPlatinum", Value: 1 },
+                { StatisticName: "TournamentDiamond", Value: 1 }
+            ]
+        });
+    }
 
     //clear the list of players that participated in the tournament
     //update the recordings object in titledata
@@ -1848,6 +1871,8 @@ handlers.endTournamentTitle = function (args, context) {
         Key: "Recordings_TournamentDiamond",
         Value: "[]"
     });
+
+    //TODO calculate the timestamp of the next leaderboard reset and save it to titledata
 }
 
 //TODO method for receiving the last tournament rewards (read LastTournamentRewards, give rewards, delete object and return relevant data)
