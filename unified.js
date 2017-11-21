@@ -88,12 +88,15 @@ function randomRange(min, max) {
 
 //Add Virtual Currency
 function addCurrency(currCode, amount) {
+
+    if (Number(amount <= 0)) return null;
+
     server.AddUserVirtualCurrency(
-{
-    PlayFabId: currentPlayerId,
-    "VirtualCurrency": currCode,
-    "Amount": amount
-});
+    {
+        PlayFabId: currentPlayerId,
+        "VirtualCurrency": currCode,
+        "Amount": amount
+    });
 }
 
 //Pay Virtual Currency (returns null if cannot afford)
@@ -1712,6 +1715,144 @@ function GetListOfOpponentRecordings(nrOfOpponents) {
     return listOfRecordings;
 }
 
-handlers.resetTournament = function (args, context) {
 
+handlers.endTournamentPlayer = function (args, context) {
+
+    var playerLeaderboardPositionData = GetPlayerLeaderboardPercentagePosition();
+
+    if (playerLeaderboardPositionData == undefined || playerLeaderboardPositionData == null) return null;
+
+    //load the tournament end rewards
+    var tournamentEndRewards = loadTitleDataJson("Balancing_TournamentEndRewards");
+    if (tournamentEndRewards == undefined || tournamentEndRewards == null || tournamentEndRewards.length <= 0) return null;
+
+    var rewardsObject = null;
+
+    for (var i = 0; i < tournamentEndRewards.length; i++) {
+
+        //check if player fall inside this percentage bracket
+        if (playerLeaderboardPositionData.TopPercent <= Number(tournamentEndRewards[i].TopPercent)) {
+            rewardsObject = tournamentEndRewards[i];
+            break; //remove this if we wish that all players receive something (last element in list) 
+        }
+    }
+
+    if (rewardsObject == null) return null; //error while finding reward
+
+    //Create the "LastTournamentRewards" object in the player's readonly data
+    var tournamentRewardsObject = {};
+    tournamentRewardsObject.PlayerLeaderboardPercentagePosition = playerLeaderboardPositionData.TopPercent;
+    tournamentRewardsObject.PlayerLeaderboardPosition = playerLeaderboardPositionData.Position;
+    tournamentRewardsObject.RewardSC = rewardsObject.RewardSC;
+    tournamentRewardsObject.RewardHC = rewardsObject.RewardHC;
+
+    //save the tournament end rewards and clear the current tournament name and recordings
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: {
+            LastTournamentRewards: JSON.stringify(tournamentRewardsObject),
+            CurrentTournament: null,
+            LastTournamentRaceRecording: null
+        }
+    }
+    );
+}
+
+function GetPlayerLeaderboardPercentagePosition() {
+
+    //first, load the player's current Tournament Rank
+    var currentTournament = GetCurrentTournament();
+
+    var LeaderboardData = server.GetLeaderboardAroundUserRequest({
+        StatisticName: currentTournament,
+        PlayFabId: currentPlayerId,
+        MaxResultsCount: 1
+    });
+
+    var playerPosition = -1;
+
+    LeaderboardDataJSON = JSON.parse(LeaderboardData);
+    if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
+
+        playerPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
+    }
+
+    //Load the dummy player's position (always be last), in order to find out how many players participated in the leaderboard
+    LeaderboardData = server.GetLeaderboardAroundUserRequest({
+        StatisticName: currentTournament,
+        PlayFabId: "00000000000000", //dummy player id
+        MaxResultsCount: 1
+    });
+
+    var lastPosition = -1;
+
+    LeaderboardDataJSON = JSON.parse(LeaderboardData);
+    if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
+
+        lastPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
+    }
+
+    //error loading leaderboards
+    if (playerPosition < 0 || lastPosition < 0) return null;
+
+
+    return {
+        "Position": playerPosition,
+        "TopPercent": (playerPosition / lastPosition) * 100
+    }
+}
+
+handlers.restTournamentLeaderboards = function (args, context) {
+
+    //reset the dummy player's statistics to 1
+    server.UpdatePlayerStatistics({
+        PlayFabId: "00000000000000", //dummy player id, //TODO create a titledata entry from where to read this id
+        Statistics: [
+            { StatisticName: "TournamentBronze", Value: 1 },
+            { StatisticName: "TournamentSilver", Value: 1 },
+            { StatisticName: "TournamentGold", Value: 1 },
+            { StatisticName: "TournamentPlatinum", Value: 1 },
+            { StatisticName: "TournamentDiamond", Value: 1 }
+        ]
+    });
+
+    //clear the list of players that participated in the tournament
+    //update the recordings object in titledata
+    server.SetTitleInternalData(
+    {
+        Key: "Recordings_TournamentBronze",
+        Value: "[]"
+    });
+
+    server.SetTitleInternalData(
+    {
+        Key: "Recordings_TournamentSilver",
+        Value: "[]"
+    });
+
+    server.SetTitleInternalData(
+    {
+        Key: "Recordings_TournamentGold",
+        Value: "[]"
+    });
+
+    server.SetTitleInternalData(
+    {
+        Key: "Recordings_TournamentPlatinum",
+        Value: "[]"
+    });
+
+    server.SetTitleInternalData(
+    {
+        Key: "Recordings_TournamentDiamond",
+        Value: "[]"
+    });
+}
+
+//TODO method for receiving the last tournament rewards (read LastTournamentRewards, give rewards, delete object and return relevant data)
+handlers.grantTournamentEndRewards = function (args, context) {
+
+    //addCurrency("SC", rewardsObject.RewardSC);
+    //addCurrency("HC", rewardsObject.RewardHC);
 }

@@ -88,12 +88,15 @@ function randomRange(min, max) {
 
 //Add Virtual Currency
 function addCurrency(currCode, amount) {
+
+    if (Number(amount <= 0)) return null;
+
     server.AddUserVirtualCurrency(
-{
-    PlayFabId: currentPlayerId,
-    "VirtualCurrency": currCode,
-    "Amount": amount
-});
+    {
+        PlayFabId: currentPlayerId,
+        "VirtualCurrency": currCode,
+        "Amount": amount
+    });
 }
 
 //Pay Virtual Currency (returns null if cannot afford)
