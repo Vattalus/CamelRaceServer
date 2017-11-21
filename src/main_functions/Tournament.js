@@ -2,8 +2,18 @@
 //returns the player's TournamentData Json object. In case of error, returns null
 function GetCurrentTournament(args) {
 
+    var currentTournament = null;
+
     //load the player's tournament data
-    var currentTournament = loadPlayerReadOnlyDataJson("CurrentTournament");
+    var playerReadOnlyData = server.GetUserReadOnlyData(
+    {
+        PlayFabId: playerId,
+        Keys: "CurrentTournament"
+    });
+
+    if (playerReadOnlyData != undefined && playerReadOnlyData.Data != undefined && playerReadOnlyData.Data.CurrentTournament != undefined) {
+        currentTournament = playerReadOnlyData.Data.CurrentTournament.Value;
+    }
 
     if (currentTournament == undefined || currentTournament == null) {
         //load player's current level
