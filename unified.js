@@ -1787,7 +1787,7 @@ function GetPlayerLeaderboardPercentagePosition() {
     //load the player's current Tournament Rank
     var currentTournament = GetCurrentTournament();
 
-    var LeaderboardData = server.GetLeaderboardAroundUserRequest({
+    var LeaderboardData = server.GetLeaderboardAroundUser({
         StatisticName: currentTournament,
         PlayFabId: currentPlayerId,
         MaxResultsCount: 1
@@ -1807,13 +1807,12 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (DummyPlayerId != undefined && DummyPlayerId != null) {
         //Load the dummy player's position (always be last), in order to find out how many players participated in the leaderboard
-        LeaderboardData = server.GetLeaderboardAroundUserRequest({
+        LeaderboardData = server.GetLeaderboardAroundUser({
             StatisticName: currentTournament,
             PlayFabId: DummyPlayerId,
             MaxResultsCount: 1
         });
     }
-
 
     var lastPosition = -1;
 
