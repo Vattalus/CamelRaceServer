@@ -1798,7 +1798,9 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     log.debug(LeaderboardData);
 
-    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined) {
+    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
+
+        log.debug(LeaderboardJSON[3].PlayFabId);
 
         var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
 
@@ -1821,7 +1823,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     var lastPosition = -1;
 
-    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined) {
+    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
         var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
 
@@ -1922,7 +1924,7 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
     var LeaderboardEntries = [];
     var DummyPlayerId = GetDummyCharacterId();
 
-    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined && LeaderboardData.data.Leaderboard.length > 0) {
+    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
         LeaderboardEntriesParsed = JSON.parse(LeaderboardData.data.Leaderboard);
 
