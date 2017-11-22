@@ -242,12 +242,14 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
-        var LeaderboardJSON = JSON.parse(LeaderboardData.Leaderboard);
+        log.debug(LeaderboardData.Leaderboard.length);
 
-        log.debug(LeaderboardJSON);
+        var LeaderboardPlayerEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
 
-        playerStatValue = Number(LeaderboardJSON[0].StatValue),
-        playerPosition = Number(LeaderboardJSON[0].Position);
+        log.debug(LeaderboardPlayerEntryJSON);
+
+        playerStatValue = Number(LeaderboardPlayerEntryJSON[0].StatValue),
+        playerPosition = Number(LeaderboardPlayerEntryJSON[0].Position);
     }
 
     var DummyPlayerId = GetDummyCharacterId();
@@ -265,9 +267,9 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
-        var LeaderboardJSON = JSON.parse(LeaderboardData.Leaderboard);
+        var LeaderboardLastEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
 
-        lastPosition = Number(LeaderboardJSON[0].Position);
+        lastPosition = Number(LeaderboardLastEntryJSON[0].Position);
     }
 
     //error loading leaderboards
