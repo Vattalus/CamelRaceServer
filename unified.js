@@ -1800,9 +1800,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
-        log.debug(LeaderboardData[3].PlayFabId);
-
-        var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
+        var LeaderboardJSON = JSON.parse(LeaderboardData.Leaderboard);
 
         log.debug(LeaderboardJSON);
 
@@ -1825,7 +1823,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
-        var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
+        var LeaderboardJSON = JSON.parse(LeaderboardData.Leaderboard);
 
         lastPosition = Number(LeaderboardJSON[0].Position);
     }
@@ -1926,7 +1924,7 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
-        LeaderboardEntriesParsed = JSON.parse(LeaderboardData.data.Leaderboard);
+        LeaderboardEntriesParsed = JSON.parse(LeaderboardData.Leaderboard);
 
         for (var i = 0; i < LeaderboardEntriesParsed.length; i++) {
 
