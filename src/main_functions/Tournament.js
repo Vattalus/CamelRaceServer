@@ -374,6 +374,7 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
     }
 
     return {
+        Result: "OK",
         "CurrentTournament": playerLeaderboardPositionData.StatName,
         "PlayerScore": playerLeaderboardPositionData.StatValue,
         "PlayerPosition": playerLeaderboardPositionData.Position,
