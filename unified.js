@@ -1800,7 +1800,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
 
-        log.debug(LeaderboardJSON[3].PlayFabId);
+        log.debug(LeaderboardData[3].PlayFabId);
 
         var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
 
