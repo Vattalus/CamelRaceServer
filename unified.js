@@ -1796,11 +1796,12 @@ function GetPlayerLeaderboardPercentagePosition() {
     var playerStatValue = 0;
     var playerPosition = -1;
 
-    LeaderboardDataJSON = JSON.parse(LeaderboardData);
-    if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
+    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined) {
 
-        playerStatValue = Number(LeaderboardDataJSON.data.Leaderboard[0].StatValue),
-        playerPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
+        var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
+
+        playerStatValue = Number(LeaderboardJSON[0].StatValue),
+        playerPosition = Number(LeaderboardJSON[0].Position);
     }
 
     var DummyPlayerId = GetDummyCharacterId();
@@ -1816,9 +1817,11 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     var lastPosition = -1;
 
-    LeaderboardDataJSON = JSON.parse(LeaderboardData);
-    if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
-        lastPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
+    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined) {
+
+        var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
+
+        lastPosition = Number(LeaderboardJSON[0].Position);
     }
 
     //error loading leaderboards
