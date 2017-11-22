@@ -1760,7 +1760,7 @@ handlers.endTournamentPlayer = function (args, context) {
         }
     }
 
-    if (rewardsObject == null) return null; //error while finding reward
+    if (rewardsObject == null) return null; //player receives no reward OR an error occured
 
     //Create the "LastTournamentRewards" object in the player's readonly data
     var tournamentRewardsObject = {};
@@ -1784,7 +1784,7 @@ handlers.endTournamentPlayer = function (args, context) {
 
 function GetPlayerLeaderboardPercentagePosition() {
 
-    //first, load the player's current Tournament Rank
+    //load the player's current Tournament Rank
     var currentTournament = GetCurrentTournament();
 
     var LeaderboardData = server.GetLeaderboardAroundUserRequest({
@@ -1793,11 +1793,13 @@ function GetPlayerLeaderboardPercentagePosition() {
         MaxResultsCount: 1
     });
 
+    var playerStatValue = 0;
     var playerPosition = -1;
 
     LeaderboardDataJSON = JSON.parse(LeaderboardData);
     if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
 
+        playerStatValue = Number(LeaderboardDataJSON.data.Leaderboard[0].StatValue),
         playerPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
     }
 
@@ -1817,7 +1819,6 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     LeaderboardDataJSON = JSON.parse(LeaderboardData);
     if (LeaderboardDataJSON.data != undefined && LeaderboardDataJSON.data.Leaderboard != undefined && LeaderboardDataJSON.data.Leaderboard.length > 0) {
-
         lastPosition = Number(LeaderboardDataJSON.data.Leaderboard[0].Position);
     }
 
@@ -1825,6 +1826,8 @@ function GetPlayerLeaderboardPercentagePosition() {
     if (playerPosition < 0 || lastPosition < 0) return null;
 
     return {
+        "StatName": currentTournament,
+        "StatValue": playerStatValue,
         "Position": playerPosition,
         "TopPercent": (playerPosition / lastPosition) * 100
     }
@@ -1893,4 +1896,50 @@ handlers.grantTournamentEndRewards = function (args, context) {
 
     //addCurrency("SC", rewardsObject.RewardSC);
     //addCurrency("HC", rewardsObject.RewardHC);
+}
+
+//TODO method for retrieving leaderboard information to the client (first x players, player position)
+handlers.RetrieveTournamentLeaderboard = function (args, context) {
+
+    //load players leaderboard data (scatistic name, statistic value, position, position percentage)
+    var playerLeaderboardPositionData = GetPlayerLeaderboardPercentagePosition();
+
+    if (playerLeaderboardPositionData == undefined || playerLeaderboardPositionData == null) return generateErrObj("Couldnt get current tournament leaderboard position");
+
+    //Load leaderboard data
+    var LeaderboardData = server.GetLeaderboard({
+        StatisticName: playerLeaderboardPositionData.StatName,
+        StartPosition: 0,
+        MaxResultsCount: 100
+    });
+
+    var LeaderboardEntries = [];
+    var DummyPlayerId = GetDummyCharacterId();
+
+    if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined && LeaderboardData.data.Leaderboard.length > 0) {
+
+        LeaderboardEntriesParsed = JSON.parse(LeaderboardData.data.Leaderboard);
+
+        for (var i = 0; i < LeaderboardEntriesParsed.length; i++) {
+
+            //ignore the dummy player
+            if (LeaderboardEntriesParsed[i].PlayFabId == DummyPlayerId) continue;
+
+            LeaderboardEntries.push(
+            {
+                "PlayFabId": LeaderboardEntriesParsed[i].PlayFabId,
+                "DisplayName": LeaderboardEntriesParsed[i].DisplayName,
+                "StatValue": LeaderboardEntriesParsed[i].StatValue,
+                "Position": LeaderboardEntriesParsed[i].Position
+            });
+        }
+    }
+
+    return {
+        "CurrentTournament": playerLeaderboardPositionData.StatName,
+        "PlayerScore": playerLeaderboardPositionData.StatValue,
+        "PlayerPosition": playerLeaderboardPositionData.Position,
+        "PlayerPositionPercentage": playerLeaderboardPositionData.TopPercent,
+        "LeaderboardData": LeaderboardEntries
+    }
 }
