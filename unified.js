@@ -1796,9 +1796,13 @@ function GetPlayerLeaderboardPercentagePosition() {
     var playerStatValue = 0;
     var playerPosition = -1;
 
+    log.debug(LeaderboardData);
+
     if (LeaderboardData.data != undefined && LeaderboardData.data.Leaderboard != undefined) {
 
         var LeaderboardJSON = JSON.parse(LeaderboardData.data.Leaderboard);
+
+        log.debug(LeaderboardJSON);
 
         playerStatValue = Number(LeaderboardJSON[0].StatValue),
         playerPosition = Number(LeaderboardJSON[0].Position);
