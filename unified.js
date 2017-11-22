@@ -1800,12 +1800,6 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
-        log.debug(LeaderboardData.Leaderboard[0].StatValue);
-
-        //var LeaderboardPlayerEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
-
-        //log.debug(LeaderboardPlayerEntryJSON);
-
         playerStatValue = Number(LeaderboardData.Leaderboard[0].StatValue),
         playerPosition = Number(LeaderboardData.Leaderboard[0].Position);
     }
@@ -1825,9 +1819,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
-        var LeaderboardLastEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
-
-        lastPosition = Number(LeaderboardLastEntryJSON[0].Position);
+        lastPosition = Number(LeaderboardData.Leaderboard[0].Position);
     }
 
     //error loading leaderboards
@@ -1926,19 +1918,17 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
-        LeaderboardEntriesParsed = JSON.parse(LeaderboardData.Leaderboard);
-
-        for (var i = 0; i < LeaderboardEntriesParsed.length; i++) {
+        for (var i = 0; i < LeaderboardData.Leaderboard.length; i++) {
 
             //ignore the dummy player
-            if (LeaderboardEntriesParsed[i].PlayFabId == DummyPlayerId) continue;
+            if (LeaderboardData.Leaderboard[i].PlayFabId == DummyPlayerId) continue;
 
             LeaderboardEntries.push(
             {
-                "PlayFabId": LeaderboardEntriesParsed[i].PlayFabId,
-                "DisplayName": LeaderboardEntriesParsed[i].DisplayName,
-                "StatValue": LeaderboardEntriesParsed[i].StatValue,
-                "Position": LeaderboardEntriesParsed[i].Position
+                "PlayFabId": LeaderboardData.Leaderboard[i].PlayFabId,
+                "DisplayName": LeaderboardData.Leaderboard[i].DisplayName,
+                "StatValue": LeaderboardData.Leaderboard[i].StatValue,
+                "Position": LeaderboardData.Leaderboard[i].Position
             });
         }
     }
