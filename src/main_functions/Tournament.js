@@ -240,16 +240,16 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     log.debug(LeaderboardData);
 
-    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
+    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
-        log.debug(LeaderboardData.Leaderboard.length);
+        log.debug(LeaderboardData.Leaderboard[0].StatValue);
 
-        var LeaderboardPlayerEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
+        //var LeaderboardPlayerEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
 
-        log.debug(LeaderboardPlayerEntryJSON);
+        //log.debug(LeaderboardPlayerEntryJSON);
 
-        playerStatValue = Number(LeaderboardPlayerEntryJSON[0].StatValue),
-        playerPosition = Number(LeaderboardPlayerEntryJSON[0].Position);
+        playerStatValue = Number(LeaderboardData.Leaderboard[0].StatValue),
+        playerPosition = Number(LeaderboardData.Leaderboard[0].Position);
     }
 
     var DummyPlayerId = GetDummyCharacterId();
@@ -265,7 +265,7 @@ function GetPlayerLeaderboardPercentagePosition() {
 
     var lastPosition = -1;
 
-    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined) {
+    if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
         var LeaderboardLastEntryJSON = JSON.parse(LeaderboardData.Leaderboard);
 
