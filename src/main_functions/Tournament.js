@@ -338,8 +338,7 @@ handlers.grantTournamentEndRewards = function (args, context) {
     //addCurrency("HC", rewardsObject.RewardHC);
 }
 
-//retreave leaderboard information to the client (first x players, player position)
-handlers.RetrieveTournamentLeaderboard = function (args, context) {
+function LoadTournamentLeaderboard() {
 
     //load players leaderboard data (scatistic name, statistic value, position, position percentage)
     var playerLeaderboardPositionData = GetPlayerLeaderboardPercentagePosition();
@@ -381,4 +380,9 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
         "PlayerPositionPercentage": playerLeaderboardPositionData.TopPercent,
         "LeaderboardEntries": LeaderboardEntries
     }
+}
+
+//retrieve leaderboard information to the client (first x players, player position)
+handlers.RetrieveTournamentLeaderboard = function (args, context) {
+    return LoadTournamentLeaderboard();
 }
