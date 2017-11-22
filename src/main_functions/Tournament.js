@@ -238,8 +238,6 @@ function GetPlayerLeaderboardPercentagePosition() {
     var playerStatValue = 0;
     var playerPosition = -1;
 
-    log.debug(LeaderboardData);
-
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
         playerStatValue = Number(LeaderboardData.Leaderboard[0].StatValue),
@@ -340,7 +338,7 @@ handlers.grantTournamentEndRewards = function (args, context) {
     //addCurrency("HC", rewardsObject.RewardHC);
 }
 
-//TODO method for retrieving leaderboard information to the client (first x players, player position)
+//retreave leaderboard information to the client (first x players, player position)
 handlers.RetrieveTournamentLeaderboard = function (args, context) {
 
     //load players leaderboard data (scatistic name, statistic value, position, position percentage)
@@ -380,6 +378,6 @@ handlers.RetrieveTournamentLeaderboard = function (args, context) {
         "PlayerScore": playerLeaderboardPositionData.StatValue,
         "PlayerPosition": playerLeaderboardPositionData.Position,
         "PlayerPositionPercentage": playerLeaderboardPositionData.TopPercent,
-        "LeaderboardData": LeaderboardEntries
+        "LeaderboardEntries": LeaderboardEntries
     }
 }

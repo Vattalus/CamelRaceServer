@@ -192,7 +192,8 @@ handlers.endRace_tournament = function (args, context) {
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency,
+        TournamentLeaderboard: RetrieveTournamentLeaderboard()
     }
 }
 
