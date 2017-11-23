@@ -206,8 +206,8 @@ handlers.endTournamentPlayer = function (args, context) {
 
     //Create the "LastTournamentRewards" object in the player's readonly data
     var tournamentRewardsObject = {};
-    tournamentRewardsObject.PlayerLeaderboardPercentagePosition = playerLeaderboardPositionData.TopPercent;
     tournamentRewardsObject.PlayerLeaderboardPosition = playerLeaderboardPositionData.Position;
+    tournamentRewardsObject.PlayerLeaderboardPercentagePosition = playerLeaderboardPositionData.TopPercent;
     tournamentRewardsObject.RewardSC = rewardsObject.RewardSC;
     tournamentRewardsObject.RewardHC = rewardsObject.RewardHC;
 
@@ -331,11 +331,31 @@ handlers.endTournamentTitle = function (args, context) {
     });
 }
 
-//TODO method for receiving the last tournament rewards (read LastTournamentRewards, give rewards, delete object and return relevant data)
-handlers.grantTournamentEndRewards = function (args, context) {
+//method for receiving the last tournament rewards (read LastTournamentRewards, give rewards, delete object and return relevant data)
+handlers.claimTournamentEndRewards = function (args, context) {
 
-    //addCurrency("SC", rewardsObject.RewardSC);
-    //addCurrency("HC", rewardsObject.RewardHC);
+    //load the player's LastTournamentRewards object
+    var lastTournamentRewardsJSON = loadPlayerReadOnlyDataJson("LastTournamentRewards");
+
+    if (lastTournamentRewardsJSON != undefined && lastTournamentRewardsJSON != null) {
+        return generateErrObj("LastTournamentRewards object not found");
+    }
+
+    //Add the currencies
+    addCurrency("SC", lastTournamentRewardsJSON.RewardSC);
+    addCurrency("HC", lastTournamentRewardsJSON.RewardHC);
+
+    //now clear the  object from player data
+    server.UpdateUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { LastTournamentRewards: null }
+    });
+
+    return {
+        Result: "OK",
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency
+    };
 }
 
 function LoadTournamentLeaderboard() {
