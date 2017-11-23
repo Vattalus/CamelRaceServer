@@ -1896,7 +1896,7 @@ handlers.claimTournamentEndRewards = function (args, context) {
     //load the player's LastTournamentRewards object
     var lastTournamentRewardsJSON = loadPlayerReadOnlyDataJson("LastTournamentRewards");
 
-    if (lastTournamentRewardsJSON != undefined && lastTournamentRewardsJSON != null) {
+    if (lastTournamentRewardsJSON == undefined || lastTournamentRewardsJSON == null) {
         return generateErrObj("LastTournamentRewards object not found");
     }
 
