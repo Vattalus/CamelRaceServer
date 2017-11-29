@@ -143,7 +143,7 @@ handlers.endRace_event = function (args, context) {
 //args.finishPosition - placement of player (0- first, 1-seconds etc)
 //args.startQteOutcome - outcome of the start qte (0-perfect, 1-great, 2-good etc)
 //args.finishSpeedFactor - speed factor when crossing finish line (0-top speed, 1-top speed+max boost speed bonus)
-//args.finishTime - time it took to finish the race (for recordings)
+//args.raceRecording - list of actions the camel made during the race (boost, motivate and their timestamps/effectiveness)
 handlers.endRace_tournament = function (args, context) {
 
     //first we load the race reward parameters for the quick race.
@@ -183,7 +183,7 @@ handlers.endRace_tournament = function (args, context) {
     var camelObject = CamelFinishedRace(args);
 
     //save race recording into the "LastTournamentRaceRecording" player data
-    SaveTournamentRecording(args.startQteOutcome, args.finishTime, camelObject);
+    SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject);
 
     //Add player to list of players recently played
     AddToTournamentPlayersList(currentTournament);

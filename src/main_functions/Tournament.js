@@ -81,13 +81,17 @@ function GetCurrentTournament(args) {
 }
 
 //save race recording into the "LastTournamentRaceRecording" player data
-function SaveTournamentRecording(startQteOutcome, finishTime, camelData) {
+function SaveTournamentRecording(startQteOutcome, camelActions, camelData) {
 
     var recording = {
         camelName: camelData.Name,
+        camelAcceleration: camelData.Acceleration,
+        camelSpeed: camelData.Speed,
+        camelGallop: camelData.Gallop,
+        //Stamina irrelevant for recordings, as it does not influence speed
         camelCustomization: camelData.Customization,
         startQteOutcome: Number(startQteOutcome),
-        finishTime: Number(finishTime),
+        camelActions: camelActions
     }
 
     server.UpdateUserReadOnlyData(
