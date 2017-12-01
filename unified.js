@@ -224,14 +224,14 @@ function loadOwnedCamels() {
 
 //Generate new camel
 
-//args.baseAcc
-//args.baseSpeed
-//args.baseGallop
-//args.baseStamina
+//args.BaseAcc
+//args.BaseSpeed
+//args.BaseGallop
+//args.BaseStamina
 function createEmptyCamelProfile(args) {
     var newCamelJson = {
         "Name": "CamelName",
-        "Number" : "00",
+        "Number": "00",
         "Quality": 0,
         //base stats
         "BaseAcc": 0,
@@ -269,27 +269,25 @@ function createEmptyCamelProfile(args) {
         "Customization": createEmptyCustomizationObject()
     }
 
-    log.debug("Acc: " + args.baseAcc + " Spd: " + args.baseSpeed);
-
     //apply provided base stats
-    if (args.baseAcc != undefined && args.baseAcc != null) {
-        newCamelJson.baseAcc = args.baseAcc;
-        newCamelJson.Acceleration = args.baseAcc;
+    if (args.BaseAcc != undefined && args.BaseAcc != null) {
+        newCamelJson.BaseAcc = args.BaseAcc;
+        newCamelJson.Acceleration = args.BaseAcc;
     }
 
-    if (args.baseSpeed != undefined && args.baseSpeed != null) {
-        newCamelJson.baseSpeed = args.baseSpeed;
-        newCamelJson.Speed = args.baseSpeed;
+    if (args.BaseSpeed != undefined && args.BaseSpeed != null) {
+        newCamelJson.BaseSpeed = args.BaseSpeed;
+        newCamelJson.Speed = args.BaseSpeed;
     }
 
-    if (args.baseGallop != undefined && args.baseGallop != null) {
-        newCamelJson.baseGallop = args.baseGallop;
-        newCamelJson.Gallop = args.baseGallop;
+    if (args.BaseGallop != undefined && args.BaseGallop != null) {
+        newCamelJson.BaseGallop = args.BaseGallop;
+        newCamelJson.Gallop = args.BaseGallop;
     }
 
-    if (args.baseStamina != undefined && args.baseStamina != null) {
-        newCamelJson.baseStamina = args.baseStamina;
-        newCamelJson.Stamina = args.baseStamina;
+    if (args.BaseStamina != undefined && args.BaseStamina != null) {
+        newCamelJson.BaseStamina = args.BaseStamina;
+        newCamelJson.Stamina = args.BaseStamina;
     }
 
     return newCamelJson;
@@ -722,10 +720,10 @@ function GenerateBreedingCandidates() {
 //
 //Arguments
 //args.camelName - name of the camel
-//args.baseAcc
-//args.baseSpeed
-//args.baseGallop
-//args.baseStamina
+//args.BaseAcc
+//args.BaseSpeed
+//args.BaseGallop
+//args.BaseStamina
 handlers.pickStartingCamel = function (args, context) {
     //first of all, we need to make sure that the player does not already own a camel (starting camel can only be picked once)
     var ownedCamels = loadOwnedCamels();
@@ -739,28 +737,28 @@ handlers.pickStartingCamel = function (args, context) {
 
     //so far, everything seems to be ok
 
-    var baseAcc = Number(0);
-    if (args.baseAcc != undefined && args.baseAcc != null && !isNaN(Number(args.baseAcc)))
-        baseAcc = args.baseAcc;
+    var BaseAcc = Number(0);
+    if (args.BaseAcc != undefined && args.BaseAcc != null && !isNaN(Number(args.BaseAcc)))
+        BaseAcc = args.BaseAcc;
 
-    var baseSpeed = Number(0);
-    if (args.baseSpeed != undefined && args.baseSpeed != null && !isNaN(Number(args.baseSpeed)))
-        baseSpeed = args.baseSpeed;
+    var BaseSpeed = Number(0);
+    if (args.BaseSpeed != undefined && args.BaseSpeed != null && !isNaN(Number(args.BaseSpeed)))
+        BaseSpeed = args.BaseSpeed;
 
-    var baseGallop = Number(0);
-    if (args.baseGallop != undefined && args.baseGallop != null && !isNaN(Number(args.baseGallop)))
-        baseGallop = args.baseGallop;
+    var BaseGallop = Number(0);
+    if (args.BaseGallop != undefined && args.BaseGallop != null && !isNaN(Number(args.BaseGallop)))
+        BaseGallop = args.BaseGallop;
 
-    var baseStamina = Number(0);
-    if (args.baseStamina != undefined && args.baseStamina != null && !isNaN(Number(args.baseStamina)))
-        baseStamina = args.baseStamina;
+    var BaseStamina = Number(0);
+    if (args.BaseStamina != undefined && args.BaseStamina != null && !isNaN(Number(args.BaseStamina)))
+        BaseStamina = args.BaseStamina;
 
     //create the new camel object, and add it to the list of owned camels
     var newCamelParams = {
-        "baseAcc": baseAcc,
-        "baseSpeed": baseSpeed,
-        "baseGallop": baseGallop,
-        "baseStamina": baseStamina
+        "BaseAcc": BaseAcc,
+        "BaseSpeed": BaseSpeed,
+        "BaseGallop": BaseGallop,
+        "BaseStamina": BaseStamina
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
