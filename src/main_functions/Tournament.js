@@ -68,6 +68,9 @@ function GetCurrentTournament(args) {
                 break;
         }
 
+        //TODO TEMP for development, everone will play in bronze league
+        currentTournament = "TournamentBronze";
+
         //update player's readonly data
         server.UpdateUserReadOnlyData(
             {
