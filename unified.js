@@ -83,9 +83,6 @@ function getServerTime() {
 
 //random int between min and max (both inclusive)
 function randomRange(min, max) {
-    log.debug("min: " + Number(min));
-    log.debug("max: " + Number(max));
-    log.debug("min thresh: " + Math.random() * (Number(max) - Number(min)));
     return Math.round(Math.random() * (Number(max) - Number(min))) + Number(min);
 }
 
@@ -271,6 +268,8 @@ function createEmptyCamelProfile(args) {
 
         "Customization": createEmptyCustomizationObject()
     }
+
+    log.debug("Acc: " + args.baseAcc + " Spd: " + args.baseSpeed);
 
     //apply provided base stats
     if (args.baseAcc != undefined && args.baseAcc != null) {

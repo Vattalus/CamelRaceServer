@@ -66,6 +66,8 @@ function createEmptyCamelProfile(args) {
         "Customization": createEmptyCustomizationObject()
     }
 
+    log.debug("Acc: " + args.baseAcc + " Spd: " + args.baseSpeed);
+
     //apply provided base stats
     if (args.baseAcc != undefined && args.baseAcc != null) {
         newCamelJson.baseAcc = args.baseAcc;
