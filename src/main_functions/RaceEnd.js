@@ -169,6 +169,8 @@ handlers.endRace_tournament = function (args, context) {
     }
     );
 
+    log.debug("tdata: " + titleData);
+
     if (titleData == undefined || titleData.Data == undefined)
         return generateErrObj("tdata undefined or null");
 
