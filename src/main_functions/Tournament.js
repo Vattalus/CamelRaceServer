@@ -1,31 +1,30 @@
 //sets the player's tournament rank based on player level
 //returns the player's TournamentData Json object. In case of error, returns null
-function GetCurrentTournament(args) {
+function GetCurrentTournament(playerReadOnlyData) {
 
     var currentTournament = null;
 
-    //load the player's tournament data
-    var playerReadOnlyData = server.GetUserReadOnlyData(
+    //if not provided, load the player's tournament data
+    if (playerReadOnlyData == undefined || playerReadOnlyData == null) {
+        playerReadOnlyData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Keys: "CurrentTournament"
+        Keys: ["CurrentTournament", "LevelProgress"]
     });
+    }
 
     if (playerReadOnlyData != undefined && playerReadOnlyData.Data != undefined && playerReadOnlyData.Data.CurrentTournament != undefined) {
         currentTournament = playerReadOnlyData.Data.CurrentTournament.Value;
     }
 
     if (currentTournament == undefined || currentTournament == null) {
-        //load player's current level
-        var playerLevelProgress = server.GetUserReadOnlyData(
-        {
-            PlayFabId: currentPlayerId,
-            Keys: ["LevelProgress"]
-        });
 
+        //determine tournament rank based on player level
         var playerLevel = 0;
 
-        if (playerLevelProgress != undefined && playerLevelProgress != null && playerLevelProgress.Data.LevelProgress != undefined && playerLevelProgress.Data.LevelProgress != null) {
+        playerLevelProgress = playerReadOnlyData.Data.LevelProgress;
+
+        if (playerLevelProgress != undefined && playerLevelProgress != null) {
             var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);
 
             if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null && !isNaN(Number(playerLevelProgressJSON.Level))) {
@@ -104,34 +103,6 @@ function SaveTournamentRecording(startQteOutcome, camelActions, camelData) {
     });
 }
 
-function AddToTournamentPlayersList(tournamentName) {
-
-    var playerListKey = "Recordings_" + tournamentName;
-
-    var playerListJSON = loadTitleInternalDataJson(playerListKey);
-
-    if (playerListJSON == undefined || playerListJSON == null)
-        return null;
-
-    //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
-    if (playerListJSON.indexOf(currentPlayerId) < 0) {
-
-        playerListJSON.push(currentPlayerId);
-
-        //if list of recordings exceeds maximum length, delete first entry
-        if (playerListJSON.length > 400) {
-            playerListJSON.splice(0, 1);
-        }
-
-        //update the recordings object in titledata
-        server.SetTitleInternalData(
-        {
-            Key: playerListKey,
-            Value: JSON.stringify(playerListJSON)
-        });
-    }
-}
-
 //get a set of random playerIDs from the list and get the recordings from each player respectively
 function GetListOfOpponentRecordings(nrOfOpponents) {
 
@@ -141,7 +112,7 @@ function GetListOfOpponentRecordings(nrOfOpponents) {
     //load the list of player ids from the list of players that recently played tournament
     var playerListKey = "Recordings_" + currentTournament;
 
-    var playerListJSON = loadTitleInternalDataJson(playerListKey);
+    var playerListJSON = loadTitleDataJson(playerListKey);
 
     if (playerListJSON == undefined || playerListJSON == null || playerListJSON.count <= 0)
         return null;
@@ -231,10 +202,12 @@ handlers.endTournamentPlayer = function (args, context) {
     );
 }
 
-function GetPlayerLeaderboardPercentagePosition() {
+function GetPlayerLeaderboardPercentagePosition(currentTournament, dummyPlayerId) {
 
-    //load the player's current Tournament Rank
-    var currentTournament = GetCurrentTournament();
+    //if not provided, load the player's current Tournament Rank
+    if (currentTournament == undefined || currentTournament == null) {
+        currentTournament = GetCurrentTournament();
+    }
 
     var LeaderboardData = server.GetLeaderboardAroundUser({
         StatisticName: currentTournament,
@@ -251,13 +224,15 @@ function GetPlayerLeaderboardPercentagePosition() {
         playerPosition = Number(LeaderboardData.Leaderboard[0].Position);
     }
 
-    var DummyPlayerId = GetDummyCharacterId();
+    if (dummyPlayerId == undefined || dummyPlayerId == null) {
+        dummyPlayerId = GetDummyCharacterId();
+    }
 
-    if (DummyPlayerId != undefined && DummyPlayerId != null) {
+    if (dummyPlayerId != undefined && dummyPlayerId != null) {
         //Load the dummy player's position (always be last), in order to find out how many players participated in the leaderboard
         LeaderboardData = server.GetLeaderboardAroundUser({
             StatisticName: currentTournament,
-            PlayFabId: DummyPlayerId,
+            PlayFabId: dummyPlayerId,
             MaxResultsCount: 1
         });
     }
@@ -300,31 +275,31 @@ handlers.endTournamentTitle = function (args, context) {
 
     //clear the list of players that participated in the tournament
     //update the recordings object in titledata
-    server.SetTitleInternalData(
+    server.SetTitleData(
     {
         Key: "Recordings_TournamentBronze",
         Value: "[]"
     });
 
-    server.SetTitleInternalData(
+    server.SetTitleData(
     {
         Key: "Recordings_TournamentSilver",
         Value: "[]"
     });
 
-    server.SetTitleInternalData(
+    server.SetTitleData(
     {
         Key: "Recordings_TournamentGold",
         Value: "[]"
     });
 
-    server.SetTitleInternalData(
+    server.SetTitleData(
     {
         Key: "Recordings_TournamentPlatinum",
         Value: "[]"
     });
 
-    server.SetTitleInternalData(
+    server.SetTitleData(
     {
         Key: "Recordings_TournamentDiamond",
         Value: "[]"
@@ -365,10 +340,10 @@ handlers.claimTournamentEndRewards = function (args, context) {
     };
 }
 
-function LoadTournamentLeaderboard() {
+function LoadTournamentLeaderboard(currentTournament, dummyPlayerId) {
 
     //load players leaderboard data (scatistic name, statistic value, position, position percentage)
-    var playerLeaderboardPositionData = GetPlayerLeaderboardPercentagePosition();
+    var playerLeaderboardPositionData = GetPlayerLeaderboardPercentagePosition(currentTournament, dummyPlayerId);
 
     if (playerLeaderboardPositionData == undefined || playerLeaderboardPositionData == null) return generateErrObj("Couldnt get current tournament leaderboard position");
 
@@ -380,14 +355,13 @@ function LoadTournamentLeaderboard() {
     });
 
     var LeaderboardEntries = [];
-    var DummyPlayerId = GetDummyCharacterId();
 
     if (LeaderboardData != undefined && LeaderboardData.Leaderboard != undefined && LeaderboardData.Leaderboard.length > 0) {
 
         for (var i = 0; i < LeaderboardData.Leaderboard.length; i++) {
 
             //ignore the dummy player
-            if (LeaderboardData.Leaderboard[i].PlayFabId == DummyPlayerId) continue;
+            if (LeaderboardData.Leaderboard[i].PlayFabId == dummyPlayerId) continue;
 
             LeaderboardEntries.push(
             {
@@ -411,5 +385,5 @@ function LoadTournamentLeaderboard() {
 
 //retrieve leaderboard information to the client (first x players, player position)
 handlers.RetrieveTournamentLeaderboard = function (args, context) {
-    return LoadTournamentLeaderboard();
+    return LoadTournamentLeaderboard(GetCurrentTournament(), GetDummyCharacterId());
 }

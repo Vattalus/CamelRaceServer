@@ -143,8 +143,34 @@ handlers.endRace_event = function (args, context) {
 //args.raceRecording - list of actions the camel made during the race (boost, motivate and their timestamps/effectiveness)
 handlers.endRace_tournament = function (args, context) {
 
-    //first we load the race reward parameters for the quick race.
-    var raceRewardJSON = loadTitleDataJson("RaceRewards_Tournament");
+    //In order to reduce api calls, we'll load all the needed readonly data at once, and pass the JSONs to the respective methods  //TODO 1 Call
+    var playerReadOnlyData = server.GetUserReadOnlyData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["CurrentTournament", "LevelProgress", "OwnedCamels"]
+    });
+
+    //get the tournament name the player is currently competing in
+    var currentTournament = GetCurrentTournament(playerReadOnlyData); //TODO +1 Call (2)
+
+    if (currentTournament == undefined || currentTournament == null)
+        return generateErrObj("error getting player tournamend data");
+
+    //Get the key of the list of players that participated in the current player's tournament
+    var playerListKey = "Recordings_" + currentTournament;
+
+    //to reduce api calls, load all the necessary title data values //TODO +1 Call (3)
+    var titleData = server.GetTitleData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["RaceRewards_Tournament", "DummyPlayer", playerListKey]
+    }
+    );
+
+    if (titleData == undefined || titleData.Data == undefined)
+        return generateErrObj("tdata undefined or null");
+
+    var raceRewardJSON = JSON.parse(titleData.Data.RaceRewards_Tournament);
 
     if (raceRewardJSON == undefined || raceRewardJSON == null)
         return generateErrObj("RaceRewards_Tournament JSON undefined or null");
@@ -153,19 +179,13 @@ handlers.endRace_tournament = function (args, context) {
     //TODO also, what does the bonus per level mean? level*bonus? (only if first place?? O.o)
 
     //calculate and give rewards based on placement, start qte, finish speed
-    var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
+    var receivedRewards = GiveRaceRewards(args, raceRewardJSON); //TODO +3 Calls (6)
 
     //check for errors
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
         return generateErrObj(receivedRewards.ErrorMessage);
 
-    //get the tournament name the player is currently competing in
-    var currentTournament = GetCurrentTournament();
-
-    if (currentTournament == undefined || currentTournament == null)
-        return generateErrObj("error getting player tournamend data");
-
-    //increment tournament leaderboard
+    //increment tournament leaderboard //TODO +1 Call (7)
     server.UpdatePlayerStatistics({
         PlayFabId: currentPlayerId,
         Statistics: [
@@ -176,21 +196,50 @@ handlers.endRace_tournament = function (args, context) {
         ]
     });
 
+    //parse the owned camels JSON
+    if ((playerReadOnlyData.Data.OwnedCamels == undefined || playerReadOnlyData.Data.OwnedCamels == null))
+        return null;
+
+    var ownedCamelsJSON = JSON.parse(playerReadOnlyData.Data.OwnedCamels.Value);
+
     //update camel statistics
-    var camelObject = CamelFinishedRace(args);
+    var camelObject = CamelFinishedRace(args, ownedCamelsJSON); //TODO +1 Call (8)
 
     //save race recording into the "LastTournamentRaceRecording" player data
-    SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject);
+    SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject); //TODO +1 Call (9)
 
     //Add player to list of players recently played
-    AddToTournamentPlayersList(currentTournament);
+
+    var playerListJSON = JSON.parse(titleData.Data.playerListKey);
+
+    //check if the titledata contains the list of players
+    if (playerListJSON == undefined || playerListJSON == null)
+        return generateErrObj("Error loading list of players");
+
+    //add the player to the list of players that recently played a tournament race (ONLY IF NOT ALREADY ON LIST)
+    if (playerListJSON.indexOf(currentPlayerId) < 0) {
+
+        playerListJSON.push(currentPlayerId);
+
+        //if list of recordings exceeds maximum length, delete first entry
+        if (playerListJSON.length > 400) {
+            playerListJSON.splice(0, 1);
+        }
+
+        //update the recordings object in titledata //TODO +1 Call (10)
+        server.SetTitleData(
+        {
+            Key: playerListKey,
+            Value: JSON.stringify(playerListJSON)
+        });
+    }
 
     //return new currency balance
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency,
-        TournamentLeaderboard: LoadTournamentLeaderboard()
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency, //TODO +1 Call (11)
+        TournamentLeaderboard: LoadTournamentLeaderboard(currentTournament, titleData.Data.DummyPlayer) //TODO +3 Calls (14)
     }
 }
 
@@ -210,32 +259,32 @@ function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
     var hcReward = Number(0);
     var tkReward = Number(0);
 
-    //check if JSON is valid
-    if (raceRewardJSON.Placement_SC == undefined || raceRewardJSON.Placement_HC == undefined || raceRewardJSON.Placement_TK == undefined) {
-        returnObject.ErrorMessage = "race rewards JSON is not valid";
-        return returnObject;
+    //Placement SC
+    if (raceRewardJSON.Placement_SC != undefined) {
+        var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
+        if (placementRwrd_SC != undefined && placementRwrd_SC != null && !isNaN(Number(placementRwrd_SC))) {
+            //there a reward defined for this placement
+            scReward += Number(placementRwrd_SC);
+        };
     }
 
-    //Placement SC
-    var placementRwrd_SC = raceRewardJSON.Placement_SC[args.finishPosition];
-    if (placementRwrd_SC != undefined && placementRwrd_SC != null && !isNaN(Number(placementRwrd_SC))) {
-        //there a reward defined for this placement
-        scReward += Number(placementRwrd_SC);
-    };
-
     //Placement HC
-    var placementRwrd_HC = raceRewardJSON.Placement_HC[args.finishPosition];
-    if (placementRwrd_HC != undefined && placementRwrd_HC != null && !isNaN(Number(placementRwrd_HC))) {
-        //there a reward defined for this placement
-        hcReward += Number(placementRwrd_HC);
-    };
+    if (raceRewardJSON.Placement_HC != undefined) {
+        var placementRwrd_HC = raceRewardJSON.Placement_HC[args.finishPosition];
+        if (placementRwrd_HC != undefined && placementRwrd_HC != null && !isNaN(Number(placementRwrd_HC))) {
+            //there a reward defined for this placement
+            hcReward += Number(placementRwrd_HC);
+        };
+    }
 
     //Placement TK
-    var placementRwrd_TK = raceRewardJSON.Placement_TK[args.finishPosition];
-    if (placementRwrd_TK != undefined && placementRwrd_TK != null && !isNaN(Number(placementRwrd_TK))) {
-        //there a reward defined for this placement
-        tkReward += Number(placementRwrd_TK);
-    };
+    if (raceRewardJSON.Placement_TK != undefined) {
+        var placementRwrd_TK = raceRewardJSON.Placement_TK[args.finishPosition];
+        if (placementRwrd_TK != undefined && placementRwrd_TK != null && !isNaN(Number(placementRwrd_TK))) {
+            //there a reward defined for this placement
+            tkReward += Number(placementRwrd_TK);
+        };
+    }
 
     //TODO actually use the start qte outcome index to modify the scReward value
     //SC from start qte
@@ -270,16 +319,18 @@ function GiveRaceRewards(args, raceRewardJSON, playerLevelBonusSC) {
 
 //this function will do all the operations on the camel that finished the race (update statistics, decrement steroids charges etc)
 //args.camelIndex
-function CamelFinishedRace(args) {
+function CamelFinishedRace(args, ownedCamelsJSON) {
 
-    //first of all, load the player's owned camels list
-    var ownedCamels = loadOwnedCamels();
+    //if not provided, load the player's owned camels list
+    if (ownedCamelsJSON == undefined || ownedCamelsJSON == null) {
+        ownedCamelsJSON = loadOwnedCamels();
+    }
 
     //check existance of Camels object
-    if (ownedCamels == undefined || ownedCamels == null)
+    if (ownedCamelsJSON == undefined || ownedCamelsJSON == null)
         return generateErrObj("Player's 'OwnedCamels' object was not found");
 
-    var selectedCamel = ownedCamels[args.camelIndex];
+    var selectedCamel = ownedCamelsJSON[args.camelIndex];
 
     //check validity of JSON
     if (selectedCamel == undefined || selectedCamel == null)
@@ -291,7 +342,7 @@ function CamelFinishedRace(args) {
     server.UpdateUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
-        Data: { "OwnedCamels": JSON.stringify(ownedCamels) }
+        Data: { "OwnedCamels": JSON.stringify(ownedCamelsJSON) }
     });
 
     return selectedCamel;
