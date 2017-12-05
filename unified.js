@@ -1296,7 +1296,7 @@ handlers.endRace_event = function (args, context) {
         //this is the current event from the current series, calculate reward
 
         //calculate and give rewards based on placement, start qte, finish speed
-        var receivedRewards = GiveRaceRewards(args, eventRewardsJSON);
+        var receivedRewards = GiveRaceRewards(args, seriesJSON.EventsList[args.eventIndex]);
 
         //check for errors
         if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
