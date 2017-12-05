@@ -159,6 +159,8 @@ handlers.endRace_tournament = function (args, context) {
     //Get the key of the list of players that participated in the current player's tournament
     var playerListKey = "Recordings_" + currentTournament;
 
+    log.debug("player list key: " + playerListKey);
+
     //to reduce api calls, load all the necessary title data values //TODO +1 Call (3)
     var titleData = server.GetTitleData(
     {
@@ -209,6 +211,8 @@ handlers.endRace_tournament = function (args, context) {
     SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject); //TODO +1 Call (9)
 
     //Add player to list of players recently played
+
+    log.debug("player list data: " + titleData.Data.playerListKey);
 
     var playerListJSON = JSON.parse(titleData.Data.playerListKey);
 
