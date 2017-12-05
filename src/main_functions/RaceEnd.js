@@ -159,8 +159,6 @@ handlers.endRace_tournament = function (args, context) {
     //Get the key of the list of players that participated in the current player's tournament
     var playerListKey = "Recordings_" + currentTournament;
 
-    log.debug("player list key: " + playerListKey);
-
     //to reduce api calls, load all the necessary title data values //TODO +1 Call (3)
     var titleData = server.GetTitleData(
     {
@@ -169,7 +167,8 @@ handlers.endRace_tournament = function (args, context) {
     }
     );
 
-    log.debug("tdata: " + titleData.Data);
+    log.debug("tdata: " + JSON.parse(titleData.Data));
+    log.debug("tdata keys: " + titleData.Data.keys);
 
     if (titleData == undefined || titleData.Data == undefined)
         return generateErrObj("tdata undefined or null");
