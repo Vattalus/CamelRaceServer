@@ -1369,17 +1369,16 @@ handlers.endRace_tournament = function (args, context) {
     //Get the key of the list of players that participated in the current player's tournament
     var playerListKey = "Recordings_" + currentTournament;
 
-    var tDataKeys = ["RaceRewards_Tournament", "DummyPlayer", playerListKey];
-
     //to reduce api calls, load all the necessary title data values //TODO +1 Call (3)
     var titleData = server.GetTitleData(
     {
         PlayFabId: currentPlayerId,
-        Keys: tDataKeys
+        Keys: ["RaceRewards_Tournament", "DummyPlayer", playerListKey]
     }
     );
 
-    log.debug("tDataKeys: " + tDataKeys);
+    //TODO titleData.Data.playerListKey is undefined for some reason
+    log.debug(titleData.Data.playerListKey);
 
     if (titleData == undefined || titleData.Data == undefined)
         return generateErrObj("tdata undefined or null");
