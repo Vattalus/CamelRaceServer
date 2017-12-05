@@ -169,7 +169,7 @@ handlers.endRace_tournament = function (args, context) {
     }
     );
 
-    log.debug("tdata: " + titleData);
+    log.debug("tdata: " + titleData.Data);
 
     if (titleData == undefined || titleData.Data == undefined)
         return generateErrObj("tdata undefined or null");
