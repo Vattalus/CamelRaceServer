@@ -60,9 +60,6 @@ handlers.endRace_event = function (args, context) {
     if (seriesJSON.EventsList == undefined || seriesJSON.EventsList == null)
         return generateErrObj("List of events not found for series with index: " + args.seriesIndex);
 
-    //at this point, we have found the series and the list of events for that series, we don't need the entire eventRewardsJSON any more.
-    eventRewardsJSON = null;
-
     //now, we need to check if the player is eligible for this reward
 
     //initialize the reached season and event values to 0 (in case they do not exist yet)
@@ -89,7 +86,7 @@ handlers.endRace_event = function (args, context) {
         //this is the current event from the current series, calculate reward
 
         //calculate and give rewards based on placement, start qte, finish speed
-        var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
+        var receivedRewards = GiveRaceRewards(args, eventRewardsJSON);
 
         //check for errors
         if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
