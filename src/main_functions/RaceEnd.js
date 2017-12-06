@@ -168,6 +168,7 @@ handlers.endRace_tournament = function (args, context) {
     );
 
     //TODO titleData.Data.playerListKey is undefined for some reason
+    log.debug(titleData.Data);
     log.debug(titleData.Data.playerListKey);
 
     if (titleData == undefined || titleData.Data == undefined)
