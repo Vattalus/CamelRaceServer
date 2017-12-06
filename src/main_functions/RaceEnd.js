@@ -167,10 +167,6 @@ handlers.endRace_tournament = function (args, context) {
     }
     );
 
-    //TODO titleData.Data.playerListKey is undefined for some reason
-    log.debug(titleData.Data);
-    log.debug(titleData.Data[playerListKey]);
-
     if (titleData == undefined || titleData.Data == undefined)
         return generateErrObj("tdata undefined or null");
 
@@ -213,10 +209,7 @@ handlers.endRace_tournament = function (args, context) {
     SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject); //TODO +1 Call (9)
 
     //Add player to list of players recently played
-
-    log.debug("player list data: " + titleData.Data.playerListKey);
-
-    var playerListJSON = JSON.parse(titleData.Data.playerListKey);
+    var playerListJSON = JSON.parse(titleData.Data[playerListKey]);
 
     //check if the titledata contains the list of players
     if (playerListJSON == undefined || playerListJSON == null)
