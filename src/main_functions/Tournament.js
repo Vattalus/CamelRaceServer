@@ -22,13 +22,8 @@ function GetCurrentTournament(playerReadOnlyData) {
         //determine tournament rank based on player level
         var playerLevel = 0;
 
-        playerLevelProgress = playerReadOnlyData.Data.LevelProgress;
-
-        log.debug(playerReadOnlyData.Data);
-        log.debug(playerReadOnlyData.Data.LevelProgress);
-
-        if (playerLevelProgress != undefined && playerLevelProgress != null) {
-            var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);
+        if (playerReadOnlyData.Data.LevelProgress != undefined && playerReadOnlyData.Data.LevelProgress != null) {
+            var playerLevelProgressJSON = JSON.parse(playerReadOnlyData.Data.LevelProgress.Value);
 
             if (playerLevelProgressJSON != undefined && playerLevelProgressJSON != null && !isNaN(Number(playerLevelProgressJSON.Level))) {
                 playerLevel = Number(playerLevelProgressJSON.Level);
