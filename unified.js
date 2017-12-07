@@ -1353,7 +1353,7 @@ handlers.endRace_event = function (args, context) {
 //args.raceRecording - list of actions the camel made during the race (boost, motivate and their timestamps/effectiveness)
 handlers.endRace_tournament = function (args, context) {
 
-    //In order to reduce api calls, we'll load all the needed readonly data at once, and pass the JSONs to the respective methods  //TODO 1 Call
+    //In order to reduce api calls, we'll load all the needed readonly data at once, and pass the JSONs to the respective methods
     var playerReadOnlyData = server.GetUserReadOnlyData(
     {
         PlayFabId: currentPlayerId,
@@ -1361,7 +1361,7 @@ handlers.endRace_tournament = function (args, context) {
     });
 
     //get the tournament name the player is currently competing in
-    var currentTournament = GetCurrentTournament(playerReadOnlyData); //TODO +1 Call (2)
+    var currentTournament = GetCurrentTournament(playerReadOnlyData);
 
     if (currentTournament == undefined || currentTournament == null)
         return generateErrObj("error getting player tournamend data");
@@ -1369,7 +1369,7 @@ handlers.endRace_tournament = function (args, context) {
     //Get the key of the list of players that participated in the current player's tournament
     var playerListKey = "Recordings_" + currentTournament;
 
-    //to reduce api calls, load all the necessary title data values //TODO +1 Call (3)
+    //to reduce api calls, load all the necessary title data values
     var titleData = server.GetTitleData(
     {
         PlayFabId: currentPlayerId,
@@ -1389,13 +1389,13 @@ handlers.endRace_tournament = function (args, context) {
     //TODO also, what does the bonus per level mean? level*bonus? (only if first place?? O.o)
 
     //calculate and give rewards based on placement, start qte, finish speed
-    var receivedRewards = GiveRaceRewards(args, raceRewardJSON); //TODO +3 Calls (6)
+    var receivedRewards = GiveRaceRewards(args, raceRewardJSON);
 
     //check for errors
     if (receivedRewards == undefined || receivedRewards == null || receivedRewards.ErrorMessage != null)
         return generateErrObj(receivedRewards.ErrorMessage);
 
-    //increment tournament leaderboard //TODO +1 Call (7)
+    //increment tournament leaderboard
     server.UpdatePlayerStatistics({
         PlayFabId: currentPlayerId,
         Statistics: [
@@ -1413,10 +1413,10 @@ handlers.endRace_tournament = function (args, context) {
     var ownedCamelsJSON = JSON.parse(playerReadOnlyData.Data.OwnedCamels.Value);
 
     //update camel statistics
-    var camelObject = CamelFinishedRace(args, ownedCamelsJSON); //TODO +1 Call (8)
+    var camelObject = CamelFinishedRace(args, ownedCamelsJSON);
 
     //save race recording into the "LastTournamentRaceRecording" player data
-    SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject); //TODO +1 Call (9)
+    SaveTournamentRecording(args.startQteOutcome, args.raceRecording, camelObject);
 
     //Add player to list of players recently played
     var playerListJSON = JSON.parse(titleData.Data[playerListKey]);
@@ -1435,7 +1435,7 @@ handlers.endRace_tournament = function (args, context) {
             playerListJSON.splice(0, 1);
         }
 
-        //update the recordings object in titledata //TODO +1 Call (10)
+        //update the recordings object in titledata
         server.SetTitleData(
         {
             Key: playerListKey,
@@ -1447,8 +1447,8 @@ handlers.endRace_tournament = function (args, context) {
     return {
         Result: "OK",
         CamelData: camelObject,
-        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency, //TODO +1 Call (11)
-        TournamentLeaderboard: LoadTournamentLeaderboard(currentTournament, titleData.Data.DummyPlayer) //TODO +3 Calls (14)
+        VirtualCurrency: server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency,
+        TournamentLeaderboard: LoadTournamentLeaderboard(currentTournament, titleData.Data.DummyPlayer)
     }
 }
 
@@ -1596,7 +1596,7 @@ handlers.startRace = function (args, context) {
             return generateFailObj("Not enough tickets");
 
         //get opponent data
-        OpponentData = GetListOfOpponentRecordings(3);
+        OpponentData = GetListOfOpponentRecordings(5);
     }
 
     return {
@@ -1629,6 +1629,9 @@ function GetCurrentTournament(playerReadOnlyData) {
         var playerLevel = 0;
 
         playerLevelProgress = playerReadOnlyData.Data.LevelProgress;
+
+        log.debug(playerReadOnlyData.Data);
+        log.debug(playerReadOnlyData.Data.LevelProgress);
 
         if (playerLevelProgress != undefined && playerLevelProgress != null) {
             var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);

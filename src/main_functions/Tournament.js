@@ -24,6 +24,9 @@ function GetCurrentTournament(playerReadOnlyData) {
 
         playerLevelProgress = playerReadOnlyData.Data.LevelProgress;
 
+        log.debug(playerReadOnlyData.Data);
+        log.debug(playerReadOnlyData.Data.LevelProgress);
+
         if (playerLevelProgress != undefined && playerLevelProgress != null) {
             var playerLevelProgressJSON = JSON.parse(playerLevelProgress.Data.LevelProgress.Value);
 
