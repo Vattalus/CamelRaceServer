@@ -40,6 +40,9 @@ function createEmptyCamelProfile(args) {
         "Speed": 0,
         "Gallop": 0,
         "Stamina": 0,
+        //
+        "Fatigue": 100,
+        "Retire": 30,
         //item levels
         "HeadGear": 0,
         "Robot": 0,

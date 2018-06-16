@@ -243,6 +243,9 @@ function createEmptyCamelProfile(args) {
         "Speed": 0,
         "Gallop": 0,
         "Stamina": 0,
+        //
+        "Fatigue": 100,
+        "Retire": 30,
         //item levels
         "HeadGear": 0,
         "Robot": 0,
@@ -559,8 +562,24 @@ handlers.breedCamel = function (args, context) {
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
-    //determine quality
+    //quality
     newCamelJson.Quality = Math.floor(Number(selectedCamel.Quality) + Number(selectedCandidate.Quality));
+
+    //retire based on qlty
+    switch (newCamelJson.Quality) {
+        case 0:
+            newCamelJson.Retire = 30;
+            break;
+        case 1:
+            newCamelJson.Retire = 40;
+            break;
+        case 2:
+            newCamelJson.Retire = 50;
+            break;
+        default:
+            newCamelJson.Retire = 30;
+            break;
+    }
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
@@ -1559,6 +1578,7 @@ function CamelFinishedRace(args, ownedCamelsJSON) {
 //Arguments
 //args.camelIndex
 //args.raceType
+//args.raceLength [int]
 handlers.startRace = function (args, context) {
 
     //first of all, load the player's owned camels list
@@ -1573,6 +1593,34 @@ handlers.startRace = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //TODO increment statistics (races started, decrement steroids etc)
+
+    //TODO add balancing from title data
+    //add fatigue and retirement
+    var fatigueVal = Number(10);
+    var retireVal = Number(10);
+
+    switch (args.raceLength) {
+        case 0:
+            fatigueVal = 10;
+            retireVal = 10;
+            break;
+        case 1:
+            fatigueVal = 20;
+            retireVal = 20;
+            break;
+        case 2:
+            fatigueVal = 30;
+            retireVal = 30;
+            break;
+        default:
+            fatigueVal = 10;
+            retireVal = 10;
+            break;
+    }
+
+    selectedCamel.Fatigue -= fatigueVal;
+    selectedCamel.Retire -= retireVal;
+
 
     //decrement steroid charges
     if (Number(selectedCamel.SteroidsLeft) > Number(1))

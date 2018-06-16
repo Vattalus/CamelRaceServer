@@ -67,8 +67,24 @@ handlers.breedCamel = function (args, context) {
     }
     var newCamelJson = createEmptyCamelProfile(newCamelParams);
 
-    //determine quality
+    //quality
     newCamelJson.Quality = Math.floor(Number(selectedCamel.Quality) + Number(selectedCandidate.Quality));
+
+    //retire based on qlty
+    switch (newCamelJson.Quality) {
+        case 0:
+            newCamelJson.Retire = 30;
+            break;
+        case 1:
+            newCamelJson.Retire = 40;
+            break;
+        case 2:
+            newCamelJson.Retire = 50;
+            break;
+        default:
+            newCamelJson.Retire = 30;
+            break;
+    }
 
     //add wait time
     newCamelJson.BreedingCompletionTimestamp = getServerTime() + (Number(selectedCandidate.WaitTimeHours) * 3600);
