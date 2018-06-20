@@ -1604,7 +1604,7 @@ handlers.startRace = function (args, context) {
     if (selectedCamel.Fatigue < 100) {
         var fatigueRechargeTime = 2;
 
-        while (selectedCamel.FatigueChangeTimestamp <= serverTime && (serverTime - selectedCamel.FatigueChangeTimestamp) * 60 >= fatigueRechargeTime && selectedCamel.Fatigue < 100) {
+        while ((serverTime - selectedCamel.FatigueChangeTimestamp) >= (fatigueRechargeTime * 60) && selectedCamel.Fatigue < 100) {
             selectedCamel.Fatigue += 10;
             selectedCamel.FatigueChangeTimestamp += (fatigueRechargeTime * 60);
 
