@@ -1608,7 +1608,7 @@ handlers.startRace = function (args, context) {
             selectedCamel.Fatigue += 10;
             selectedCamel.FatigueChangeTimestamp += (fatigueRechargeTime * 60);
 
-            if (selectedCamel.Fatigue > 100) {
+            if (selectedCamel.Fatigue >= 100) {
                 //fully recharged
                 selectedCamel.Fatigue = 100;
                 selectedCamel.FatigueChangeTimestamp = serverTime;
