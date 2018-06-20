@@ -17,6 +17,11 @@ handlers.startRace = function (args, context) {
 
     //TODO increment statistics (races started, decrement steroids etc)
 
+    //if camel too old
+    if (selectedCamel.Retire <= 0)
+        if (VirtualCurrencyObject == null)
+            return generateFailObj("Camel Too Old");
+
     //recalculate fatigue
     var serverTime = getServerTime();
 
