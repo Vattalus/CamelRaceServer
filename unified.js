@@ -1598,18 +1598,21 @@ handlers.startRace = function (args, context) {
     //recalculate fatigue
     var serverTime = getServerTime();
 
-    if (selectedCamel.FatigueChangeTimestamp == undefined || selectedCamel.FatigueChangeTimestamp == null || selectedCamel.Fatigue >= 100)
+    if (selectedCamel.FatigueChangeTimestamp == undefined || selectedCamel.FatigueChangeTimestamp == null)
         selectedCamel.FatigueChangeTimestamp = serverTime;
 
     if (selectedCamel.Fatigue < 100) {
-        var minutesSinceFatigueChange = (serverTime - selectedCamel.FatigueChangeTimestamp) * 60;
         var fatigueRechargeTime = 2;
 
-        while (selectedCamel.FatigueChangeTimestamp <= serverTime && minutesSinceFatigueChange >= fatigueRechargeTime && selectedCamel.Fatigue < 100) {
-            minutesSinceFatigueChange -= fatigueRechargeTime;
+        while (selectedCamel.FatigueChangeTimestamp <= serverTime && (serverTime - selectedCamel.FatigueChangeTimestamp) * 60 >= fatigueRechargeTime && selectedCamel.Fatigue < 100) {
             selectedCamel.Fatigue += 10;
             selectedCamel.FatigueChangeTimestamp += (fatigueRechargeTime * 60);
-            if (selectedCamel.Fatigue > 100) selectedCamel.Fatigue = 100;
+
+            if (selectedCamel.Fatigue > 100) {
+                //fully recharged
+                selectedCamel.Fatigue = 100;
+                selectedCamel.FatigueChangeTimestamp = serverTime;
+            }
         }
     }
 
