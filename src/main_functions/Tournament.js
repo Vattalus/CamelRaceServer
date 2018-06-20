@@ -88,7 +88,8 @@ function SaveTournamentRecording(startQteOutcome, camelActions, camelData) {
         camelAcceleration: camelData.Acceleration,
         camelSpeed: camelData.Speed,
         camelGallop: camelData.Gallop,
-        //Stamina irrelevant for recordings, as it does not influence speed
+        //Stamina irrelevant for recordings, no influence
+        camelFatigue: camelData.Fatigue,
         camelCustomization: camelData.Customization,
         startQteOutcome: Number(startQteOutcome),
         camelActions: camelActions

@@ -42,6 +42,7 @@ function createEmptyCamelProfile(args) {
         "Stamina": 0,
         //
         "Fatigue": 100,
+        "FatigueChangeTimestamp": 0,
         "Retire": 30,
         //item levels
         "HeadGear": 0,
