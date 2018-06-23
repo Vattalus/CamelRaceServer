@@ -30,7 +30,7 @@ handlers.retireCamel = function (args, context) {
 
     var VirtualCurrencyObject = server.GetUserInventory({ PlayFabId: currentPlayerId }).VirtualCurrency;
 
-    playerListJSON.splice(args.camelIndex, 1);
+    ownedCamels.splice(args.camelIndex, 1);
 
     //update the player's Camels data
     server.UpdateUserReadOnlyData(
