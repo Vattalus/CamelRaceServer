@@ -14,7 +14,7 @@ handlers.retireCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if there is another available camel left after retirement
-    if (Number(camelsJSON.length) <= Number(1))
+    if (Number(ownedCamels.length) <= Number(1))
         return generateFailObj("Last camel");
 
     //var nrOfAvailableCamels = getNumberOfAvailableCamels(ownedCamels);
