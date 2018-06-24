@@ -813,8 +813,8 @@ handlers.retireCamel = function (args, context) {
         return generateErrObj("Camel with index: " + args.camelIndex + "not found.");
 
     //check if there is another available camel left after retirement
-    if (Number(ownedCamels.length) <= Number(1))
-        return generateFailObj("Last camel");
+    //if (Number(ownedCamels.length) <= Number(1))
+    //    return generateFailObj("Last camel");
 
     //var nrOfAvailableCamels = getNumberOfAvailableCamels(ownedCamels);
 
@@ -1678,23 +1678,19 @@ handlers.startRace = function (args, context) {
 
     //add fatigue and retirement
     var fatigueVal = Number(10);
-    var retireVal = Number(10);
+    var retireVal = Number(3);
 
     switch (args.raceLength) {
         case 0:
             fatigueVal = 10;
-            retireVal = 10;
+            retireVal = 3;
             break;
         case 1:
             fatigueVal = 20;
-            retireVal = 20;
+            retireVal = 5;
             break;
         case 2:
             fatigueVal = 30;
-            retireVal = 30;
-            break;
-        default:
-            fatigueVal = 10;
             retireVal = 10;
             break;
     }

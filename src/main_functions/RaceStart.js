@@ -45,23 +45,19 @@ handlers.startRace = function (args, context) {
 
     //add fatigue and retirement
     var fatigueVal = Number(10);
-    var retireVal = Number(10);
+    var retireVal = Number(3);
 
     switch (args.raceLength) {
         case 0:
             fatigueVal = 10;
-            retireVal = 10;
+            retireVal = 3;
             break;
         case 1:
             fatigueVal = 20;
-            retireVal = 20;
+            retireVal = 5;
             break;
         case 2:
             fatigueVal = 30;
-            retireVal = 30;
-            break;
-        default:
-            fatigueVal = 10;
             retireVal = 10;
             break;
     }
