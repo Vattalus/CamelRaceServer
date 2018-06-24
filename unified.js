@@ -820,9 +820,21 @@ handlers.retireCamel = function (args, context) {
 
     //if (nrOfAvailableCamels == undefined || nrOfAvailableCamels == null || isNaN(Number(nrOfAvailableCamels)) || Number(nrOfAvailableCamels) <= 1)
     //    return generateFailObj("No available camel");
-    
+
     //calculate rewards
-    var scReward = 1;
+    var scReward = 30;
+
+    switch (selectedCamel.Quality) {
+        case 0:
+            scReward = 30;
+            break;
+        case 1:
+            scReward = 40;
+            break;
+        case 2:
+            scReward = 50;
+            break;
+    }
 
     //increment virtual currency
     addCurrency("SC", scReward);
@@ -1650,7 +1662,7 @@ handlers.startRace = function (args, context) {
         selectedCamel.FatigueChangeTimestamp = serverTime;
 
     if (selectedCamel.Fatigue < 100) {
-        var fatigueRechargeTime = 2;
+        var fatigueRechargeTime = 10;
 
         while ((serverTime - selectedCamel.FatigueChangeTimestamp) >= (fatigueRechargeTime * 60) && selectedCamel.Fatigue < 100) {
             selectedCamel.Fatigue += 10;
